@@ -1,7 +1,7 @@
 function [] = compare_lines(gel, no_gel, gel_val, no_gel_val, direction)
 %compare_lines plots an overlapping plot of the two cross sections (used to
 %compare gain values
-
+gel_constant = 1;
 figure;
 subplot(2,2,1);
 visualizeProfile(gel) %show gel with a line through it
@@ -31,9 +31,14 @@ elseif direction == 'h'
     no_gel_ax = no_gel.x_axis;
 end
 
+min_val_gel = min(gel_line);
+min_val_no_gel = min(no_gel_line);
+no_gel_line = no_gel_line - min_val_no_gel;
+gel_line = gel_line - min_val_gel;
+
 subplot(2,2,3)
 hold on
 plot(no_gel_ax, no_gel_line);
-plot(gel_ax, gel_line);
+plot(gel_ax, gel_line*gel_constant);
 end
 

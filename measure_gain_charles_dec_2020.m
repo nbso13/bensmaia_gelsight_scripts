@@ -3,13 +3,14 @@ clear
 close all
 % Try convolution!!!
 % Try going pixel by pixel
+cd ..
 cd mat_files
 load('201204_gain_35_gel_processed');
 new_gel = gel;
 load('201119_gain_no_gel_processed');
 load('201119_gain_gel_processed');
-
 cd ..
+cd bensmaia_gelsight_scripts
 
 % 
 % gel.profile = gel.profile-0.035;
@@ -22,7 +23,9 @@ gel = cropProfile(gel, 'bottom', 3, 'px');
 no_gel = cropProfile(no_gel, 'left', 3, 'px');
 no_gel = cropProfile(no_gel, 'right', 4, 'px');
 
-compare_lines(gel, no_gel, 11, 11, 'h')
+compare_lines(gel, no_gel, 10.7, 10.7, 'h')
+
+compare_lines(gel, no_gel, 13.7, 13.7, 'h')
 
 
 ground_swath = [4,5,12,13];
@@ -33,7 +36,7 @@ no_gel_bottom_mean = mean(no_gel_bottom, 'all');
 gel_bottom_mean = mean(gel_bottom, 'all');
 no_gel.profile = no_gel.profile -(no_gel_bottom_mean-gel_bottom_mean);
 
-% new_gel.profile = imrotate(new_gel.profile, 90);
+new_gel.profile = imrotate(new_gel.profile, 90);
 temp = new_gel.x_axis;
 new_gel.x_axis = new_gel.y_axis;
 new_gel.y_axis = temp;
@@ -50,12 +53,35 @@ new_no_gel = cropProfile(new_no_gel, 'top', 3.488, 'mm');
 % new_gel_bottom_mean = mean(new_gel_bottom, 'all');
 % new_no_gel.profile = new_no_gel.profile -(new_no_gel_bottom_mean-new_gel_bottom_mean);
 
+
+
 if ~checkSizeMatch(new_gel, new_no_gel)
     [new_gel, new_no_gel] = resampleToMin(new_gel, new_no_gel); %resamples to the min resolution
     [new_gel, new_no_gel] = bruteCropFit(new_gel, new_no_gel); %crops to same size
 end
 
-compare_lines(new_gel, new_no_gel, 11, 11, 'h')
+compare_lines(new_gel, new_no_gel, 7.5, 7.45, 'h')
+compare_lines(new_gel, new_no_gel, 1.3, 1.3, 'h')
+compare_lines(gel, no_gel, 7.7, 7.7, 'v')
+y = [0.75, 0.25, 0.25, 0.5, 0.5 1];
+x = [0.52, 0.175, 0.17, 0.35, 0.345, 0.67];
+
+% y = [y, 0, 0, 0, 0, 0, 0];
+% x = [x, 0, 0, 0, 0, 0, 0];
+
+figure;
+hold on
+scatter(x, y);
+
+fit_ob = fit(x',y', 'poly1');
+m = fit_ob.p1;
+n = fit_ob.p2;
+ax = plot(fit_ob);
+legend(ax, sprintf('y=%f*x + %f',m, n))
+xlabel("Dot Height Gel (mm)")
+ylabel("Dot Height No Gel (mm)")
+title("Measuring Gel Gain")
+
 
 for j = [1] %%trying to see what would minimize variance
     x = 0.5:0.02:2;
