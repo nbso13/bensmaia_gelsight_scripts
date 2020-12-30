@@ -15,6 +15,7 @@ Profilometry struct analysis functions:
 - shape2profilometry transforms touchsim shape and offset into profilometry struct
 - skinModel takes in a touchsim stimulus and applies the skin mechanics model, giving back the skin profile for that stimulus.
 - visualizeProfile displays given profilometry struct
+- freqAnalysisFull takes the full fourier transform
 
 Touchsim Functions:
 - surfTouchSim takes in a shape and pin offset pair and plots a surface

@@ -11,7 +11,7 @@ close all
 gel_constant = 1.5;
 vline = 600;
 hline = 600;
-plotflag = 1;
+plotflag = 0;
 log = 1; %yes/no we want the color map to be log scale
 cax = "max"; %we want the max val to be the range
 max_freq = 5; %1 dot per mm is upper freq limit
@@ -36,10 +36,10 @@ filename_nogel = "201118_corduroy_no_gel_trimmed";
 %
 
 %% Load data process data
-cd ..\..\mat_files\
+cd ../../mat_files/
 load(filename_gel);
 load(filename_nogel);
-cd ..\bensmaia_gelsight_scripts\profilometry_analysis_scripts
+cd ../bensmaia_gelsight_scripts/profilometry_analysis_scripts
 
 gel.profile = gel.profile.*gel_constant; %scale up
 
@@ -48,7 +48,9 @@ if ~checkSizeMatch(gel, no_gel)
     [gel, no_gel] = bruteCropFit(gel, no_gel); %crops to same size
 end
 
+figure
 visualizeProfile(gel);
+figure
 visualizeProfile(no_gel);
 
 % if filename_gel == "10x_Gel_Dot_200524_processed_aligned"
@@ -95,7 +97,7 @@ visualizeProfile(no_gel);
 
 %% compare to touchsim skin mechs
 ppm = 10;
-plot_flag=0;
+plot_flag=1;
 [new_gel, touchsim_gel, new_no_gel] = TouchSimSkin(gel, no_gel, ppm, plot_flag);
 plot_flag = 1;
 vline = 10;
