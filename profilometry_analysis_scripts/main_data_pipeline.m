@@ -36,37 +36,39 @@ filename_nogel = "201118_corduroy_no_gel_trimmed";
 %
 
 %% Load data process data
-cd mat_files\
+cd ..\..\mat_files\
 load(filename_gel);
 load(filename_nogel);
-cd ..
-gel.profile = gel.profile.*gel_constant;
+cd ..\bensmaia_gelsight_scripts\profilometry_analysis_scripts
+
+gel.profile = gel.profile.*gel_constant; %scale up
 
 if ~checkSizeMatch(gel, no_gel)
     [gel, no_gel] = resampleToMin(gel, no_gel); %resamples to the min resolution
     [gel, no_gel] = bruteCropFit(gel, no_gel); %crops to same size
 end
 
-if filename_gel == "10x_Gel_Dot_200524_processed_aligned"
-    gel = gel_dot_200524;
-    gel.profile = gel.profile./1000;
-    gel.x_axis = gel.x_axis/1000;
-    gel.y_axis = gel.y_axis/1000;
-    no_gel = nogel_dot_200524;
-    no_gel.profile = no_gel.profile./1000;
-    no_gel.x_axis = no_gel.x_axis/1000;
-    no_gel.y_axis = no_gel.y_axis/1000;
-end
-
-if filename_gel == "10x_Gel_Dot_200923_processed_aligned"
-    gel.profile = gel.profile - 0.25;
-    gel.profile(gel.profile<0)=0;
-end
-
 visualizeProfile(gel);
 visualizeProfile(no_gel);
+
+% if filename_gel == "10x_Gel_Dot_200524_processed_aligned"
+%     gel = gel_dot_200524;
+%     gel.profile = gel.profile./1000;
+%     gel.x_axis = gel.x_axis/1000;
+%     gel.y_axis = gel.y_axis/1000;
+%     no_gel = nogel_dot_200524;
+%     no_gel.profile = no_gel.profile./1000;
+%     no_gel.x_axis = no_gel.x_axis/1000;
+%     no_gel.y_axis = no_gel.y_axis/1000;
+% end
+% 
+% if filename_gel == "10x_Gel_Dot_200923_processed_aligned"
+%     gel.profile = gel.profile - 0.25;
+%     gel.profile(gel.profile<0)=0;
+% end
 %plot_flag = 1;
 %surfaceArea4Ind(no_gel, plot_flag);
+
 
 %% Prepare for TouchSim
 % pins_per_mm = 8;
@@ -77,9 +79,8 @@ visualizeProfile(no_gel);
 % %save("no_gel_ts", "no_gel_ts");
 
 %% Analyze Empirical Data and Characterize Filter
-[gel_amp_ratio_mat, gel_amp_ratio_fx, gel_amp_ratio_fy] = characterizeFilterFull(no_gel, gel, vline, hline, cax, log, plotflag, max_freq, one_dim);
-clear("nogel_dot_200524", "gel_dot_200524")
-
+[gel_amp_ratio_mat, gel_amp_ratio_fx, gel_amp_ratio_fy] = characterizeFilterFull(no_gel, ...
+    gel, vline, hline, cax, log, plotflag, max_freq, one_dim);
 
 %% compare to calculated filter
 % sigma = 200;
@@ -101,6 +102,7 @@ vline = 10;
 hline = 10;
 characterizeFilterFull(new_no_gel, touchsim_gel, vline, hline, cax, log, plot_flag, max_freq, one_dim);
 characterizeFilterFull(new_no_gel, new_gel, vline, hline, cax, log, plot_flag, max_freq, one_dim);
+
 %% Make Simulated dots
 ratio_mat_size = size(gel_amp_ratio_mat);
 window_size = 1000;
