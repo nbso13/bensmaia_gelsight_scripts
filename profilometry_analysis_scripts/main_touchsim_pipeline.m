@@ -3,22 +3,8 @@
 
 close all
 clear
-setup_path
-
-% pin locations (grid of pins spaced by 0.2mm)
-[x,y]=meshgrid(-6:.2:6);
-
-
-% initial indentation matrix
-S0=zeros(size(x(:)))';
-S0(x==0&y==0)=1; % set the central pin indentation to 1mm
-
-% final indentation matrix
-[~,~,S1]=CircIndent2LoadProfile(S0,[x(:) y(:)],1,2); % set pin diam to 2mm
-re_shaped = -reshape(S1,size(x));
-% plot result
-surf(x,y,re_shaped);
-
+cd ../../touchsim
+setup_path;
 
 %load('force_profile.mat');
 %% Plot firing rates for each indentation

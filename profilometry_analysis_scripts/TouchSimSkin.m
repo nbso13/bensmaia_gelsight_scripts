@@ -17,12 +17,6 @@ gel_ts.shape = shape;
 gel_ts.offset = offset;
 gel_ts.pins_per_mm = pins_per_mm;
 
-if plot_flag
-    surfTouchSim(gel_ts.shape, gel_ts.offset)
-    title("Gel")
-    disp("now skin modeling!")
-end
-
 %save(strcat(filename_nogel, "_ts"), "no_gel_ts");
 
 %% touchsim operation on shape, skin mechanics on NO gel
@@ -33,8 +27,16 @@ new_offset = skinModel(no_gel_ts.shape, no_gel_ts.offset, pin_radius, mm_per_pin
 new_gel_ts = no_gel_ts;
 new_gel_ts.offset = new_offset;
 
-%visTexture(new_no_gel_ts.shape, new_no_gel_ts.offset, new_no_gel_ts.pins_per_mm);
-%visTexture(no_gel_ts.shape, no_gel_ts.offset, no_gel_ts.pins_per_mm);
+if plot_flag
+    surfTouchSim(gel_ts.shape, gel_ts.offset)
+    title("Gel")
+    surfTouchSim(no_gel_ts.shape, no_gel_ts.offset)
+    title("No Gel")
+    surfTouchSim(new_gel_ts.shape, new_gel_ts.offset)
+    title("TouchSim")
+    disp("now skin modeling!")
+end
+
 %% back to profilometry
 new_gel = shape2profilometry(new_gel_ts.shape, new_gel_ts.offset, new_gel_ts.pins_per_mm);
 no_gel = shape2profilometry(no_gel_ts.shape, no_gel_ts.offset, no_gel_ts.pins_per_mm);

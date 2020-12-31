@@ -95,13 +95,70 @@ visualizeProfile(no_gel);
 % characterizeFilterFull(no_gel, filt_dots, vline, hline, cax, log, plot_flag, max_freq, one_dim);
 
 
-%% compare to touchsim skin mechs
-ppm = 10;
-plot_flag=1;
+%% generate touchsim models
+ppm = 9;
+plot_flag = 1;
 [new_gel, touchsim_gel, new_no_gel] = TouchSimSkin(gel, no_gel, ppm, plot_flag);
+
+%show the profiles
+figure
+visualizeProfile(touchsim_gel)
+figure
+visualizeProfile(new_gel)
+figure
+visualizeProfile(new_no_gel)
+
+
+[shape, offset] = profilometry2shape(new_no_gel, ppm);
+no_gel_ts = struct;
+no_gel_ts.shape = shape;
+no_gel_ts.offset = offset;
+no_gel_ts.name = "no_gel_ts";
+
+[shape, offset] = profilometry2shape(new_gel, ppm);
+gel_ts = struct;
+gel_ts.shape = shape;
+gel_ts.offset = offset;
+gel_ts.name = "gel_ts";
+
+[shape, offset] = profilometry2shape(touchsim_gel, ppm);
+touchsim_gel_ts = struct;
+touchsim_gel_ts.shape = shape;
+touchsim_gel_ts.offset = offset;
+touchsim_gel_ts.name = "touchsim_gel_ts";
+
+a = affpop_hand('D2d', 0.4, 'SA1');
+
+cd ../../touchsim
+setup_path;
+
+ts_structs = [touchsim_gel_ts, gel_ts, no_gel_ts];
+speed = 80; %mm/s.
+len = 1; % s
+loc = [0 0];
+samp_freq = 200; % hz
+ramp_len = 0.2;
+
+for i = 1:length(ts_structs)
+    amp = max(ts_structs(i).offset);
+    s = stim_scan_shape(ts_structs(i).shape, ts_structs(i).offset, ppm, len, samp_freq, amp, speed);
+    figure
+    plot(s)
+    r = a.response(s);
+    pin_num = size(r.stimulus.location,1);
+    %take out neurons that fire less than 2 spikes per second
+    r_new = excludeNeurons(r, 2);
+    figure
+    plot(r_new)
+    title(ts_structs(i).name);
+end
+
+%% characterize filters
+
 plot_flag = 1;
 vline = 10;
 hline = 10;
+
 characterizeFilterFull(new_no_gel, touchsim_gel, vline, hline, cax, log, plot_flag, max_freq, one_dim);
 characterizeFilterFull(new_no_gel, new_gel, vline, hline, cax, log, plot_flag, max_freq, one_dim);
 
