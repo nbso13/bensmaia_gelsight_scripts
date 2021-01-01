@@ -1,0 +1,2 @@
+Fig 6
+Decrease in response with increase in number of indenting probes.

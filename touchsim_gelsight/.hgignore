@@ -1,0 +1,27 @@
+syntax: glob
+*.bak
+*.mat
+*.asv
+*.tif
+*.db
+*.mexw64
+*.DS_Store
+*.orig
+*.avi
+*.gif
+*.bin
+*.dig
+*.pyc
+*.zip
+*.rej
+*.html
+version.txt
+tests/gen_fig/*.pdf
+tests/gen_fig/figs/*_curr.*
+tests/gen_fig/figs/*-eps-converted-to.pdf
+tests/gen_fig/gen_fig.pdf
+tests/paper_figs/*.pdf
+tests/paper_figs/*.png
+python/touchsim/__pycache__/*
+python/.ipynb_checkpoints/*
+docs/html/*.png

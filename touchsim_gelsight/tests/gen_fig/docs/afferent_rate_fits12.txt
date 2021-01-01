@@ -1,0 +1,2 @@
+Sinusoids
+Compare rate-intensity functions for sinusoids (RA 6-9 maps).

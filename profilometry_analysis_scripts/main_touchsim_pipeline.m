@@ -88,7 +88,7 @@ else
     amp = 0.8; %mm
 end
 speed = 80; %mm/s.
-len = 1; % s
+len = 0.5; % s
 loc = [0 0];
 samp_freq = 200; % hz
 ramp_len = 0.2;

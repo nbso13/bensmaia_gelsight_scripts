@@ -16,12 +16,12 @@ log = 1; %yes/no we want the color map to be log scale
 cax = "max"; %we want the max val to be the range
 max_freq = 5; %1 dot per mm is upper freq limit
 one_dim = 0; % yes, this is one dimensional and grating goes horizontal.
-filename_gel = "201118_corduroy_35_gel_trimmed";
-filename_nogel = "201118_corduroy_no_gel_trimmed";
+% filename_gel = "201118_corduroy_35_gel_trimmed";
+% filename_nogel = "201118_corduroy_no_gel_trimmed";
 % filename_gel = "201116_2mm_grating_35_gel_processed";
 % filename_nogel = "201019_no_gel_2mm_grating";
-% filename_gel = "201116_1mm_grating_35_gel_processed";
-% filename_nogel = "201019_no_gel_1mm_grating";
+filename_gel = "201116_1mm_grating_35_gel_processed";
+filename_nogel = "201019_no_gel_1mm_grating";
 
 %% Generate sim texture
 % height = 450;
@@ -96,17 +96,17 @@ visualizeProfile(no_gel);
 
 
 %% generate touchsim models
-ppm = 9;
+ppm = 7;
 plot_flag = 1;
 [new_gel, touchsim_gel, new_no_gel] = TouchSimSkin(gel, no_gel, ppm, plot_flag);
 
 %show the profiles
 figure
-visualizeProfile(touchsim_gel)
+visualizeProfile(touchsim_gel);
 figure
-visualizeProfile(new_gel)
+visualizeProfile(new_gel);
 figure
-visualizeProfile(new_no_gel)
+visualizeProfile(new_no_gel);
 
 
 [shape, offset] = profilometry2shape(new_no_gel, ppm);
@@ -129,7 +129,7 @@ touchsim_gel_ts.name = "touchsim_gel_ts";
 
 a = affpop_hand('D2d', 0.4, 'SA1');
 
-cd ../../touchsim
+cd ../touchsim
 setup_path;
 
 ts_structs = [touchsim_gel_ts, gel_ts, no_gel_ts];
@@ -141,11 +141,10 @@ ramp_len = 0.2;
 
 for i = 1:length(ts_structs)
     amp = max(ts_structs(i).offset);
-    s = stim_scan_shape(ts_structs(i).shape, ts_structs(i).offset, ppm, len, samp_freq, amp, speed);
+    s = stim_scan_shape(ts_structs(i).shape, ts_structs(i).offset, ppm, len, samp_freq, amp, speed, gel_flag);
     figure
     plot(s)
     r = a.response(s);
-    pin_num = size(r.stimulus.location,1);
     %take out neurons that fire less than 2 spikes per second
     r_new = excludeNeurons(r, 2);
     figure

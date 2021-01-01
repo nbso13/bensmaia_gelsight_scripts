@@ -1,0 +1,2 @@
+Receptive field sizes
+Reproduce figs from Johansson \& Flanagan 2009 and Vega-Bermudez \& Johnson 1999.

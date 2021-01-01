@@ -1,0 +1,2 @@
+Fig 3
+Reproduce amplitude versus number of spikes per cycle

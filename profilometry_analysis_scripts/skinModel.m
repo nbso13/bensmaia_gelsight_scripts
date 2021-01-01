@@ -29,8 +29,8 @@ if plot_flag
     surf(X, Y, re_shaped);
     title("Before skin mechanics")
 end
-
-[~,~,S1]=CircIndent2LoadProfile(pin_offset', shape, 1, pin_radius); % set pin diam to 2mm
+gel_flag = 0; %we want to treat as not a gel to apply skin mechanics
+[~,~,S1]=CircIndent2LoadProfile(pin_offset', shape, 1, pin_radius, gel_flag); % set pin diam to 2mm
 
 re_shaped  = reshape(S1,size(X));
 % plot result
