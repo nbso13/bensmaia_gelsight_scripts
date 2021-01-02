@@ -77,6 +77,9 @@ if plotflag
     common_y_axis = data_unfilt.y_axis;
     
     if one_dim
+        if length(one_dim) < 2
+            error("one_dim var needs to be a size 2 array - first index indicates one dim and second indicates direction, 1 is horizontal 2 is vertical");
+        end
         if one_dim(2) == 2 % vertical grating averaging (right to left)
             data_filt_vline = mean(data_filt.profile, 2);
             data_unfilt_vline = mean(data_unfilt.profile, 2);

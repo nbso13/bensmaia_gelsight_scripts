@@ -20,7 +20,7 @@ gel_ts.pins_per_mm = pins_per_mm;
 %save(strcat(filename_nogel, "_ts"), "no_gel_ts");
 
 %% touchsim operation on shape, skin mechanics on NO gel
-cd ../touchsim/
+cd ../touchsim_gelsight/
 setup_path;
 cd ../profilometry_analysis_scripts/
 new_offset = skinModel(no_gel_ts.shape, no_gel_ts.offset, pin_radius, mm_per_pin, plot_flag);

@@ -137,7 +137,6 @@ classdef Stimulus < handle
             
             stat_comp=stat_comp(:,ic);
             dyn_comp=dyn_comp(:,ic);
-            dyn_comp = double(dyn_comp);
             
             s=struct;
             for ii=1:size(stat_comp,2)

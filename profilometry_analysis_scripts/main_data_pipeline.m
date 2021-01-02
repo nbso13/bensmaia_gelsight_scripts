@@ -3,12 +3,12 @@
 % Group: Bensmaia Lab
 % Project: Gelsight Profilometry
 % Date: June 26 2020
-
+cd ~/Documents/bensmaia_lab/bensmaia_gelsight_scripts/profilometry_analysis_scripts
 clear 
 close all
 
 %% set vars
-gel_constant = 1.5;
+gel_constant = 1.49;
 vline = 600;
 hline = 600;
 plotflag = 0;
@@ -16,12 +16,35 @@ log = 1; %yes/no we want the color map to be log scale
 cax = "max"; %we want the max val to be the range
 max_freq = 5; %1 dot per mm is upper freq limit
 one_dim = 0; % yes, this is one dimensional and grating goes horizontal.
+
+% 3/05 DOTS
+% filename_gel = "200305_dots_gel_processed";
+% filename_nogel = "200305_dots_no_gel_processed";
+
+% 5/24 DOTS
+% filename_gel = "200524_dots_gel_processed_aligned";
+% filename_nogel = "200524_dots_no_gel_processed";
+
+% 9/23 DOTS
+% filename_gel = "200923_dots_gel_processed_aligned";
+% filename_nogel = "200923_dots_no_gel";
+
+% 9/25 DOTS
+filename_gel = "200925_dots_gel_processed_aligned";
+filename_nogel = "200925_dots_no_gel";
+
+% CORDUROY
 % filename_gel = "201118_corduroy_35_gel_trimmed";
 % filename_nogel = "201118_corduroy_no_gel_trimmed";
+
+% 2MM GRATING THIN
 % filename_gel = "201116_2mm_grating_35_gel_processed";
 % filename_nogel = "201019_no_gel_2mm_grating";
-filename_gel = "201116_1mm_grating_35_gel_processed";
-filename_nogel = "201019_no_gel_1mm_grating";
+
+% 1MM GRATING THIN
+% filename_gel = "201116_1mm_grating_35_gel_processed";
+% filename_nogel = "201021_no_gel_1mm_grating";
+
 
 %% Generate sim texture
 % height = 450;
@@ -47,6 +70,9 @@ if ~checkSizeMatch(gel, no_gel)
     [gel, no_gel] = resampleToMin(gel, no_gel); %resamples to the min resolution
     [gel, no_gel] = bruteCropFit(gel, no_gel); %crops to same size
 end
+
+gel = rotateProfilometry(gel, 90);
+no_gel = rotateProfilometry(no_gel, 90);
 
 figure
 visualizeProfile(gel);
@@ -81,8 +107,8 @@ visualizeProfile(no_gel);
 % %save("no_gel_ts", "no_gel_ts");
 
 %% Analyze Empirical Data and Characterize Filter
-[gel_amp_ratio_mat, gel_amp_ratio_fx, gel_amp_ratio_fy] = characterizeFilterFull(no_gel, ...
-    gel, vline, hline, cax, log, plotflag, max_freq, one_dim);
+% [gel_amp_ratio_mat, gel_amp_ratio_fx, gel_amp_ratio_fy] = characterizeFilterFull(no_gel, ...
+%     gel, vline, hline, cax, log, plotflag, max_freq, one_dim);
 
 %% compare to calculated filter
 % sigma = 200;
@@ -96,52 +122,56 @@ visualizeProfile(no_gel);
 
 
 %% generate touchsim models
-ppm = 7;
+ppm = 10;
 plot_flag = 1;
 [new_gel, touchsim_gel, new_no_gel] = TouchSimSkin(gel, no_gel, ppm, plot_flag);
 
 %show the profiles
-figure
-visualizeProfile(touchsim_gel);
-figure
-visualizeProfile(new_gel);
-figure
-visualizeProfile(new_no_gel);
+% figure
+% visualizeProfile(touchsim_gel);
+% figure
+% visualizeProfile(new_gel);
+% figure
+% visualizeProfile(new_no_gel);
 
 
 [shape, offset] = profilometry2shape(new_no_gel, ppm);
 no_gel_ts = struct;
 no_gel_ts.shape = shape;
 no_gel_ts.offset = offset;
-no_gel_ts.name = "no_gel_ts";
+no_gel_ts.name = "no gel ts";
+no_gel_ts.gel_flag = 0; %not a gel, but the actual textured surface
 
 [shape, offset] = profilometry2shape(new_gel, ppm);
 gel_ts = struct;
 gel_ts.shape = shape;
 gel_ts.offset = offset;
-gel_ts.name = "gel_ts";
+gel_ts.name = "gel ts";
+gel_ts.gel_flag = 1; %this is a skin surface, not a texture
 
 [shape, offset] = profilometry2shape(touchsim_gel, ppm);
 touchsim_gel_ts = struct;
 touchsim_gel_ts.shape = shape;
 touchsim_gel_ts.offset = offset;
-touchsim_gel_ts.name = "touchsim_gel_ts";
+touchsim_gel_ts.name = "touchsim gel ts";
+touchsim_gel_ts.gel_flag = 1; %this is the calculated skin surface from the model
 
-a = affpop_hand('D2d', 0.4, 'SA1');
+a = affpop_hand('D2d', 0.8, 'SA1');
 
-cd ../touchsim
+cd ../touchsim_gelsight
 setup_path;
 
 ts_structs = [touchsim_gel_ts, gel_ts, no_gel_ts];
 speed = 80; %mm/s.
 len = 1; % s
 loc = [0 0];
-samp_freq = 200; % hz
+samp_freq = 2000; % hz
 ramp_len = 0.2;
 
 for i = 1:length(ts_structs)
-    amp = max(ts_structs(i).offset);
-    s = stim_scan_shape(ts_structs(i).shape, ts_structs(i).offset, ppm, len, samp_freq, amp, speed, gel_flag);
+    amp = max(ts_structs(i).offset) - min(ts_structs(i).offset);
+    s = stim_scan_shape(ts_structs(i).shape, ts_structs(i).offset, ppm, ...
+        len, samp_freq, amp, speed, ts_structs(i).gel_flag);
     figure
     plot(s)
     r = a.response(s);
@@ -157,10 +187,9 @@ end
 plot_flag = 1;
 vline = 10;
 hline = 10;
-
+cd ../profilometry_analysis_scripts/
 characterizeFilterFull(new_no_gel, touchsim_gel, vline, hline, cax, log, plot_flag, max_freq, one_dim);
 characterizeFilterFull(new_no_gel, new_gel, vline, hline, cax, log, plot_flag, max_freq, one_dim);
-
 %% Make Simulated dots
 ratio_mat_size = size(gel_amp_ratio_mat);
 window_size = 1000;

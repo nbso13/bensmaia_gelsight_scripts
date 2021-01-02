@@ -6,6 +6,8 @@ addpath([p '/base/internal'])           % internal functions
 addpath([p '/base/GUI'])                % GUI
 addpath([p '/base/skinmech/'])          % Skin mechanics code
 addpath([p '/docs'])                    % Toolbox documentation
+addpath([p '/added_functions'])         % gelsight_mod functions
+
 
 % optional directories
 if exist([p '/tests'],'dir')

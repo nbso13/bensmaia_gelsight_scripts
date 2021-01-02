@@ -52,7 +52,7 @@ trace = repmat(t,[1 size(shape,1)]);
 % make pin_offset so that tip of texture contacts skin, plus given
 % amplitude
 pin_offset = pin_offset - max(pin_offset)+amp;
-disp(strcat("stim_scan_shape: Indenting at ", num2str(max(pin_offset)), "mm amplitude."));
+disp(strcat("Indenting at ", num2str(max(pin_offset)), "mm."));
 pin_offset(pin_offset<0) = 0; %zero negative values
 trace = scanTexture(pin_offset, trace, pinspermm, speed, samp_freq); % scan offset across trace
 

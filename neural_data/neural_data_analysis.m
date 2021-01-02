@@ -17,7 +17,7 @@ disp(neuron_types(num));
 
 texture_num = 9;
 for i = 1:2
-    disp(htxt_name(texture_num)
+    disp(htxt_name(texture_num))
     temp = spikes{1}(texture_num,num,i);
     spike_train_last_texture{1,i} = temp;
 end
