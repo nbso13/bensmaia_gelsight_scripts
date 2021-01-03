@@ -30,8 +30,8 @@ one_dim = 0; % yes, this is one dimensional and grating goes horizontal.
 % filename_nogel = "200923_dots_no_gel";
 
 % 9/25 DOTS
-filename_gel = "200925_dots_gel_processed_aligned";
-filename_nogel = "200925_dots_no_gel";
+% filename_gel = "200925_dots_gel_processed_aligned";
+% filename_nogel = "200925_dots_no_gel";
 
 % CORDUROY
 % filename_gel = "201118_corduroy_35_gel_trimmed";
@@ -124,44 +124,30 @@ visualizeProfile(no_gel);
 %% generate touchsim models
 ppm = 10;
 plot_flag = 1;
-[new_gel, touchsim_gel, new_no_gel] = TouchSimSkin(gel, no_gel, ppm, plot_flag);
+[new_gel_ts, new_no_gel_ts, skin_surface_ts] = TouchSimSkin(gel, no_gel, ppm, plot_flag);
+
+%get profiles
+touchsim_gel = shape2profilometry(skin_surface_ts.shape, ...
+    skin_surface_ts.offset, skin_surface_ts.pins_per_mm);
+new_gel = shape2profilometry(new_gel_ts.shape, ...
+    new_gel_ts.offset, new_gel_ts.pins_per_mm);
+new_no_gel = shape2profilometry(new_no_gel_ts.shape, ...
+    new_no_gel_ts.offset, new_no_gel_ts.pins_per_mm);
 
 %show the profiles
-% figure
-% visualizeProfile(touchsim_gel);
-% figure
-% visualizeProfile(new_gel);
-% figure
-% visualizeProfile(new_no_gel);
-
-
-[shape, offset] = profilometry2shape(new_no_gel, ppm);
-no_gel_ts = struct;
-no_gel_ts.shape = shape;
-no_gel_ts.offset = offset;
-no_gel_ts.name = "no gel ts";
-no_gel_ts.gel_flag = 0; %not a gel, but the actual textured surface
-
-[shape, offset] = profilometry2shape(new_gel, ppm);
-gel_ts = struct;
-gel_ts.shape = shape;
-gel_ts.offset = offset;
-gel_ts.name = "gel ts";
-gel_ts.gel_flag = 1; %this is a skin surface, not a texture
-
-[shape, offset] = profilometry2shape(touchsim_gel, ppm);
-touchsim_gel_ts = struct;
-touchsim_gel_ts.shape = shape;
-touchsim_gel_ts.offset = offset;
-touchsim_gel_ts.name = "touchsim gel ts";
-touchsim_gel_ts.gel_flag = 1; %this is the calculated skin surface from the model
+figure
+visualizeProfile(touchsim_gel);
+figure
+visualizeProfile(new_gel);
+figure
+visualizeProfile(new_no_gel);
 
 a = affpop_hand('D2d', 0.8, 'SA1');
 
 cd ../touchsim_gelsight
 setup_path;
 
-ts_structs = [touchsim_gel_ts, gel_ts, no_gel_ts];
+ts_structs = [skin_surface_ts, new_gel_ts, new_no_gel_ts];
 speed = 80; %mm/s.
 len = 1; % s
 loc = [0 0];

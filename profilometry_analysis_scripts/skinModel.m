@@ -1,5 +1,5 @@
-function [offset_out] = skinModel(shape, pin_offset, pin_radius, samp_freq, plot_flag)
-%skinModel takes in a touchsim stimulus and applies the skin mechanics
+function [offset_out, P] = skinModel(shape, pin_offset, pin_radius, samp_freq, plot_flag)
+%skinModel takes in touchsim stimulus parameters and applies the skin mechanics
 %model, giving back the skin profile for that stimulus.
 
 % initial indentation matrix
@@ -30,9 +30,11 @@ if plot_flag
     title("Before skin mechanics")
 end
 gel_flag = 0; %we want to treat as not a gel to apply skin mechanics
-[~,~,S1]=CircIndent2LoadProfile(pin_offset', shape, 1, pin_radius, gel_flag); % set pin diam to 2mm
+[P,~,S1]=CircIndent2LoadProfile(pin_offset', shape, 1, pin_radius, gel_flag); % set pin diam to 2mm
 
 re_shaped  = reshape(S1,size(X));
+P = reshape(P ,size(X));
+
 % plot result
 if plot_flag
     subplot(1,2,2)
