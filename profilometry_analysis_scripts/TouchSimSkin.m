@@ -27,7 +27,7 @@ gel_ts.gel_flag = 1; %gelsight gel profile
 cd ../touchsim_gelsight/
 setup_path;
 cd ../profilometry_analysis_scripts/
-[new_offset, P] = skinModel(no_gel_ts.shape, no_gel_ts.offset, pin_radius, mm_per_pin, plot_flag);
+[new_offset, P] = skinModel(no_gel_ts.shape, no_gel_ts.offset, pin_radius, plot_flag);
 skin_surface_ts = no_gel_ts;
 skin_surface_ts.offset = new_offset;
 skin_surface_ts.name = "touchsim skin surface";

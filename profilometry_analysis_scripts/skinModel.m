@@ -1,4 +1,4 @@
-function [offset_out, P] = skinModel(shape, pin_offset, pin_radius, samp_freq, plot_flag)
+function [offset_out, P] = skinModel(shape, pin_offset, pin_radius, plot_flag)
 %skinModel takes in touchsim stimulus parameters and applies the skin mechanics
 %model, giving back the skin profile for that stimulus.
 

@@ -3,11 +3,12 @@
 % Group: Bensmaia Lab
 % Project: Gelsight Profilometry
 % Date: June 26 2020
-cd ~/Documents/bensmaia_lab/bensmaia_gelsight_scripts/profilometry_analysis_scripts
+% cd ~/Documents/bensmaia_lab/bensmaia_gelsight_scripts/profilometry_analysis_scripts
 clear 
 close all
 
 %% set vars
+ppm = 17;
 gel_constant = 1.49;
 vline = 600;
 hline = 600;
@@ -16,6 +17,14 @@ log = 1; %yes/no we want the color map to be log scale
 cax = "max"; %we want the max val to be the range
 max_freq = 5; %1 dot per mm is upper freq limit
 one_dim = 0; % yes, this is one dimensional and grating goes horizontal.
+
+%cross
+filename_gel = "201119_cross_gel_processed";
+filename_nogel = "201119_cross_no_gel_processed";
+
+% gain_stim
+% filename_gel = "201119_gain_gel_processed";
+% filename_nogel = "201119_gain_no_gel_processed";
 
 % 3/05 DOTS
 % filename_gel = "200305_dots_gel_processed";
@@ -122,9 +131,10 @@ visualizeProfile(no_gel);
 
 
 %% generate touchsim models
-ppm = 10;
+
 plot_flag = 1;
-[new_gel_ts, new_no_gel_ts, skin_surface_ts] = TouchSimSkin(gel, no_gel, ppm, plot_flag);
+pin_radius = 0.025;
+[new_gel_ts, new_no_gel_ts, skin_surface_ts] = TouchSimSkin(gel, no_gel, ppm, pin_radius, plot_flag);
 
 %get profiles
 touchsim_gel = shape2profilometry(skin_surface_ts.shape, ...

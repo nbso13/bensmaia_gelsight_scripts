@@ -17,6 +17,6 @@ x_axis = xax(1:length(y_axis):length(xax));
 re_shaped  = reshape(pin_offset',size(X));
 % plot result
 figure
-surf(X, Y, re_shaped);
+surf(X, Y, re_shaped, 'edgecolor', 'none');
 end
 
