@@ -9,9 +9,9 @@ close all;
 DETILT = 0;
 LEXT = 1;
 GEL = 1;
-file_name = '201204_craig_36_gel';
+file_name = '210108_craig_36_gel_2';
 %% THIS IS FOR LEXT FILE
-cd csv_data;
+cd ../../csv_data;
 
 if LEXT == 1
     file_list = dir;
@@ -36,8 +36,6 @@ if LEXT == 1
     
     %samp_freq = 1/(x_res/1000); % once every 2.5 microns
     temp_data_filtered = temp_data;%filter2(fir1(10,0.6), temp_data);
-    
-    
     
     x_res = temp_data_res(1,1)/1000;
     y_res = temp_data_res(2,1)/1000;
@@ -71,7 +69,7 @@ if LEXT == 0
     y_axis = linspace(0, y_res*(size(temp_data,2)-1)/1000, size(temp_data,2));
 end
 
-cd ..
+cd ../bensmaia_gelsight_scripts/profilometry_analysis_scripts
 
 
 %% turning csv data into 3xn matrix of x,y,z points
@@ -146,25 +144,14 @@ caxis([l_lim, u_lim]); %ylim([1240 1270]); xlim([2810 2930])
 % 
 % figure;
 % hist(new_window)
-if strcmp(file_name, '201118_corduroy_35_gel')
-    new_window = new_window + 0.002;
-    new_window(new_window<0) = 0;
-end
-if strcmp(file_name, '201118_corduroy_no_gel')
-    disp("corduroy no gel");
-    new_window(new_window<0.1) = 0;
-end
-
-
-% 
-% figure;
-% imagesc(x_axis, y_axis, new_window')
-% c = colorbar;
-% ylabel(c, 'mm');
-% title([title_str, " After Edge Filter"]);
-% xlabel('mm'); ylabel('mm');
-% caxis([l_lim, u_lim]); %ylim([1240 1270]); xlim([2810 2930])
-
+% if strcmp(file_name, '201118_corduroy_35_gel')
+%     new_window = new_window + 0.002;
+%     new_window(new_window<0) = 0;
+% end
+% if strcmp(file_name, '201118_corduroy_no_gel')
+%     disp("corduroy no gel");
+%     new_window(new_window<0.1) = 0;
+% end
 
 gel_dot_200305 = struct;
 gel_dot_200305.profile = new_window';
@@ -176,7 +163,7 @@ gel_dot_200305.y_axis = y_axis';
 gel_dot_200305.type = "dots";
 filename = strcat(file_name, "_processed.mat");
 visualizeProfile(gel_dot_200305);
-cd mat_files
+cd ../../mat_files
 if GEL
     gel = gel_dot_200305;
     save(filename, "gel");
@@ -185,7 +172,7 @@ else
     save(filename, "no_gel");
 end
 
-cd ..
+cd ../bensmaia_gelsight_scripts/profilometry_analysis_scripts
 
 %% processsing - crop and rotate if necessary
 %
