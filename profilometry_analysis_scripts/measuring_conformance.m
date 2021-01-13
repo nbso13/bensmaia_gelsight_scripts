@@ -4,16 +4,21 @@
 clear
 close all
 load('colorscheme.mat')
-gel_constant = 1.56;
+gel_constant = 1.49;
 force = 200; %g
-num_gels = 5; %1:32, 1:35_201116, 1:36 , 1:35_201118 .... 1:36old
-num_widths = 7; %0.35,0.5,0.75,1,1.2,1.5,2 
-gels = zeros(num_gels, num_widths);
-plot_gels = [0, 1, 1, 1, 1]; %determines which gels are visualized (see order below in filenames)
 
+num_widths = 7; %0.35,0.5,0.75,1,1.2,1.5,2 
+
+plot_gels = [1, 1, 1, 1, 1, 1, 1, 1, 1]; %determines which gels are visualized (see order below in filenames)
+num_gels = length(plot_gels);
+gels = zeros(num_gels, num_widths);
 %% set empirically chosen parameters %CRAIG STIMS 
 file_names = {'201111_craig_stim_32_gel_processed', ...
-    '201116_craig_stim_35_gel_processed', '201111_craig_stim_36_gel_processed', '201118_craig_35_gel_processed', '201204_craig_36_gel_processed'};
+    '201116_craig_stim_35_gel_processed', '201111_craig_stim_36_gel_processed', ...
+    '201118_craig_35_gel_processed', '201204_craig_36_gel_processed', ...
+    '210108_craig_36_gel_1_processed', '210108_craig_36_gel_2_processed', ...
+    '210111_craig_36_gel_1_processed', '210111_craig_36_gel_2_processed' ...
+    '210112_craig_36_gel_1_processed', '210112_craig_36_gel_2_processed'};
 % each file name is a gel struct of a different gel with the craig
 % stimulus.
 area_vecs = {}; %each row is for a craig stim reading 32 is 1, 35 is 2, 36 is 3, 1st entry is min ranges, 
@@ -33,14 +38,26 @@ area_vecs{4,3} = 'h';
 area_vecs{5,1} = [13, 14; 11, 13; 10, 11;  7, 9; 5, 7; 2, 5; 0.5, 2 ]; 
 area_vecs{5,2} = [14, 14.5; 12, 13.5; 11, 12; 9, 10; 7, 8;  5, 6;  1, 3.5 ];       
 area_vecs{5,3} = 'h';
+area_vecs{6,1} = [13, 14; 11, 13; 10, 11;  7, 9; 5, 7; 2, 5; 0.5, 2 ]; 
+area_vecs{6,2} = [14, 14.5; 12, 13.5; 11, 12; 9, 10; 7, 8;  5, 6;  1, 3.5 ];       
+area_vecs{6,3} = 'h';
+area_vecs{7,1} = [13, 14; 11, 13; 10, 11;  7, 10; 6, 8; 4, 6; 0.5, 2 ]; 
+area_vecs{7,2} = [13.9, 14.5; 12.5, 13.5; 11, 11.3; 9, 10; 7, 8;  5, 6;  1, 3.5 ];       
+area_vecs{7,3} = 'h';
+area_vecs{8,1} = [14, 14.2; 12, 13; 10, 12;  6, 8; 4, 6; 2, 5; 0.5, 3 ]; 
+area_vecs{8,2} = [14.25, 14.5; 12.9, 13.5; 9, 12; 9, 10; 7, 8;  5, 6;  2, 3.5 ];       
+area_vecs{8,3} = 'h';
+area_vecs{9,1} = [13.96, 14.5; 12.5, 13; 10.7, 11.5;  9, 9.4; 6.7, 7.3; 4, 5; 0.5, 3 ]; 
+area_vecs{9,2} = [14.25, 14.45; 12.9, 13.1; 11, 12; 9.6, 9.9; 7.6, 7.9;  5, 5.7;  2.8, 3.2 ];       
+area_vecs{9,3} = 'h';
 %% run main for loop
-plot_flag = 1;
+plot_flag = 0;
 for i = 1: num_gels
-    cd mat_files\
+    cd ../../mat_files
     load(file_names{i})
-    cd ..
     gel.profile(gel.profile<0) = 0; % by histogram inspection
     gel.profile = gel.profile.*gel_constant;
+    cd ../bensmaia_gelsight_scripts/profilometry_analysis_scripts
     gels(i, :) = find_grating_differences(gel, area_vecs{i,3},...
                                                area_vecs{i,1}, ...
                                                area_vecs{i,2}, ...
@@ -51,8 +68,7 @@ end
 figure;
 hold on
 dot_size = 15;
-color_str = ['b', 'g', 'r', 'c', 'k'];
-x_norm = [0.35, 0.5, 0.75, 1, 1.2, 1.5, 2]';
+x_norm = [0.35, 0.5, 0.75, 1, 1.2, 1.5, 2]'; %stimulus widths
 x_36 = [0.5, 0.75, 1, 1.2, 1.5]';
 m = zeros(num_gels+1); %slopes
 n = m; %intercepts
@@ -82,16 +98,28 @@ end
 x = [0.35, 0.5, 0.75, 1, 1.2, 1.5]'; % in mm, from gibson and craig '06, fig 5
 y = [0.06, 0.1, 0.17, 0.28, 0.366, 0.4]';
 i = i+1;
-scatter(x,y, dot_size, colorscheme(i+1, :));
+scatter(x,y, dot_size, colorscheme(i, :));
 fit_ob = fit(x,y, 'poly1');
 m(i) = fit_ob.p1;
 n(i) = fit_ob.p2;
 ax{i} = plot(fit_ob);
+ax_handles = ax{i};
+set(ax_handles,'color',colorscheme(i, :));
 
-%'1:32 gel', '1:32 gel trendline', ...
-legend('1:35 gel', '1:35 gel trendline', '1:36 gel', '1:36 gel trendline', ...
-    '1:35_201118 gel', '1:35_201118 trendline', 'Gibson & Craig, 2006 (human)', ...
-    'G&B trendline', '1:36 gel dec', '1:36 dec trendline');
+%automating plotting legend
+plot_legends = zeros(length(plot_gels)*2, 1)';
+for i = 1:length(plot_gels)
+    plot_legends(i*2) = plot_gels(i);
+    plot_legends(i*2 - 1) = plot_gels(i);
+end
+legend_labels = {'1:32 gel', '1:32 gel trendline', '1:35 gel', '1:35 gel trendline', '1:36 gel', '1:36 gel trendline', ...
+    '1:35_201118 gel', '1:35_201118 trendline', '1:36 gel dec', '1:36 dec trendline'};
+legend_labels = legend_labels(plot_legends);
+legend_labels = [legend_labels, 'Gibson & Craig, 2006 (human)', 'G&B trendline'];
+
+
+
+legend(legend_labels);
 xlabel("Grating Width (mm)")
 ylabel("Conformance Depth (mm)")
 title("Width-Conformance relationship at 200g force")

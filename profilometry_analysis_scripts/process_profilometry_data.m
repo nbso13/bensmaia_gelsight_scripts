@@ -9,7 +9,7 @@ close all;
 DETILT = 0;
 LEXT = 1;
 GEL = 1;
-file_name = '210108_craig_36_gel_2';
+file_name = '210111_upholstery_no_gel';
 %% THIS IS FOR LEXT FILE
 cd ../../csv_data;
 

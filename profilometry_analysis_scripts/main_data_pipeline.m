@@ -18,6 +18,14 @@ cax = "max"; %we want the max val to be the range
 max_freq = 5; %1 dot per mm is upper freq limit
 one_dim = 0; % yes, this is one dimensional and grating goes horizontal.
 
+%upholstery gel 2
+filename_gel = "201119_cross_gel_processed";
+filename_nogel = "201119_cross_no_gel_processed";
+
+%upholstery gel 1
+filename_gel = "201119_cross_gel_processed";
+filename_nogel = "201119_cross_no_gel_processed";
+
 %cross
 filename_gel = "201119_cross_gel_processed";
 filename_nogel = "201119_cross_no_gel_processed";
