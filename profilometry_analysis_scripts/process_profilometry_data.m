@@ -8,8 +8,8 @@ close all;
 %macros
 DETILT = 0;
 LEXT = 1;
-GEL = 0;
-file_name = '210113_upholstry_no_gel';
+GEL = 1;
+file_name = '210115_craig_gel_35_or_36';
 %% THIS IS FOR LEXT FILE
 cd ../../csv_data;
 
