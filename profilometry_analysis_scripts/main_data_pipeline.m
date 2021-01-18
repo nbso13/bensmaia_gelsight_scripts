@@ -8,7 +8,7 @@ clear
 close all
 
 %% set vars
-ppm = 17;
+ppm = 7;
 gel_constant = 1.49;
 vline = 600;
 hline = 600;
@@ -18,17 +18,23 @@ cax = "max"; %we want the max val to be the range
 max_freq = 5; %1 dot per mm is upper freq limit
 one_dim = 0; % yes, this is one dimensional and grating goes horizontal.
 
+
+%upholstery 1 on gel 1
+filename_gel = "210113_upholstry_36_gel_1_processed";
+filename_nogel = "210113_upholstry_no_gel_processed";
+
+
 %upholstery gel 2
-filename_gel = "201119_cross_gel_processed";
-filename_nogel = "201119_cross_no_gel_processed";
+% filename_gel = "210112_upholstry_36_gel_2_processed";
+% filename_nogel = "210111_upholstery_no_gel_processed";
 
 %upholstery gel 1
-filename_gel = "201119_cross_gel_processed";
-filename_nogel = "201119_cross_no_gel_processed";
+% filename_gel = "210112_upholstry_36_gel_1_processed";
+% filename_nogel = "210111_upholstery_no_gel_processed";
 
 %cross
-filename_gel = "201119_cross_gel_processed";
-filename_nogel = "201119_cross_no_gel_processed";
+% filename_gel = "201119_cross_gel_processed";
+% filename_nogel = "201119_cross_no_gel_processed";
 
 % gain_stim
 % filename_gel = "201119_gain_gel_processed";
@@ -83,18 +89,23 @@ cd ../bensmaia_gelsight_scripts/profilometry_analysis_scripts
 
 gel.profile = gel.profile.*gel_constant; %scale up
 
-if ~checkSizeMatch(gel, no_gel)
-    [gel, no_gel] = resampleToMin(gel, no_gel); %resamples to the min resolution
-    [gel, no_gel] = bruteCropFit(gel, no_gel); %crops to same size
-end
-
-gel = rotateProfilometry(gel, 90);
-no_gel = rotateProfilometry(no_gel, 90);
-
 figure
 visualizeProfile(gel);
 figure
 visualizeProfile(no_gel);
+
+% if ~checkSizeMatch(gel, no_gel)
+%     [gel, no_gel] = resampleToMin(gel, no_gel); %resamples to the min resolution
+%     [gel, no_gel] = bruteCropFit(gel, no_gel); %crops to same size
+% end
+
+% gel = rotateProfilometry(gel, 90);
+% no_gel = rotateProfilometry(no_gel, 90);
+
+% figure
+% visualizeProfile(gel);
+% figure
+% visualizeProfile(no_gel);
 
 % if filename_gel == "10x_Gel_Dot_200524_processed_aligned"
 %     gel = gel_dot_200524;

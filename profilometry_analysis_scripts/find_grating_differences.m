@@ -14,19 +14,23 @@ factor = 0;
 if direction == 'v'
     trace = mean(profilometry.profile, 1);
     factor = profilometry.x_res;
-    figure
-    plot(profilometry.x_axis, trace)
-    title("Average vertical trace")
-    xlabel("x loc")
-    ylabel("height (mm)")
+    if plot_flag
+        figure
+        plot(profilometry.x_axis, trace)
+        title("Average vertical trace")
+        xlabel("x loc")
+        ylabel("height (mm)")
+    end
 elseif direction =='h'
     trace = mean(profilometry.profile, 2);
     factor = profilometry.y_res;
-    figure
-    plot(profilometry.y_axis, trace)
-    title("Average vertical trace")
-    xlabel("y loc")
-    ylabel("height (mm)")
+    if plot_flag
+        figure
+        plot(profilometry.y_axis, trace)
+        title("Average vertical trace")
+        xlabel("y loc")
+        ylabel("height (mm)")
+    end
 else
     error("direction unrecognized. use h for horizontal (averaging horizontally) or v for vertical (averaging down)");
 end
@@ -39,15 +43,19 @@ for i = 1:n
     mins(i) = min(trace(ceil(min_ranges(i,1)):ceil(min_ranges(i,2))));
     maxs(i) = max(trace(ceil(max_ranges(i,1)):ceil(max_ranges(i,2))));
 end
-hold on;
+
 
 min_ranges = min_ranges.*factor;
 max_ranges = max_ranges.*factor;
 mid_min = (min_ranges(:,1)+min_ranges(:,2))./2;
 mid_max = (max_ranges(:,1)+max_ranges(:,2))./2;
 
-scatter(mid_min, mins);
-scatter(mid_max, maxs);
+if plot_flag
+    hold on;
+    scatter(mid_min, mins);
+    scatter(mid_max, maxs);
+end
+
 differences = maxs-mins;
 end
 
