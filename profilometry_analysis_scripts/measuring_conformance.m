@@ -9,23 +9,25 @@ force = 200; %g
 
 num_widths = 7; %0.35,0.5,0.75,1,1.2,1.5,2 
 
-%nov 15 "35" gel was 2.79% or 34.65
-%nov 3 "36" gel was 2.82% or 35.4
-%jan 6 "36" gel 1 was 2.80% 35.7
-%jan 6 "36" gel 2 was 3.03% or 33
+%nov 15 "35" gel was 2.81% or 34.65
+%nov 3 "36" gel was 2.73% or 35.4
+%jan 6 "36" gel 1 was 2.72% 35.7
+%jan 6 "36" gel 2 was 2.94% or 33
+%jan 14 gels 3, 4, and 5 were 2.80% or 34.7
 
-days_old = [nan, 1, 8, 3, 30, 2, 2, 5, 5, 6, 6, 9, 9, nan];
-ratio = [nan, 34.65, 35.4, 34.65, 35.4, 35.7, 33, 35.7, 33, 35.7, 33, 35.7, 33, nan];
+days_old = [nan, 1, 8, 3, 30, 2, 2, 5, 5, 6, 6, 9, 9, 12, 12, 4, 4, nan];
+ratio = [nan, 2.81, 2.73, 2.81, 2.73, 2.72, 2.94, 2.72, 2.94, 2.72, 2.94, 2.72, 2.94, 2.72, 2.94, 2.80, 2.80, nan];
+gel_id_num = [nan, nan, nan, nan, nan, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 3, 4, nan];
 file_names = {'201111_craig_stim_32_gel_processed', ...
     '201116_craig_stim_35_gel_processed', '201111_craig_stim_36_gel_processed', ...
     '201118_craig_35_gel_processed', '201204_craig_36_gel_processed', ...
     '210108_craig_36_gel_1_processed', '210108_craig_36_gel_2_processed', ...
     '210111_craig_36_gel_1_processed', '210111_craig_36_gel_2_processed' ...
     '210112_craig_36_gel_1_processed', '210112_craig_36_gel_2_processed', ...
-    '210115_craig_gel_1_processed', '210115_craig_gel_2_processed'};
-
-plot_gels = ones(length(file_names),1); %determines which gels are visualized (see order below in filenames)
-num_gels = length(plot_gels);
+    '210115_craig_gel_1_processed', '210115_craig_gel_2_processed', ...
+    '210118_craig_gel_1_processed', '210118_craig_gel_2_processed', ...
+    '210118_craig_gel_3_processed', '210118_craig_gel_4_processed'};
+num_gels = length(file_names);
 gels = zeros(num_gels, num_widths);
 %% set empirically chosen parameters %CRAIG STIMS 
 
@@ -72,8 +74,20 @@ area_vecs{12,3} = 'h';
 area_vecs{13,1} = [0.1, 1; 13, 14.5; 11, 13; 9, 11;  7, 9; 5, 7.3; 2, 4]; 
 area_vecs{13,2} = [0.1, 1; 14, 14.5; 12.5, 13.1; 10, 11; 8, 9; 6, 7;  3, 4.5 ];       
 area_vecs{13,3} = 'h'; %ALERT: 0.35 gap not measured here. NAN in data.
+area_vecs{14,1} = [14, 16; 12.5, 14; 11, 12; 9, 11;  7, 9; 4, 6; 2, 4]; 
+area_vecs{14,2} = [15, 15.2; 12, 13; 11.5, 12.1; 10,10.5; 8, 8.5; 6, 6.2;  2, 4 ];       
+area_vecs{14,3} = 'h'; 
+area_vecs{15,1} = [14, 15; 12, 14; 10, 12; 8, 10;  6, 8; 4, 6; 1, 4]; 
+area_vecs{15,2} = [14, 14.5; 12.5, 13.1; 10, 11.7; 9.5, 10; 7, 8;  5, 6; 2,3 ];       
+area_vecs{15,3} = 'h'; 
+area_vecs{16,1} = [14.5, 15; 13, 14.5; 11, 13; 9, 11;  7, 9; 5, 7.3; 2, 4]; 
+area_vecs{16,2} = [15, 15.5;  13.5, 14; 12, 12.5; 10, 11; 8, 9; 6, 7;  3, 4.5 ];       
+area_vecs{16,3} = 'h'; 
+area_vecs{17,1} = [14, 14.5; 13, 14.5; 11, 13; 9, 11;  7, 9; 5, 7.3; 2, 4]; 
+area_vecs{17,2} = [14, 14.5; 13, 13.5; 11, 12; 9, 10; 7, 8;  5, 6; 3, 3.3];       
+area_vecs{17,3} = 'h'; 
 %% run main for loop
-plot_flag = 1;
+plot_flag = 0;
 for i = 1: num_gels
     cd ../../mat_files
     load(file_names{i})
@@ -87,22 +101,17 @@ for i = 1: num_gels
 end
 
 %% plot gel data
-figure;
-hold on
-dot_size = 15;
+if plot_flag
+    figure;
+    hold on
+    dot_size = 15;
+end
 x_norm = [0.35, 0.5, 0.75, 1, 1.2, 1.5, 2]'; %stimulus widths
 x_36 = [0.5, 0.75, 1, 1.2, 1.5]';
 x_gel_2_0115 = [0.5, 0.75, 1, 1.2, 1.5, 2]';
-m = zeros(num_gels+1, 1); %slopes
-n = m; %intercepts
-ax = {}; %trendlines
 scatters = {};
 fits = {};
 for i = 1:num_gels
-    
-    if ~plot_gels(i) %if we're not to print a gel, skip
-        continue
-    end
     if i == 3 %third one has no first or last entry (im dumb)
         x = x_36;
         y = gels(i, :)';
@@ -120,33 +129,41 @@ for i = 1:num_gels
     
     x = [0; 0; x];
     y = [0; 0; y];
-    
-    scatters{i} = scatter(x,y, dot_size, colorscheme(i, :));
     fit_ob = fitlm(x,y);
     fits{i} = fit_ob;
-    fit_plot = fit(x,y, 'poly1');
-    ax{i} = plot(fit_plot);
-    ax_handles = ax{i};
-    set(ax_handles,'color',colorscheme(i, :));
+    
+    if plot_flag
+        scatters{i} = scatter(x,y, dot_size, colorscheme(i, :));
+        fit_plot = fit(x,y, 'poly1');
+        ax{i} = plot(fit_plot);
+        ax_handles = ax{i};
+        set(ax_handles,'color',colorscheme(i, :));
+    end
 end
 
 %% add gibson and craig data
 x = [0.35, 0.5, 0.75, 1, 1.2, 1.5]'; % in mm, from gibson and craig '06, fig 5
 y = [0.06, 0.1, 0.17, 0.28, 0.366, 0.4]';
 i = i+1;
-scatters{i} = scatter(x,y, dot_size, colorscheme(i, :));
 fit_ob = fitlm(x,y);
 fits{i} = fit_ob;
-fit_plot = fit(x,y, 'poly1');
-ax{i} = plot(fit_plot);
-ax_handles = ax{i};
-set(ax_handles,'color',colorscheme(i, :));
+
+if plot_flag
+    scatters{i} = scatter(x,y, dot_size, colorscheme(i, :));
+    fit_plot = fit(x,y, 'poly1');
+    ax{i} = plot(fit_plot);
+    ax_handles = ax{i};
+    set(ax_handles,'color',colorscheme(i, :));
+    xlabel("Grating Width (mm)")
+    ylabel("Conformance Depth (mm)")
+    title("Width-Conformance relationship at 200g force")
+end
 
 % %automating plotting legend
-% plot_legends = zeros(length(plot_gels)*2, 1)';
-% for i = 1:length(plot_gels)
-%     plot_legends(i*2) = plot_gels(i);
-%     plot_legends(i*2 - 1) = plot_gels(i);
+% plot_legends = zeros(length(num_gels)*2, 1)';
+% for i = 1:length(num_gels)
+%     plot_legends(i*2) = num_gels(i);
+%     plot_legends(i*2 - 1) = num_gels(i);
 % end
 % legend_labels = {'1:32 gel', '1:32 gel trendline', '1:35 gel', '1:35 gel trendline', '1:36 gel', '1:36 gel trendline', ...
 %     '1:35_201118 gel', '1:35_201118 trendline', '1:36 gel dec', '1:36 dec trendline'};
@@ -154,17 +171,12 @@ set(ax_handles,'color',colorscheme(i, :));
 % legend_labels = [legend_labels, 'Gibson & Craig, 2006 (human)', 'G&B trendline'];
 % 
 % 
-% 
-% legend(legend_labels);
-xlabel("Grating Width (mm)")
-ylabel("Conformance Depth (mm)")
-title("Width-Conformance relationship at 200g force")
-legend( "2.72%, 6 days old", "trend", "2.94%, 6 days old", "trend", "finger", "trend");
 
 
 
 %% stats on results - showing change over time for 33
 num_gels  = num_gels+1;
+
 rmses = zeros(num_gels,1);
 SEs = zeros(num_gels,1);
 slopes = zeros(num_gels,1);
@@ -174,17 +186,22 @@ for i = 1:num_gels
     SEs(i) = lin_fit.Coefficients.SE(2);
     rmses(i) = lin_fit.RMSE;
 end
-x = [2, 5, 6, 9];
-slope33 = slopes(ratio == 33);
-SE33 = SEs(ratio == 33);
-slope35 = slopes(ratio == 35.7);
-SE35 = SEs(ratio == 35.7);
+
+
+gel_id_targets = 1:5;
+gel_stats = {}; 
+% first row is slopes second is standard errors on slopes, third is days
+% old reading (x coord)
 figure;
 hold on
-errorbar(x, slope33, SE33)
-errorbar(x, slope35, SE33)
+for i = gel_id_targets
+gel_stats{1, i} = slopes(gel_id_num == i);
+gel_stats{2, i} = SEs(gel_id_num == i);
+gel_stats{3, i} = days_old(gel_id_num == i);
+errorbar(gel_stats{3, i}, gel_stats{1, i}, gel_stats{2, i});
+end
+
 yline(slopes(end))
-x = [1, 3];
-slope34 = slopes(ratio == 34.65);
-SE34 = SEs(ratio == 34.65);
-errorbar(x, slope34, SE34);
+xlabel("days old")
+ylabel("slope index")
+legend("2.72%", "2.94%", "2.8%(3)", "2.8%(4)")

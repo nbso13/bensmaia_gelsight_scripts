@@ -16,9 +16,8 @@ clear
 close all
 
 %% set vars
-ppm = 7;
+ppm = 18;
 gel_constant = 1.49;
-one_dim = 0; % yes, this is one dimensional and grating goes horizontal.
 
 %cross
 filename_gel = "201119_cross_gel_processed";
@@ -37,11 +36,6 @@ cd ../bensmaia_gelsight_scripts/profilometry_analysis_scripts
 
 gel.profile = gel.profile.*gel_constant; %scale up
 
-figure
-visualizeProfile(gel);
-figure
-visualizeProfile(no_gel);
-
 if ~checkSizeMatch(gel, no_gel)
     [gel, no_gel] = resampleToMin(gel, no_gel); %resamples to the min resolution
     [gel, no_gel] = bruteCropFit(gel, no_gel); %crops to same size
@@ -51,11 +45,6 @@ end
 % no_gel = rotateProfilometry(no_gel, 90);
 gel_area = gel.x_axis(end)*gel.y_axis(end);
 no_gel_area = no_gel.x_axis(end)*no_gel.y_axis(end);
-
-figure
-visualizeProfile(gel);
-figure
-visualizeProfile(no_gel);
 
 %% generate touchsim models
 
@@ -84,29 +73,8 @@ cd ../touchsim_gelsight
 setup_path;
 cd ../profilometry_analysis_scripts
 ts_structs = [skin_surface_ts, new_gel_ts, new_no_gel_ts];
-speed = 80; %mm/s.
-len = 1; % s
-loc = [0 0];
-samp_freq = 2000; % hz
-ramp_len = 0.2;
-amp = 0.1:0.1:1;
-forces = zeros(size(amp));
-for i = 1:length(amp)
-    disp(strcat("Indenting at (mm): ", num2str(amp(i))));
-    new_offset = amp(i) + skin_surface_ts.offset - max(skin_surface_ts.offset); %setting up amplitude
-    new_offset(new_offset<0) = 0;
-    [~, P] = skinModel(skin_surface_ts.shape, new_offset', pin_radius, plot_flag);
-    total_forces = sum(sum(P));
-    forces(i) = total_forces;
-end
-
-forces = forces./gel_area; %now in N/mm^2
-pressures = forces*1000000; %now in N/m^2
-figure
-plot(amp, pressures)
-title("Amplitude vs pressure")
-xlabel("Amplitude of indentation (mm)")
-ylabel("Pressure (N/m^2)");
-force = 200*0.0098; %grams to newtons
-gel_pressure = force/(576/1000000);
-yline(gel_pressure);
+amplitudes = 0.1:0.1:1;
+gel_mass = 200; %200 grams used
+plot_flag = 1;
+ts_struct = skin_surface_ts;
+[~] = ampCurve(ts_struct, pin_radius, gel_area, gel_mass, amplitudes, plot_flag);

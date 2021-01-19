@@ -1,178 +1,178 @@
 %% Processing Data
 
 %% Load data
-
-clear;
-close all;
-
-%macros
-DETILT = 0;
-LEXT = 1;
-GEL = 1;
-file_name = '210115_craig_gel_35_or_36';
-%% THIS IS FOR LEXT FILE
-cd ../../csv_data;
-
-if LEXT == 1
-    file_list = dir;
-    starting_row = 19;
-    x_res_row = 3;
-    y_res_row = 4;
-    z_res_row = 5;
-    res_col = 1;
-    title_str = file_name;
+file_names = {'210118_upholstry2_gel_3'};
+for index = 1:length(file_names)
     
-    %picking out pertainent files
-    for file = 1:size(file_list,1)
-        file_logit(file) = (contains(file_list(file).name, 'csv'))&(contains(file_list(file).name, file_name));
+    %macros
+    DETILT = 0;
+    LEXT = 1;
+    GEL = 1;
+    file_name = file_names{index};
+    %% THIS IS FOR LEXT FILE
+    cd ../../csv_data;
+    
+    if LEXT == 1
+        file_list = dir;
+        starting_row = 19;
+        x_res_row = 3;
+        y_res_row = 4;
+        z_res_row = 5;
+        res_col = 1;
+        title_str = file_name;
+        
+        %picking out pertainent files
+        for file = 1:size(file_list,1)
+            file_logit(file) = (contains(file_list(file).name, 'csv'))&(contains(file_list(file).name, file_name));
+        end
+        target_file = file_list(logical(file_logit));
+        
+        %reading data
+        temp_data  = csvread(target_file(1).name, starting_row, 1);
+        %read in resolutions from spreadsheet, put them into resolution cell -
+        %x, y, z.
+        temp_data_res = csvread(target_file(1).name, x_res_row, res_col, [x_res_row res_col z_res_row res_col]);
+        
+        %samp_freq = 1/(x_res/1000); % once every 2.5 microns
+        temp_data_filtered = temp_data;%filter2(fir1(10,0.6), temp_data);
+        
+        x_res = temp_data_res(1,1)/1000;
+        y_res = temp_data_res(2,1)/1000;
+        z_res = temp_data_res(3,1)/1000; % all in mms
+        x_axis = linspace(0, x_res*(size(temp_data,1)-1), size(temp_data_filtered,1));
+        y_axis = linspace(0, y_res*(size(temp_data,2)-1), size(temp_data_filtered,2));
+        new_window = temp_data_filtered;
+        new_window = new_window./1000;
     end
-    target_file = file_list(logical(file_logit));
-    
-    %reading data
-     temp_data  = csvread(target_file(1).name, starting_row, 1);
-    %read in resolutions from spreadsheet, put them into resolution cell -
-    %x, y, z.
-    temp_data_res = csvread(target_file(1).name, x_res_row, res_col, [x_res_row res_col z_res_row res_col]);
-    
-    %samp_freq = 1/(x_res/1000); % once every 2.5 microns
-    temp_data_filtered = temp_data;%filter2(fir1(10,0.6), temp_data);
-    
-    x_res = temp_data_res(1,1)/1000;
-    y_res = temp_data_res(2,1)/1000;
-    z_res = temp_data_res(3,1)/1000; % all in mms
-    x_axis = linspace(0, x_res*(size(temp_data,1)-1), size(temp_data_filtered,1));
-    y_axis = linspace(0, y_res*(size(temp_data,2)-1), size(temp_data_filtered,2));
-    new_window = temp_data_filtered;
-    new_window = new_window./1000;
-end
     %% THIS IS FOR GWEN FILE
-if LEXT == 0
-    clear;
-    close all;
-    file_list = dir;
-    starting_row = 5;
-    for file = 1:size(file_list,1)
-        file_logit(file) = (contains(file_list(file).name, 'csv'));
-    end
-    target_file = file_list(logical(file_logit));
-    
-    %reading data
-    temp_data  = csvread(target_file(1).name, starting_row, 1);
-    temp_data = (temp_data').*1000; %now in mms
-    new_window = temp_data;
-    load(file_name)
-    x_res = gel_dot_200524.x_res;
-    y_res = gel_dot_200524.x_res;
-    z_res = gel_dot_200524.x_res;
-    
-    x_axis = linspace(0, x_res*(size(temp_data,1)-1)/1000, size(temp_data,1));
-    y_axis = linspace(0, y_res*(size(temp_data,2)-1)/1000, size(temp_data,2));
-end
-
-cd ../bensmaia_gelsight_scripts/profilometry_analysis_scripts
-
-
-%% turning csv data into 3xn matrix of x,y,z points
-y_axis = y_axis'; x_axis = x_axis';
-y_size = size(y_axis, 1); x_size = size(x_axis, 1);
-%only do this if we are detilting.
-if DETILT
-    N = zeros(y_size*x_size, 3);
-    count = 1;
-    reverseStr = '';
-    %go through height map and make a 3 column matrix with 3D points for each
-    %point
-    for x_val = 1:x_size
-
-        x_amount = x_axis(x_val);
-        msg = sprintf('    fitting line %d of %d', count, x_size);
-        fprintf([reverseStr, msg]);
-        reverseStr = repmat(sprintf('\b'), 1, length(msg));
-        count = count + 1;
-        for y_val = 1:y_size
-            matrix_val = (x_val-1)*y_size+y_val;
-            N(matrix_val, 1) = x_amount;
-            N(matrix_val, 2) = y_axis(y_val);
-            N(matrix_val, 3) = new_window(x_val, y_val);
+    if LEXT == 0
+        clear;
+        close all;
+        file_list = dir;
+        starting_row = 5;
+        for file = 1:size(file_list,1)
+            file_logit(file) = (contains(file_list(file).name, 'csv'));
         end
+        target_file = file_list(logical(file_logit));
+        
+        %reading data
+        temp_data  = csvread(target_file(1).name, starting_row, 1);
+        temp_data = (temp_data').*1000; %now in mms
+        new_window = temp_data;
+        load(file_name)
+        x_res = gel_dot_200524.x_res;
+        y_res = gel_dot_200524.x_res;
+        z_res = gel_dot_200524.x_res;
+        
+        x_axis = linspace(0, x_res*(size(temp_data,1)-1)/1000, size(temp_data,1));
+        y_axis = linspace(0, y_res*(size(temp_data,2)-1)/1000, size(temp_data,2));
     end
-    fprintf('\n');
-    %calculate plane and fit
-    [plane, gof] = fit([N(:,1), N(:,2)], N(:,3), 'poly11');
-    params = coeffvalues(plane);
-
-    %% Filling in New Plane and Subtracting
-    grid_form_plane = zeros(size(new_window));
-    %fill a new grid height map with the trend plane
-    count = 1;
-    reverseStr = '';
-    for x_val = 1:x_size
-        msg = sprintf('    fitting line %d of %d', count, x_size);
-        fprintf([reverseStr, msg]);
-        reverseStr = repmat(sprintf('\b'), 1, length(msg));
-        count = count + 1;
-        for y_val = 1:y_size
-            grid_form_plane(x_val, y_val) = x_axis(x_val)*params(2) + y_axis(y_val)*params(3);
+    
+    cd ../bensmaia_gelsight_scripts/profilometry_analysis_scripts
+    
+    
+    %% turning csv data into 3xn matrix of x,y,z points
+    y_axis = y_axis'; x_axis = x_axis';
+    y_size = size(y_axis, 1); x_size = size(x_axis, 1);
+    %only do this if we are detilting.
+    if DETILT
+        N = zeros(y_size*x_size, 3);
+        count = 1;
+        reverseStr = '';
+        %go through height map and make a 3 column matrix with 3D points for each
+        %point
+        for x_val = 1:x_size
+            
+            x_amount = x_axis(x_val);
+            msg = sprintf('    fitting line %d of %d', count, x_size);
+            fprintf([reverseStr, msg]);
+            reverseStr = repmat(sprintf('\b'), 1, length(msg));
+            count = count + 1;
+            for y_val = 1:y_size
+                matrix_val = (x_val-1)*y_size+y_val;
+                N(matrix_val, 1) = x_amount;
+                N(matrix_val, 2) = y_axis(y_val);
+                N(matrix_val, 3) = new_window(x_val, y_val);
+            end
         end
+        fprintf('\n');
+        %calculate plane and fit
+        [plane, gof] = fit([N(:,1), N(:,2)], N(:,3), 'poly11');
+        params = coeffvalues(plane);
+        
+        %% Filling in New Plane and Subtracting
+        grid_form_plane = zeros(size(new_window));
+        %fill a new grid height map with the trend plane
+        count = 1;
+        reverseStr = '';
+        for x_val = 1:x_size
+            msg = sprintf('    fitting line %d of %d', count, x_size);
+            fprintf([reverseStr, msg]);
+            reverseStr = repmat(sprintf('\b'), 1, length(msg));
+            count = count + 1;
+            for y_val = 1:y_size
+                grid_form_plane(x_val, y_val) = x_axis(x_val)*params(2) + y_axis(y_val)*params(3);
+            end
+        end
+        fprintf('\n');
     end
-    fprintf('\n');
+    
+    figure;
+    [l_lim, u_lim] = bounds(new_window(:));
+    imagesc(x_axis', y_axis', new_window')
+    c = colorbar;
+    ylabel(c, 'mm');
+    title([title_str, " Before Processing"]);
+    xlabel('mm'); ylabel('mm');
+    caxis([l_lim, u_lim]); %ylim([1240 1270]); xlim([2810 2930])
+    
+    if DETILT
+        new_window = new_window - grid_form_plane; % Subtract out
+    end
+    y_axis = y_axis'; x_axis = x_axis';
+    
+    [l_lim, u_lim] = bounds(new_window(:));
+    figure;
+    imagesc(x_axis, y_axis, new_window')
+    c = colorbar;
+    ylabel(c, 'mm');
+    title([title_str, " After DeTilt"]);
+    xlabel('mm'); ylabel('mm');
+    caxis([l_lim, u_lim]); %ylim([1240 1270]); xlim([2810 2930])
+    
+    %
+    % figure;
+    % hist(new_window)
+    % if strcmp(file_name, '201118_corduroy_35_gel')
+    %     new_window = new_window + 0.002;
+    %     new_window(new_window<0) = 0;
+    % end
+    % if strcmp(file_name, '201118_corduroy_no_gel')
+    %     disp("corduroy no gel");
+    %     new_window(new_window<0.1) = 0;
+    % end
+    
+    gel_dot_200305 = struct;
+    gel_dot_200305.profile = new_window';
+    gel_dot_200305.x_res = x_res;
+    gel_dot_200305.y_res = y_res;
+    gel_dot_200305.z_res = z_res;
+    gel_dot_200305.x_axis = x_axis';
+    gel_dot_200305.y_axis = y_axis';
+    gel_dot_200305.type = "dots";
+    filename = strcat(file_name, "_processed.mat");
+    visualizeProfile(gel_dot_200305);
+    cd ../../mat_files
+    if GEL
+        gel = gel_dot_200305;
+        save(filename, "gel");
+    else
+        no_gel = gel_dot_200305;
+        save(filename, "no_gel");
+    end
+    
+    cd ../bensmaia_gelsight_scripts/profilometry_analysis_scripts
 end
-
-figure;
-[l_lim, u_lim] = bounds(new_window(:));
-imagesc(x_axis', y_axis', new_window')
-c = colorbar;
-ylabel(c, 'mm');
-title([title_str, " Before Processing"]);
-xlabel('mm'); ylabel('mm');
-caxis([l_lim, u_lim]); %ylim([1240 1270]); xlim([2810 2930])
-
-if DETILT
-    new_window = new_window - grid_form_plane; % Subtract out
-end
-y_axis = y_axis'; x_axis = x_axis';
-
-[l_lim, u_lim] = bounds(new_window(:));
-figure;
-imagesc(x_axis, y_axis, new_window')
-c = colorbar;
-ylabel(c, 'mm');
-title([title_str, " After DeTilt"]);
-xlabel('mm'); ylabel('mm');
-caxis([l_lim, u_lim]); %ylim([1240 1270]); xlim([2810 2930])
-
-% 
-% figure;
-% hist(new_window)
-% if strcmp(file_name, '201118_corduroy_35_gel')
-%     new_window = new_window + 0.002;
-%     new_window(new_window<0) = 0;
-% end
-% if strcmp(file_name, '201118_corduroy_no_gel')
-%     disp("corduroy no gel");
-%     new_window(new_window<0.1) = 0;
-% end
-
-gel_dot_200305 = struct;
-gel_dot_200305.profile = new_window';
-gel_dot_200305.x_res = x_res;
-gel_dot_200305.y_res = y_res;
-gel_dot_200305.z_res = z_res;
-gel_dot_200305.x_axis = x_axis';
-gel_dot_200305.y_axis = y_axis';
-gel_dot_200305.type = "dots";
-filename = strcat(file_name, "_processed.mat");
-visualizeProfile(gel_dot_200305);
-cd ../../mat_files
-if GEL
-    gel = gel_dot_200305;
-    save(filename, "gel");
-else
-    no_gel = gel_dot_200305;
-    save(filename, "no_gel");
-end
-
-cd ../bensmaia_gelsight_scripts/profilometry_analysis_scripts
 
 %% processsing - crop and rotate if necessary
 %
@@ -278,14 +278,14 @@ cd ../bensmaia_gelsight_scripts/profilometry_analysis_scripts
 
 
 
-% 
+%
 % % Frequency analysis
 % samp_freq = 1/(x_res/1000); % once every 2.5 microns
 % samp_period = 1/samp_freq;
 % L = length(new_window);
 % lines_total = size(new_window,2);
 % f_ax = samp_freq*(0:(L/2))/L;
-% 
+%
 % reverseStr = '';
 % count = 1;
 % [size_x, size_y] = size(new_window);
@@ -311,13 +311,13 @@ cd ../bensmaia_gelsight_scripts/profilometry_analysis_scripts
 % fprintf('\n')
 % fourier_average = mean(transform, 1);
 % plot(f_ax, fourier_average)
-% 
+%
 % title('Amplitude Spectrum of Profilometry Data')
 % xlabel('frequency (1/mm)')
 % ylabel('Amplitude')
-% 
-% 
-% 
+%
+%
+%
 % %
 % % test = temp_data{file} - temp_data_filtered{file};
 % % [l_lim, u_lim] = bounds(test(:));
@@ -329,8 +329,8 @@ cd ../bensmaia_gelsight_scripts/profilometry_analysis_scripts
 % % caxis([l_lim, u_lim]); %ylim([1240 1270]); xlim([2810 2930])
 % % subplot(2,2,4);
 % % imagesc(temp_data_filtered{2}')
-% 
-% 
+%
+%
 % %%
 % %daspect([1 1 1]);
 % %surf((temp_data{1})', 'LineStyle', 'none');
