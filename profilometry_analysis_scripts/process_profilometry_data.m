@@ -1,13 +1,15 @@
 %% Processing Data
 
 %% Load data
-file_names = {'210118_upholstry2_gel_3'};
+file_names = { '210120_craig_gel_1', '210120_craig_gel_2', '210120_craig_gel_3', ...
+    '210120_craig_old_gel_4', '210120_craig_old_gel_not_4', '210120_dots_no_gel'};
+gel_id = [1, 1, 1, 1, 1, 0];
 for index = 1:length(file_names)
     
     %macros
     DETILT = 0;
     LEXT = 1;
-    GEL = 1;
+    GEL = gel_id(index);
     file_name = file_names{index};
     %% THIS IS FOR LEXT FILE
     cd ../../csv_data;

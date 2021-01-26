@@ -54,7 +54,13 @@ trace = repmat(t,[1 size(shape,1)]);
 pin_offset = pin_offset - max(pin_offset)+amp;
 disp(strcat("stim_scan_shape: Indenting at ", num2str(max(pin_offset)), "mm amplitude."));
 pin_offset(pin_offset<0) = 0; %zero negative values
-trace = scanTexture(pin_offset, trace, pinspermm, speed, samp_freq); % scan offset across trace
+
+%find x coord num
+%first x val
+x1 = shape(1,1);
+xs = shape(:,1);
+x_len = sum(xs==x1);
+trace = scanTexture(pin_offset, trace, x_len, pinspermm, speed, samp_freq); % scan offset across trace
 
 s = Stimulus(trace,shape,samp_freq,pin_radius, gel_flag);
 

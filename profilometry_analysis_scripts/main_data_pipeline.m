@@ -18,10 +18,15 @@ cax = "max"; %we want the max val to be the range
 max_freq = 5; %1 dot per mm is upper freq limit
 one_dim = 0; % yes, this is one dimensional and grating goes horizontal.
 
+%upholstery 2 on gel 3
+filename_gel = "210119_dots_gel_3_processed";
+filename_nogel = "210120_dots_no_gel_processed";
 
-%upholstery 1 on gel 1
-filename_gel = "210113_upholstry_36_gel_1_processed";
-filename_nogel = "210113_upholstry_no_gel_processed";
+
+
+% %upholstery 1 on gel 1
+% filename_gel = "210113_upholstry_36_gel_1_processed";
+% filename_nogel = "210113_upholstry_no_gel_processed";
 
 
 %upholstery gel 2
@@ -84,20 +89,31 @@ filename_nogel = "210113_upholstry_no_gel_processed";
 %% Load data process data
 cd ../../mat_files/
 load(filename_gel);
+gel = no_gel;
 load(filename_nogel);
 cd ../bensmaia_gelsight_scripts/profilometry_analysis_scripts
 
 gel.profile = gel.profile.*gel_constant; %scale up
+% no_gel = cropProfile(cropProfile(cropProfile(cropProfile(no_gel, "left", 5, "mm"), "bottom", 5, "mm"), "top", 2, "mm"), "right", 1.5, "mm");
+% gel = cropProfile(cropProfile(cropProfile(cropProfile(gel, "left", 1, "mm"), "bottom", 0.5, "mm"), "top", 10, "mm"), "right", 3, "mm");
 
 figure
 visualizeProfile(gel);
 figure
 visualizeProfile(no_gel);
 
-% if ~checkSizeMatch(gel, no_gel)
-%     [gel, no_gel] = resampleToMin(gel, no_gel); %resamples to the min resolution
-%     [gel, no_gel] = bruteCropFit(gel, no_gel); %crops to same size
-% end
+
+if ~checkSizeMatch(gel, no_gel)
+    [gel, no_gel] = resampleToMin(gel, no_gel); %resamples to the min resolution
+    [gel, no_gel] = bruteCropFit(gel, no_gel); %crops to same size
+end
+
+
+
+figure
+visualizeProfile(gel);
+figure
+visualizeProfile(no_gel);
 
 % gel = rotateProfilometry(gel, 90);
 % no_gel = rotateProfilometry(no_gel, 90);
@@ -151,6 +167,9 @@ visualizeProfile(no_gel);
 
 %% generate touchsim models
 
+
+gel_area = gel.x_axis(end)*gel.y_axis(end);
+
 plot_flag = 1;
 pin_radius = 0.025;
 [new_gel_ts, new_no_gel_ts, skin_surface_ts] = TouchSimSkin(gel, no_gel, ppm, pin_radius, plot_flag);
@@ -171,12 +190,26 @@ visualizeProfile(new_gel);
 figure
 visualizeProfile(new_no_gel);
 
-a = affpop_hand('D2d', 0.8, 'SA1');
+a = affpop_hand('D2d', 0.6);
 
 cd ../touchsim_gelsight
 setup_path;
+cd ../profilometry_analysis_scripts/
 
-ts_structs = [skin_surface_ts, new_gel_ts, new_no_gel_ts];
+
+
+amplitudes = 1:0.2:2;
+gel_mass = 200; %200 grams used
+plot_flag = 1;
+ts_struct = skin_surface_ts;
+% [~] = ampCurve(ts_struct, pin_radius, gel_area, gel_mass, amplitudes, plot_flag);
+%%
+skin_surface_ts.amp = 1.15;
+new_gel_ts.amp = max(new_gel_ts.offset) - min(new_gel_ts.offset);
+new_no_gel_ts.amp = max(new_no_gel_ts.offset) - min(new_no_gel_ts.offset);
+
+ts_structs = [skin_surface_ts, new_gel_ts];
+
 speed = 80; %mm/s.
 len = 1; % s
 loc = [0 0];
@@ -184,16 +217,16 @@ samp_freq = 2000; % hz
 ramp_len = 0.2;
 
 for i = 1:length(ts_structs)
-    amp = max(ts_structs(i).offset) - min(ts_structs(i).offset);
+    
     s = stim_scan_shape(ts_structs(i).shape, ts_structs(i).offset, ppm, ...
-        len, samp_freq, amp, speed, ts_structs(i).gel_flag);
+        len, samp_freq, ts_structs(i).amp, speed, ts_structs(i).gel_flag);
     figure
     plot(s)
     r = a.response(s);
-    %take out neurons that fire less than 2 spikes per second
-    r_new = excludeNeurons(r, 2);
+%     %take out neurons that fire less than 2 spikes per second
+%     r_new = excludeNeurons(r, 2);
     figure
-    plot(r_new)
+    plot(r)
     title(ts_structs(i).name);
 end
 

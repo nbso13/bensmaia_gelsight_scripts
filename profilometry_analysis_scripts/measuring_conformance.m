@@ -15,9 +15,9 @@ num_widths = 7; %0.35,0.5,0.75,1,1.2,1.5,2
 %jan 6 "36" gel 2 was 2.94% or 33
 %jan 14 gels 3, 4, and 5 were 2.80% or 34.7
 
-days_old = [nan, 1, 8, 3, 30, 2, 2, 5, 5, 6, 6, 9, 9, 12, 12, 4, 4, nan];
-ratio = [nan, 2.81, 2.73, 2.81, 2.73, 2.72, 2.94, 2.72, 2.94, 2.72, 2.94, 2.72, 2.94, 2.72, 2.94, 2.80, 2.80, nan];
-gel_id_num = [nan, nan, nan, nan, nan, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 3, 4, nan];
+days_old = [nan, 1, 8, 3, 30, 2, 2, 5, 5, 6, 6, 9, 9, 12, 12, 4, 4, 14, 14, 6, 45, 60, nan];
+ratio = [nan, 2.81, 2.73, 2.81, 2.73, 2.72, 2.94, 2.72, 2.94, 2.72, 2.94, 2.72, 2.94, 2.72, 2.94, 2.80, 2.80, 2.72, 2.94, 2.80, 2.81, 2.73, nan];
+gel_id_num = [nan, 35, 36, 35, 36, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 3, 4, 1, 2, 3, 35, 36, nan];
 file_names = {'201111_craig_stim_32_gel_processed', ...
     '201116_craig_stim_35_gel_processed', '201111_craig_stim_36_gel_processed', ...
     '201118_craig_35_gel_processed', '201204_craig_36_gel_processed', ...
@@ -26,7 +26,9 @@ file_names = {'201111_craig_stim_32_gel_processed', ...
     '210112_craig_36_gel_1_processed', '210112_craig_36_gel_2_processed', ...
     '210115_craig_gel_1_processed', '210115_craig_gel_2_processed', ...
     '210118_craig_gel_1_processed', '210118_craig_gel_2_processed', ...
-    '210118_craig_gel_3_processed', '210118_craig_gel_4_processed'};
+    '210118_craig_gel_3_processed', '210118_craig_gel_4_processed' ...
+    '210120_craig_gel_1_processed', '210120_craig_gel_2_processed' ...
+    '210120_craig_gel_3_processed', '210120_craig_old_gel_4_processed', '210120_craig_old_gel_not_4_processed'};
 num_gels = length(file_names);
 gels = zeros(num_gels, num_widths);
 %% set empirically chosen parameters %CRAIG STIMS 
@@ -83,9 +85,24 @@ area_vecs{15,3} = 'h';
 area_vecs{16,1} = [14.5, 15; 13, 14.5; 11, 13; 9, 11;  7, 9; 5, 7.3; 2, 4]; 
 area_vecs{16,2} = [15, 15.5;  13.5, 14; 12, 12.5; 10, 11; 8, 9; 6, 7;  3, 4.5 ];       
 area_vecs{16,3} = 'h'; 
-area_vecs{17,1} = [14, 14.5; 13, 14.5; 11, 13; 9, 11;  7, 9; 5, 7.3; 2, 4]; 
+area_vecs{17,1} = [14, 14.5; 12, 14.5; 11, 13; 9, 11;  6, 8; 4, 5; 1, 4]; 
 area_vecs{17,2} = [14, 14.5; 13, 13.5; 11, 12; 9, 10; 7, 8;  5, 6; 3, 3.3];       
 area_vecs{17,3} = 'h'; 
+area_vecs{18,1} = [14, 14.5; 13, 14.5; 11, 13; 9, 11;  7, 9; 5, 7.3; 2, 4]; 
+area_vecs{18,2} = [14.5, 15; 13, 13.5; 11.7, 12.3; 10, 10.5; 8, 8.5;  5.5, 6; 3, 3.5];       
+area_vecs{18,3} = 'h'; 
+area_vecs{19,1} = [14, 14.5; 12.4, 13; 11, 12; 9, 10;  7, 8; 4, 5; 1, 3]; 
+area_vecs{19,2} = [14.2, 14.5; 13, 13.5; 11, 12; 9, 10; 7, 8;  5, 6; 3, 3.3];       
+area_vecs{19,3} = 'h'; 
+area_vecs{20,1} = [11, 12.5; 10, 11; 8, 10; 6,8;  4,6; 2,3; 0.001, 1]; 
+area_vecs{20,2} = [12, 12.4; 10.5, 11; 9, 9.6; 7, 8; 5, 6;  3, 4; 0.001, 1];       
+area_vecs{20,3} = 'h'; 
+area_vecs{21,1} = [14, 14.5; 12.4, 13; 11, 12; 9, 10;  7, 8; 4, 5; 1, 3]; 
+area_vecs{21,2} = [14.3, 14.6; 13, 13.5; 11, 12; 9, 10; 7, 8;  5.5, 5.8; 3, 3.3];       
+area_vecs{21,3} = 'h'; 
+area_vecs{22,1} = [13.4, 13.8; 12.5, 13; 10.5, 12; 9, 10;  6,7; 4, 5; 1, 3]; 
+area_vecs{22,2} = [13.8, 14; 13, 13.5; 11, 12; 9, 10; 7, 8;  5,5.6; 2.5, 3];       
+area_vecs{22,3} = 'h'; 
 %% run main for loop
 plot_flag = 0;
 for i = 1: num_gels
@@ -133,7 +150,7 @@ for i = 1:num_gels
     fits{i} = fit_ob;
     
     if plot_flag
-        scatters{i} = scatter(x,y, dot_size, colorscheme(i, :));
+        scatters{i} = scatter(x,y, dot_size, colorscheme(ceil(i/2), :));
         fit_plot = fit(x,y, 'poly1');
         ax{i} = plot(fit_plot);
         ax_handles = ax{i};
@@ -188,7 +205,8 @@ for i = 1:num_gels
 end
 
 
-gel_id_targets = 1:5;
+gel_id_targets = 1:4;
+gel_id_targets = [gel_id_targets, 35, 36];
 gel_stats = {}; 
 % first row is slopes second is standard errors on slopes, third is days
 % old reading (x coord)
@@ -204,4 +222,4 @@ end
 yline(slopes(end))
 xlabel("days old")
 ylabel("slope index")
-legend("2.72%", "2.94%", "2.8%(3)", "2.8%(4)")
+legend("2.72%", "2.94%", "2.8%(3)", "2.8%(4)", "35", "36")
