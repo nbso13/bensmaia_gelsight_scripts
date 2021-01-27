@@ -15,9 +15,12 @@ num_widths = 7; %0.35,0.5,0.75,1,1.2,1.5,2
 %jan 6 "36" gel 2 was 2.94% or 33
 %jan 14 gels 3, 4, and 5 were 2.80% or 34.7
 
-days_old = [nan, 1, 8, 3, 30, 2, 2, 5, 5, 6, 6, 9, 9, 12, 12, 4, 4, 14, 14, 6, 45, 60, nan];
-ratio = [nan, 2.81, 2.73, 2.81, 2.73, 2.72, 2.94, 2.72, 2.94, 2.72, 2.94, 2.72, 2.94, 2.72, 2.94, 2.80, 2.80, 2.72, 2.94, 2.80, 2.81, 2.73, nan];
-gel_id_num = [nan, 35, 36, 35, 36, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 3, 4, 1, 2, 3, 35, 36, nan];
+days_old = [nan, 1, 8, 3, 30, 2, 2, 5, 5, 6, 6, 9, 9, 12, 12, 4, 4, 14, 14, ...
+    6, 45, 60, 20, 12, 12, 12, nan];
+ratio = [nan, 2.81, 2.73, 2.81, 2.73, 2.72, 2.94, 2.72, 2.94, 2.72, 2.94, 2.72, ... 
+    2.94, 2.72, 2.94, 2.80, 2.80, 2.72, 2.94, 2.80, 2.81, 2.73, 2.72, 2.8, 2.8, 2.8 nan];
+gel_id_num = [nan, 35, 36, 35, 36, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 3, 4, 1, 2, ...
+    3, 35, 36, 1, 3, 4, 5, nan];
 file_names = {'201111_craig_stim_32_gel_processed', ...
     '201116_craig_stim_35_gel_processed', '201111_craig_stim_36_gel_processed', ...
     '201118_craig_35_gel_processed', '201204_craig_36_gel_processed', ...
@@ -28,9 +31,14 @@ file_names = {'201111_craig_stim_32_gel_processed', ...
     '210118_craig_gel_1_processed', '210118_craig_gel_2_processed', ...
     '210118_craig_gel_3_processed', '210118_craig_gel_4_processed' ...
     '210120_craig_gel_1_processed', '210120_craig_gel_2_processed' ...
-    '210120_craig_gel_3_processed', '210120_craig_old_gel_4_processed', '210120_craig_old_gel_not_4_processed'};
+    '210120_craig_gel_3_processed', '210120_craig_old_gel_4_processed', ...
+    '210120_craig_old_gel_not_4_processed',  '210126_craig_gel_1_processed', ...
+    '210126_craig_gel_3_processed', ...
+    '210126_craig_gel_4_processed', '210126_craig_gel_5_processed'};
+
 num_gels = length(file_names);
 gels = zeros(num_gels, num_widths);
+most_recent = 21; %num most recent gels we want to look at
 %% set empirically chosen parameters %CRAIG STIMS 
 
 % each file name is a gel struct of a different gel with the craig
@@ -103,9 +111,21 @@ area_vecs{21,3} = 'h';
 area_vecs{22,1} = [13.4, 13.8; 12.5, 13; 10.5, 12; 9, 10;  6,7; 4, 5; 1, 3]; 
 area_vecs{22,2} = [13.8, 14; 13, 13.5; 11, 12; 9, 10; 7, 8;  5,5.6; 2.5, 3];       
 area_vecs{22,3} = 'h'; 
+area_vecs{23,1} = [13.5, 14.5; 12.5, 13; 10.5, 12; 9, 10;  6,7; 4, 5; 1, 3]; 
+area_vecs{23,2} = [14, 14.5; 12.5, 13.3; 11, 12; 9, 10; 7, 8;  5,5.6; 2.5, 3];       
+area_vecs{23,3} = 'h'; 
+area_vecs{24,1} = [14, 15; 13, 14; 10.5, 12; 9, 10; 7, 8; 4, 6; 1, 3]; 
+area_vecs{24,2} = [ 13, 13.5; 13, 13.5; 11.5, 12.5; 9.5, 10.5; 7.5, 8.5;  5,5.6; 2, 4];       
+area_vecs{24,3} = 'h'; 
+area_vecs{25,1} = [14, 15; 12.5, 13; 10.5, 12; 9, 10;  6,7; 4, 5; 1, 3]; 
+area_vecs{25,2} = [ 13, 13.5; 13, 13.5; 11, 12; 9, 10; 7, 8;  5,5.6; 2.5, 3];       
+area_vecs{25,3} = 'h'; 
+area_vecs{26,1} = [14, 14.5; 12.5, 13; 10.5, 12; 9, 10;  6,7; 4, 6; 1, 3]; 
+area_vecs{26,2} = [13, 13.5; 13, 13.5; 11, 12; 9, 10; 7, 8;  5,5.6; 2.5, 3];       
+area_vecs{26,3} = 'h'; 
 %% run main for loop
 plot_flag = 0;
-for i = 1: num_gels
+for i = num_gels-most_recent+1: num_gels
     cd ../../mat_files
     load(file_names{i})
     gel.profile(gel.profile<0) = 0; % by histogram inspection
@@ -115,9 +135,12 @@ for i = 1: num_gels
                                                area_vecs{i,1}, ...
                                                area_vecs{i,2}, ...
                                                plot_flag)';
+                                           
 end
 
 %% plot gel data
+human_x = [0.35, 0.5, 0.75, 1, 1.2, 1.5]'; % in mm, from gibson and craig '06, fig 5
+human_y = [0.06, 0.1, 0.17, 0.28, 0.366, 0.4]';
 if plot_flag
     figure;
     hold on
@@ -128,49 +151,53 @@ x_36 = [0.5, 0.75, 1, 1.2, 1.5]';
 x_gel_2_0115 = [0.5, 0.75, 1, 1.2, 1.5, 2]';
 scatters = {};
 fits = {};
-for i = 1:num_gels
+mean_percent_error = zeros(1,num_gels);
+for i = num_gels-most_recent+1:num_gels
     if i == 3 %third one has no first or last entry (im dumb)
         x = x_36;
         y = gels(i, :)';
         y = y(2:end-1); 
-    elseif i == 3 %third one has no first or last entry (im dumb)
+        mean_percent_error(i) = meanPercentError(y, human_y(2:end));
+    elseif i == 3 %has no first  entry (im dumb)
         x = x_gel_2_0115;
         y = gels(i, :)';
         y = y(2:end); 
+        mean_percent_error(i) = meanPercentError(y(1:end-1), human_y(2:end));
     else
         x = x_norm;
         y = gels(i, :)';
+        mean_percent_error(i) = meanPercentError(y(1:end-1), human_y);
     end
     %add 0 to x and why because we know that 0 width should have 0
     %protrusion
     
-    x = [0; 0; x];
-    y = [0; 0; y];
+    x = [ x];
+    y = [ y];
     fit_ob = fitlm(x,y);
     fits{i} = fit_ob;
     
     if plot_flag
-        scatters{i} = scatter(x,y, dot_size, colorscheme(ceil(i/2), :));
+        scatters{i} = scatter(x,y, dot_size, colorscheme(i-num_gels+most_recent+1, :));
         fit_plot = fit(x,y, 'poly1');
         ax{i} = plot(fit_plot);
         ax_handles = ax{i};
-        set(ax_handles,'color',colorscheme(i, :));
+        set(ax_handles,'color',colorscheme(i-num_gels+most_recent+1, :));
     end
 end
 
 %% add gibson and craig data
-x = [0.35, 0.5, 0.75, 1, 1.2, 1.5]'; % in mm, from gibson and craig '06, fig 5
-y = [0.06, 0.1, 0.17, 0.28, 0.366, 0.4]';
+x = human_x; % in mm, from gibson and craig '06, fig 5
+y = human_y;
 i = i+1;
 fit_ob = fitlm(x,y);
 fits{i} = fit_ob;
 
 if plot_flag
-    scatters{i} = scatter(x,y, dot_size, colorscheme(i, :));
+    scatters{i} = scatter(x,y, dot_size, colorscheme(1, :));
     fit_plot = fit(x,y, 'poly1');
     ax{i} = plot(fit_plot);
     ax_handles = ax{i};
-    set(ax_handles,'color',colorscheme(i, :));
+    set(ax_handles,'color',colorscheme(1, :));
     xlabel("Grating Width (mm)")
     ylabel("Conformance Depth (mm)")
     title("Width-Conformance relationship at 200g force")
@@ -197,16 +224,18 @@ num_gels  = num_gels+1;
 rmses = zeros(num_gels,1);
 SEs = zeros(num_gels,1);
 slopes = zeros(num_gels,1);
-for i = 1:num_gels
+intercepts = slopes;
+for i = num_gels-most_recent+1:num_gels
     lin_fit = fits{i};
     slopes(i) = lin_fit.Coefficients.Estimate(2);
     SEs(i) = lin_fit.Coefficients.SE(2);
     rmses(i) = lin_fit.RMSE;
+    intercepts(i) = lin_fit.Coefficients.Estimate(1);
 end
 
 
-gel_id_targets = 1:4;
-gel_id_targets = [gel_id_targets, 35, 36];
+gel_id_targets = 1:5;
+% gel_id_targets = [gel_id_targets, 35, 36];
 gel_stats = {}; 
 % first row is slopes second is standard errors on slopes, third is days
 % old reading (x coord)
@@ -216,10 +245,29 @@ for i = gel_id_targets
 gel_stats{1, i} = slopes(gel_id_num == i);
 gel_stats{2, i} = SEs(gel_id_num == i);
 gel_stats{3, i} = days_old(gel_id_num == i);
+gel_stats{4, i} = intercepts(gel_id_num == i);
+gel_stats{5, i} = mean_percent_error(gel_id_num == i);
 errorbar(gel_stats{3, i}, gel_stats{1, i}, gel_stats{2, i});
 end
 
 yline(slopes(end))
 xlabel("days old")
 ylabel("slope index")
-legend("2.72%", "2.94%", "2.8%(3)", "2.8%(4)", "35", "36")
+legend("2.72%", "2.94%", "2.8%(3)", "2.8%(4)", "2.8%(5)", "human")
+
+figure;
+hold on
+for i = gel_id_targets
+    plot(gel_stats{3,i}, gel_stats{4,i})
+end
+yline(intercepts(end)) %human
+legend("2.72%", "2.94%", "2.8%(3)", "2.8%(4)", "2.8%(5)")
+title("intercepts")
+
+figure;
+hold on
+for i = gel_id_targets
+    plot(gel_stats{3,i}, gel_stats{5,i})
+end
+legend("2.72%", "2.94%", "2.8%(3)", "2.8%(4)", "2.8%(5)")
+title("mean percent error")

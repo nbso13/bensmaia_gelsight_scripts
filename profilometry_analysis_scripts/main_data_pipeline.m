@@ -9,7 +9,7 @@ close all
 
 %% set vars
 ppm = 7;
-gel_constant = 1.49;
+gel_constant = 1.48;
 vline = 600;
 hline = 600;
 plotflag = 0;
@@ -110,10 +110,10 @@ end
 
 
 
-figure
-visualizeProfile(gel);
-figure
-visualizeProfile(no_gel);
+% figure
+% visualizeProfile(gel);
+% figure
+% visualizeProfile(no_gel);
 
 % gel = rotateProfilometry(gel, 90);
 % no_gel = rotateProfilometry(no_gel, 90);
@@ -183,12 +183,12 @@ new_no_gel = shape2profilometry(new_no_gel_ts.shape, ...
     new_no_gel_ts.offset, new_no_gel_ts.pins_per_mm);
 
 %show the profiles
-figure
-visualizeProfile(touchsim_gel);
-figure
-visualizeProfile(new_gel);
-figure
-visualizeProfile(new_no_gel);
+% figure
+% visualizeProfile(touchsim_gel);
+% figure
+% visualizeProfile(new_gel);
+% figure
+% visualizeProfile(new_no_gel);
 
 a = affpop_hand('D2d', 0.6);
 
@@ -210,7 +210,7 @@ new_no_gel_ts.amp = max(new_no_gel_ts.offset) - min(new_no_gel_ts.offset);
 
 ts_structs = [skin_surface_ts, new_gel_ts];
 
-speed = 80; %mm/s.
+speed = 40; %mm/s.
 len = 1; % s
 loc = [0 0];
 samp_freq = 2000; % hz

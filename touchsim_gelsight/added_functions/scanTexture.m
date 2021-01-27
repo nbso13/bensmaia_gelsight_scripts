@@ -11,25 +11,23 @@ if ne(size(trace,2), length(offset))
     error("trace width and offset length are unequal and do not match to the same pins");
 end
 trace(1,:) = offset;
-counter = 2; %keeps track of how moved the profile is at this time spot
 speed_counter = 1; %keeps track of how many time intervals since last move
+num_x_swaths = offset_len/x_len;
 for i = 2:size(trace,1)
     if speed_counter < timeperpin %if its not yet time to move up
         speed_counter = speed_counter+1; %increment counter
         trace(i,:) = trace(i-1,:); %trace does not move
     
     else %rotate within each x swath
-        for j= 1:offset_len/x_len %for every x swath
+        for j= 1:num_x_swaths %for every x swath
             ind_1 = 1+(j-1)*x_len;
-            ind_2 = ind_1+x_len;
+            ind_2 = ind_1+x_len-1;
             x_swath = offset(ind_1:ind_2);
             x_swath_rotated = [x_swath(end), x_swath(1:end-1)];
             offset(ind_1:ind_2) = x_swath_rotated;
         end
-%         trace(i, counter:end) = offset(1:end-counter+1); %take beginning of offset and put it at the end of trace
-%         trace(i, 1:counter-1) = offset(end-counter+2:end); %take the end off offset and put it at the beginning of trace
+        trace(i, :) = offset; 
         speed_counter = 1; %reset counter
-%         counter = counter+1; %move pins more to the right
     end
 end
 end
