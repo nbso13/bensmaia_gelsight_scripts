@@ -6,7 +6,7 @@ function [pressures] = ampCurve(ts_struct, pin_radius, prof_area, gel_mass, ampl
 %touchsim)
 
 forces = zeros(size(amplitudes));
-for i = 1:length(amplitudes)
+for i = 1:length(amplitudes) % for every amplitude
     disp(strcat("Indenting at (mm): ", num2str(amplitudes(i))));
     new_offset = amplitudes(i) + ts_struct.offset - max(ts_struct.offset); %setting up amplitude
     new_offset(new_offset<0) = 0;

@@ -23,7 +23,14 @@ for i = 2:size(trace,1)
             ind_1 = 1+(j-1)*x_len;
             ind_2 = ind_1+x_len-1;
             x_swath = offset(ind_1:ind_2);
+            if size(offset, 1) == 1
             x_swath_rotated = [x_swath(end), x_swath(1:end-1)];
+            elseif size(offset, 2) == 1
+                
+            x_swath_rotated = [x_swath(end); x_swath(1:end-1)];
+            else
+                error("offset size unexpectedly not a vector")
+            end
             offset(ind_1:ind_2) = x_swath_rotated;
         end
         trace(i, :) = offset; 

@@ -8,21 +8,22 @@ clear
 close all
 
 %% set vars
-ppm = 7;
+ppm = 8;
 gel_constant = 1.48;
-vline = 600;
-hline = 600;
-plotflag = 0;
 log = 1; %yes/no we want the color map to be log scale
 cax = "max"; %we want the max val to be the range
 max_freq = 5; %1 dot per mm is upper freq limit
 one_dim = 0; % yes, this is one dimensional and grating goes horizontal.
 
-%upholstery 2 on gel 3
-filename_gel = "210119_dots_gel_3_processed";
-filename_nogel = "210120_dots_no_gel_processed";
+%% Texture options
+% % upholstery 2 on gel 3
+% filename_gel = "210119_dots_gel_3_processed";
+% filename_nogel = "210120_dots_no_gel_processed";
 
-
+%velvet
+% filename_gel = "210122_velvet_gel_3_processed";
+filename_gel = "210122_velvet_gel_4_processed";
+filename_nogel = "210121_velvet_no_gel_processed";
 
 % %upholstery 1 on gel 1
 % filename_gel = "210113_upholstry_36_gel_1_processed";
@@ -74,54 +75,35 @@ filename_nogel = "210120_dots_no_gel_processed";
 % filename_nogel = "201021_no_gel_1mm_grating";
 
 
-%% Generate sim texture
-% height = 450;
-% diam = 600;
-% res = 10; %microns
-% freq = 0.5; %dots per mm
-% windowsize = 21000; %microns
-% dot_pattern = generate_texture("dots", freq, height, diam, res, windowsize);
-% visualizeProfile(dot_pattern);
-% plot_flag = 1;
-% [ind, sa] = surfaceArea4Ind(dot_pattern, plot_flag);
-%
 
 %% Load data process data
 cd ../../mat_files/
 load(filename_gel);
-gel = no_gel;
 load(filename_nogel);
 cd ../bensmaia_gelsight_scripts/profilometry_analysis_scripts
 
 gel.profile = gel.profile.*gel_constant; %scale up
-% no_gel = cropProfile(cropProfile(cropProfile(cropProfile(no_gel, "left", 5, "mm"), "bottom", 5, "mm"), "top", 2, "mm"), "right", 1.5, "mm");
-% gel = cropProfile(cropProfile(cropProfile(cropProfile(gel, "left", 1, "mm"), "bottom", 0.5, "mm"), "top", 10, "mm"), "right", 3, "mm");
-
 figure
 visualizeProfile(gel);
 figure
 visualizeProfile(no_gel);
 
-
 if ~checkSizeMatch(gel, no_gel)
     [gel, no_gel] = resampleToMin(gel, no_gel); %resamples to the min resolution
     [gel, no_gel] = bruteCropFit(gel, no_gel); %crops to same size
 end
+% %for velvet
+% crop_val = 2.5;
+% gel = cropProfile(cropProfile(gel, 'left', crop_val, 'mm'), 'right', crop_val, 'mm');
+% no_gel = cropProfile(cropProfile(no_gel, 'left', crop_val, 'mm'), 'right', crop_val, 'mm');
+% for upholstry
+% no_gel = cropProfile(cropProfile(cropProfile(cropProfile(no_gel, "left", 5, "mm"), "bottom", 5, "mm"), "top", 2, "mm"), "right", 1.5, "mm");
+% gel = cropProfile(cropProfile(cropProfile(cropProfile(gel, "left", 1, "mm"), "bottom", 0.5, "mm"), "top", 10, "mm"), "right", 3, "mm");
 
 
+gel = rotateProfilometry(gel, 90);
+no_gel = rotateProfilometry(no_gel, 90);
 
-% figure
-% visualizeProfile(gel);
-% figure
-% visualizeProfile(no_gel);
-
-% gel = rotateProfilometry(gel, 90);
-% no_gel = rotateProfilometry(no_gel, 90);
-
-% figure
-% visualizeProfile(gel);
-% figure
-% visualizeProfile(no_gel);
 
 % if filename_gel == "10x_Gel_Dot_200524_processed_aligned"
 %     gel = gel_dot_200524;
@@ -138,32 +120,17 @@ end
 %     gel.profile = gel.profile - 0.25;
 %     gel.profile(gel.profile<0)=0;
 % end
-%plot_flag = 1;
-%surfaceArea4Ind(no_gel, plot_flag);
 
-
-%% Prepare for TouchSim
-% pins_per_mm = 8;
-% [shape, offset] = profilometry2shape(no_gel, pins_per_mm);
-% no_gel_ts = struct;
-% no_gel_ts.shape = shape;
-% no_gel_ts.offset = offset;
-% %save("no_gel_ts", "no_gel_ts");
 
 %% Analyze Empirical Data and Characterize Filter
+vline = 100;
+hline = 100;
+log = 1;
+cax = "max";
+max_freq = 2;
+plotflag = 1;
 % [gel_amp_ratio_mat, gel_amp_ratio_fx, gel_amp_ratio_fy] = characterizeFilterFull(no_gel, ...
 %     gel, vline, hline, cax, log, plotflag, max_freq, one_dim);
-
-%% compare to calculated filter
-% sigma = 200;
-% %filtered_dots_profile = gelsightFilterFull(no_gel, gel_amp_ratio_mat, gel_amp_ratio_fx, gel_amp_ratio_fy);
-% %testing filter_characterization
-% filtered_dots_profile = imgaussfilt(no_gel.profile, sigma);
-% filt_dots = no_gel;
-% filt_dots.profile = real(filtered_dots_profile);
-% plot_flag = 1;
-% characterizeFilterFull(no_gel, filt_dots, vline, hline, cax, log, plot_flag, max_freq, one_dim);
-
 
 %% generate touchsim models
 
@@ -196,41 +163,85 @@ cd ../touchsim_gelsight
 setup_path;
 cd ../profilometry_analysis_scripts/
 
+% 
+% amplitudes = 1:0.2:2.5;
+% gel_mass = 200; %200 grams used
+% gel_area = 27*12; %mm sq
+% plot_flag = 1;
+% ts_struct = skin_surface_ts;
+% pressures = ampCurve(ts_struct, pin_radius, 12*20, gel_mass, amplitudes, plot_flag);
 
 
-amplitudes = 1:0.2:2;
-gel_mass = 200; %200 grams used
-plot_flag = 1;
-ts_struct = skin_surface_ts;
-% [~] = ampCurve(ts_struct, pin_radius, gel_area, gel_mass, amplitudes, plot_flag);
-%%
-skin_surface_ts.amp = 1.15;
-new_gel_ts.amp = max(new_gel_ts.offset) - min(new_gel_ts.offset);
-new_no_gel_ts.amp = max(new_no_gel_ts.offset) - min(new_no_gel_ts.offset);
+skin_surface_ts.amp = 1.55; %velvet
+% skin_surface_ts.amp = 1.95; %1/19 dots
+new_gel_ts.amp = max(skin_surface_ts.offset) - min(skin_surface_ts.offset);
+new_no_gel_ts.amp = 0;
 
 ts_structs = [skin_surface_ts, new_gel_ts];
-
+%%
 speed = 40; %mm/s.
-len = 1; % s
+len = 0.15; % s
 loc = [0 0];
 samp_freq = 2000; % hz
 ramp_len = 0.2;
-
+r = {};
+s = {};
+FRs = {};
+plot_flag = 1;
 for i = 1:length(ts_structs)
     
-    s = stim_scan_shape(ts_structs(i).shape, ts_structs(i).offset, ppm, ...
+    s{i} = stim_scan_shape(ts_structs(i).shape, ts_structs(i).offset, ppm, ...
         len, samp_freq, ts_structs(i).amp, speed, ts_structs(i).gel_flag);
     figure
-    plot(s)
-    r = a.response(s);
+    plot(s{i})
+    resp = a.response(s{i});
+%     fr{i} = calcFR(r{i}, plot_flag)
 %     %take out neurons that fire less than 2 spikes per second
 %     r_new = excludeNeurons(r, 2);
+    r{i} = resp;
     figure
-    plot(r)
+    plot(resp)
     title(ts_structs(i).name);
+    %calculate mean frs and sd
+    
+    FRs{i,1} = resp.rate(a.iPC);
+    FRs{i,2} = resp.rate(a.iRA);
+    FRs{i,3} = resp.rate(a.iSA1);
+    means = zeros(3,1);
+    sem = means;
+    for j = 1:3
+        means(j)  = mean(FRs{i,j});
+        sem(j) = std(FRs{i,j})/sqrt(length(FRs{i,j}));
+    end
+    FRs{i,4} = means;
+    FRs{i, 5} = sem;
+    x = [1,2,3];
+    
+    figure;
+    bar(x, means);
+    hold on
+    er = errorbar(x,means,means-sem,means+sem);
+    er.Color = [0 0 0];                            
+    er.LineStyle = 'none';  
+    title(strcat(ts_structs(i).name, "firing rate"));
+    xticks(x)
+    xticklabels({'PCs','RAs','SAs'})
+    ylabel("Hz")
+    
+    force_profile = shape2profilometry(ts_structs(i).shape, ...
+    s{i}.profile(1,:), ts_structs(i).pins_per_mm);
+    figure; visualizeProfile(force_profile)
+    title(strcat(ts_structs(i).name, " force profile"));
+    
+    trace_profile = shape2profilometry(ts_structs(i).shape, ...
+    s{i}.trace(1,:), ts_structs(i).pins_per_mm);
+    figure; visualizeProfile(trace_profile)
+    title(strcat(ts_structs(i).name, " trace profile"));
 end
 
 %% characterize filters
+% plot force profiles
+
 
 plot_flag = 1;
 vline = 10;
@@ -238,6 +249,7 @@ hline = 10;
 cd ../profilometry_analysis_scripts/
 characterizeFilterFull(new_no_gel, touchsim_gel, vline, hline, cax, log, plot_flag, max_freq, one_dim);
 characterizeFilterFull(new_no_gel, new_gel, vline, hline, cax, log, plot_flag, max_freq, one_dim);
+
 %% Make Simulated dots
 ratio_mat_size = size(gel_amp_ratio_mat);
 window_size = 1000;
@@ -355,4 +367,27 @@ filt_dots.profile = real(filtered_dots_profile);
 hline = findBestLine(filt_dots.profile, 'horiz');
 vline = findBestLine(filt_dots.profile, 'vert');
 characterizeFilterFull(dot_pattern, filt_dots, vline, hline, cax, log, plotflag);
+
+
+%% Generate sim texture
+% height = 450;
+% diam = 600;
+% res = 10; %microns
+% freq = 0.5; %dots per mm
+% windowsize = 21000; %microns
+% dot_pattern = generate_texture("dots", freq, height, diam, res, windowsize);
+% visualizeProfile(dot_pattern);
+% plot_flag = 1;
+% [ind, sa] = surfaceArea4Ind(dot_pattern, plot_flag);
+%
+%% compare to calculated filter
+% sigma = 200;
+% %filtered_dots_profile = gelsightFilterFull(no_gel, gel_amp_ratio_mat, gel_amp_ratio_fx, gel_amp_ratio_fy);
+% %testing filter_characterization
+% filtered_dots_profile = imgaussfilt(no_gel.profile, sigma);
+% filt_dots = no_gel;
+% filt_dots.profile = real(filtered_dots_profile);
+% plot_flag = 1;
+% characterizeFilterFull(no_gel, filt_dots, vline, hline, cax, log, plot_flag, max_freq, one_dim);
+
 
