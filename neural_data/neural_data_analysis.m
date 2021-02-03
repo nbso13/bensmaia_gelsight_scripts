@@ -10,12 +10,50 @@ load('TextureNames')
 % Recorded from 39 neurons. 55 textures were spun across monkey fingers.
 % Four reps at three speeds (40, 80, 120 mm/s I believe)
 indices = [2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 18 22 25 28 33 34];
-num = 2;
-disp(neuron_rfloc(num));
-disp(neuron_stats{num});
-disp(neuron_types(num));
 
-texture_num = 21;
+text_nums = [6, 9, 13, 21, 25, 37, 31, 51:55];
+speed  = 40;
+neuron_identities = {iPC, iRA, iSA};
+for i = 1:length(text_nums)
+    plotFiringRates(rates, htxt_name, neuron_identities, text_nums(i), speed, 1);
+end
+
+
+ind = speed/40;
+rates_mat = rates{ind};
+rates_mat = squeeze(rates_mat(texture_num,:, :));
+stats = {}; % PC RA SA1 are columns. Mean and SEM are rows.
+pcs = rates_mat(iPC, :);
+ras = rates_mat(iRA, :);
+sas = rates_mat(iSA, :);
+
+stats{1, 1} = nanmean(pcs(:));
+stats{1, 2} = nanmean(ras(:));
+stats{1, 3} = nanmean(sas(:));
+
+stats{2, 1} = nanstd(pcs(:))/sqrt(length(~isnan(pcs)));
+stats{2, 2} = nanstd(ras(:))/sqrt(length(~isnan(ras)));
+stats{2, 3} = nanstd(sas(:))/sqrt(length(~isnan(sas)));
+
+figure
+x = [1,2,3];
+
+means = [stats{1, 1}, stats{1, 2}, stats{1, 3}];
+sem = [stats{2, 1}, stats{2, 2}, stats{2, 3}];
+figure;
+bar(x, means);
+hold on
+er = errorbar(x,means,means-sem,means+sem);
+er.Color = [0 0 0];                            
+er.LineStyle = 'none';  
+title(strcat(htxt_name{texture_num}, " firing rate"));
+xticks(x)
+xticklabels({'PCs','RAs','SAs'})
+ylabel("Hz")
+
+
+
+
 for i = 1:2
     disp(htxt_name(texture_num))
     temp = spikes{1}(texture_num,num,i);
@@ -111,3 +149,6 @@ er.LineStyle = 'none';
 title(strcat('Mean FR in Hz (Tx ', num2str(texture_num),' sp=80)'))
 xlabel('population average')
 ylabel('FR (Hz)')
+
+
+WRITE ANALYSIS CODE HERE

@@ -17,13 +17,13 @@ one_dim = 0; % yes, this is one dimensional and grating goes horizontal.
 
 %% Texture options
 % % upholstery 2 on gel 3
-% filename_gel = "210119_dots_gel_3_processed";
-% filename_nogel = "210120_dots_no_gel_processed";
+filename_gel = "210119_dots_gel_3_processed";
+filename_nogel = "210120_dots_no_gel_processed";
 
 %velvet
 % filename_gel = "210122_velvet_gel_3_processed";
-filename_gel = "210122_velvet_gel_4_processed";
-filename_nogel = "210121_velvet_no_gel_processed";
+% filename_gel = "210122_velvet_gel_4_processed";
+% filename_nogel = "210121_velvet_no_gel_processed";
 
 % %upholstery 1 on gel 1
 % filename_gel = "210113_upholstry_36_gel_1_processed";
