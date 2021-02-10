@@ -1,8 +1,8 @@
 %% Processing Data
 
 %% Load data
-file_names = {"210119_dots_gel_3", "210120_dots_no_gel"};
-gel_id = [1, 0]; %1 if gel 0 if nah
+file_names = {"210209_craig_gel_10", "210209_craig_gel_11", "210209_craig_gel_12", '210209_hucktowel_gel_11'};
+gel_id = [ 1, 1, 1, 1]; %1 if gel 0 if nah
 for index = 1:length(file_names)
     clearvars -except file_names gel_id index
     

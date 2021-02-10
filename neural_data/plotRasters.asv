@@ -1,0 +1,44 @@
+function [] = plotRasters(spikes, names, neuron_identities, texture_num, speed, excludeNeurons)
+%plotRasters takes spiketrains for a given texture at a given speed and
+%plots the raster. SAs are green, RAs are blue, PCs are orange.
+
+iPC = neuron_identities{1};
+iRA = neuron_identities{2};
+iSA = neuron_identities{3};
+name_str = names{texture_num};
+
+ind = speed/40;
+spikes_mat = spikes{ind};
+spikes_mat = squeeze(spikes_mat(texture_num,:, :));
+
+pcs = spikes_mat(iPC, :);
+ras = spikes_mat(iRA, :);
+sas = spikes_mat(iSA, :);
+neurons = {pcs, ras, sas};
+colors = [[1 0.62 0]; [0.2 0.2 1]; [0.1 1 0]];
+
+plotter = 1;
+for i = 1:length(neurons)
+    type = neurons{i};
+    for j = 1:size(type, 1)
+        for k = 1:size(type, 2)
+            spike_train = type{j,k};
+            if size(spike_train, 1) == 0
+                continue
+            else
+                for m = 1:length(spike_train)
+                    line([spike_train(m) spike_train(m)], [plotter-1 plotter], 'Color', colors(i, :));
+                    %Create a tick mark at x = t1(i) with a height of 1
+                    plotter = plotter + 1;
+                end
+            end
+        end
+    end
+    plotter = plotter + 2;
+            
+xlabel('Time (sec)') %Label x-axis
+ylabel('Neurons')
+
+title(strcat(name_str, " firing rate, ", num2str(speed), " mm/s"));
+end
+

@@ -29,7 +29,6 @@ filename_nogel = "210120_dots_no_gel_processed";
 % filename_gel = "210113_upholstry_36_gel_1_processed";
 % filename_nogel = "210113_upholstry_no_gel_processed";
 
-
 %upholstery gel 2
 % filename_gel = "210112_upholstry_36_gel_2_processed";
 % filename_nogel = "210111_upholstery_no_gel_processed";
@@ -37,6 +36,18 @@ filename_nogel = "210120_dots_no_gel_processed";
 %upholstery gel 1
 % filename_gel = "210112_upholstry_36_gel_1_processed";
 % filename_nogel = "210111_upholstery_no_gel_processed";
+
+% CORDUROY
+% filename_gel = "201118_corduroy_35_gel_trimmed";
+% filename_nogel = "201118_corduroy_no_gel_trimmed";
+
+% 2MM GRATING THIN
+% filename_gel = "201116_2mm_grating_35_gel_processed";
+% filename_nogel = "201019_no_gel_2mm_grating";
+
+% 1MM GRATING THIN
+% filename_gel = "201116_1mm_grating_35_gel_processed";
+% filename_nogel = "201021_no_gel_1mm_grating";
 
 %cross
 % filename_gel = "201119_cross_gel_processed";
@@ -62,18 +73,6 @@ filename_nogel = "210120_dots_no_gel_processed";
 % filename_gel = "200925_dots_gel_processed_aligned";
 % filename_nogel = "200925_dots_no_gel";
 
-% CORDUROY
-% filename_gel = "201118_corduroy_35_gel_trimmed";
-% filename_nogel = "201118_corduroy_no_gel_trimmed";
-
-% 2MM GRATING THIN
-% filename_gel = "201116_2mm_grating_35_gel_processed";
-% filename_nogel = "201019_no_gel_2mm_grating";
-
-% 1MM GRATING THIN
-% filename_gel = "201116_1mm_grating_35_gel_processed";
-% filename_nogel = "201021_no_gel_1mm_grating";
-
 
 
 %% Load data process data
@@ -92,35 +91,9 @@ if ~checkSizeMatch(gel, no_gel)
     [gel, no_gel] = resampleToMin(gel, no_gel); %resamples to the min resolution
     [gel, no_gel] = bruteCropFit(gel, no_gel); %crops to same size
 end
-% %for velvet
-% crop_val = 2.5;
-% gel = cropProfile(cropProfile(gel, 'left', crop_val, 'mm'), 'right', crop_val, 'mm');
-% no_gel = cropProfile(cropProfile(no_gel, 'left', crop_val, 'mm'), 'right', crop_val, 'mm');
-% for upholstry
-% no_gel = cropProfile(cropProfile(cropProfile(cropProfile(no_gel, "left", 5, "mm"), "bottom", 5, "mm"), "top", 2, "mm"), "right", 1.5, "mm");
-% gel = cropProfile(cropProfile(cropProfile(cropProfile(gel, "left", 1, "mm"), "bottom", 0.5, "mm"), "top", 10, "mm"), "right", 3, "mm");
-
 
 gel = rotateProfilometry(gel, 90);
 no_gel = rotateProfilometry(no_gel, 90);
-
-
-% if filename_gel == "10x_Gel_Dot_200524_processed_aligned"
-%     gel = gel_dot_200524;
-%     gel.profile = gel.profile./1000;
-%     gel.x_axis = gel.x_axis/1000;
-%     gel.y_axis = gel.y_axis/1000;
-%     no_gel = nogel_dot_200524;
-%     no_gel.profile = no_gel.profile./1000;
-%     no_gel.x_axis = no_gel.x_axis/1000;
-%     no_gel.y_axis = no_gel.y_axis/1000;
-% end
-% 
-% if filename_gel == "10x_Gel_Dot_200923_processed_aligned"
-%     gel.profile = gel.profile - 0.25;
-%     gel.profile(gel.profile<0)=0;
-% end
-
 
 %% Analyze Empirical Data and Characterize Filter
 vline = 100;
@@ -133,8 +106,6 @@ plotflag = 1;
 %     gel, vline, hline, cax, log, plotflag, max_freq, one_dim);
 
 %% generate touchsim models
-
-
 gel_area = gel.x_axis(end)*gel.y_axis(end);
 
 plot_flag = 1;
@@ -157,7 +128,7 @@ new_no_gel = shape2profilometry(new_no_gel_ts.shape, ...
 % figure
 % visualizeProfile(new_no_gel);
 
-a = affpop_hand('D2d', 0.6);
+a = affpop_hand('D2d', 0.7);
 
 cd ../touchsim_gelsight
 setup_path;
@@ -178,7 +149,7 @@ new_gel_ts.amp = max(skin_surface_ts.offset) - min(skin_surface_ts.offset);
 new_no_gel_ts.amp = 0;
 
 ts_structs = [skin_surface_ts, new_gel_ts];
-%%
+%% YOU NEED TO WRITE A FUNCTION HERE
 speed = 40; %mm/s.
 len = 0.15; % s
 loc = [0 0];

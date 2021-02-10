@@ -9,14 +9,30 @@ load('TextureNames')
 % good neurons indices [2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 18 22 25 28 33 34]
 % Recorded from 39 neurons. 55 textures were spun across monkey fingers.
 % Four reps at three speeds (40, 80, 120 mm/s I believe)
-indices = [2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 18 22 25 28 33 34];
+% good_neurons = [2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 18 22 25 28 33 34];
+good_neurons = 1:39;
+% text_nums = [6, 9, 13, 21, 25, 37, 31, 50:55];
 
-text_nums = [6, 9, 13, 21, 25, 37, 31, 51:55];
-speed  = 40;
+text_nums = [45:48];
+sub_plot_y_len = 2;
+sub_plot_x_len = 2;
+
+
+speed  = 120;
 neuron_identities = {iPC, iRA, iSA};
+figure('Position', [100, 100, 500, 500]);
 for i = 1:length(text_nums)
-    plotFiringRates(rates, htxt_name, neuron_identities, text_nums(i), speed, 1);
+    subplot(sub_plot_y_len,sub_plot_x_len,i)
+    plotFiringRates(rates, good_neurons, htxt_name, neuron_identities, text_nums(i), speed, 1);
+    ylim([0 inf])
 end
+
+figure('Position', [400, 400, 800, 500]);
+for i = 1:length(text_nums)
+    subplot(sub_plot_y_len,sub_plot_x_len,i)
+    plotRasters(spikes, good_neurons, htxt_name, neuron_identities, text_nums(i), speed);
+end
+
 
 
 ind = speed/40;

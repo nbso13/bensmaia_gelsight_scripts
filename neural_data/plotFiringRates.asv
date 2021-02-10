@@ -8,7 +8,6 @@ for i = 1:length(good_logit)
         good_logit(i) = 1;
     end
 end
-good_logit = logical(good_logit);
 
 iPC = neuron_identities{1};
 iRA = neuron_identities{2};
@@ -22,7 +21,7 @@ name_str = names{texture_num};
 ind = speed/40;
 rates_mat = rates{ind};
 rates_mat = squeeze(rates_mat(texture_num,:, :));
-rates_mat = rates_mat(good_logit,:);
+rates_mat = rates_mat(good_logit, :);
 
 %alert user to how good the readings are here
 percent_non_nan = sum(~isnan(rates_mat(:)))/length(rates_mat);
