@@ -162,7 +162,7 @@ new_no_gel = shape2profilometry(new_no_gel_ts.shape, ...
 
 diff1 = displayDirecAverage(new_gel, 'v');
 diff2 = displayDirecAverage(touchsim_gel, 'v');
-disp(diff2-diff1);
+disp(strcat("difference in maxima: ", num2str(diff2-diff1));
 
 %show the profiles
 % figure
@@ -179,7 +179,7 @@ setup_path;
 cd ../profilometry_analysis_scripts/
 
 % 
-% amplitudes = 1:0.2:2.5;
+% amplitudes = 0:0.2:1;
 % gel_mass = 200; %200 grams used
 % gel_area = 27*12; %mm sq
 % plot_flag = 1;
@@ -187,19 +187,19 @@ cd ../profilometry_analysis_scripts/
 % pressures = ampCurve(ts_struct, pin_radius, 12*20, gel_mass, amplitudes, plot_flag);
 
 
-skin_surface_ts.amp =  1+max(skin_surface_ts.offset) - min(skin_surface_ts.offset); %velvet
+skin_surface_ts.amp =  2; %velvet
 % skin_surface_ts.amp = 1.95; %1/19 dots
-new_gel_ts.amp = skin_surface_ts.amp;
+new_gel_ts.amp = skin_surface_ts.amp+0.3;
 new_no_gel_ts.amp = 0;
 
 ts_structs = [skin_surface_ts, new_gel_ts];
-%% YOU NEED TO WRITE A FUNCTION HERE
 speed = 80; %mm/s.
 len = 1; % s
 loc = [0 0];
 samp_freq = 2000; % hz
 ramp_len = 0.2;
 plot_flag = 1;
+
 [FRs, figure_handles] = calcResponses(ts_structs, aff_pop, ppm, speed, len, loc, samp_freq, ramp_len);
 
 if save_figures
@@ -215,7 +215,7 @@ if save_figures
         saveas(figure_handles{i,5}, strcat("trace_profile_", direcs(i), "_", texture_name, "_", dates(i), '.png'));
         cd ..
     end
-    cd ../../../../bensmaia_gelsight_scripts/profilometry_analysis_scripts %out of ts, hucktowel, _checkin, pngs,
+    cd ../../../bensmaia_gelsight_scripts/profilometry_analysis_scripts %out of ts, hucktowel, _checkin, pngs,
 end
 
 

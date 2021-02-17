@@ -12,8 +12,8 @@ for i = 1:length(ts_structs)
     plot(s{i})
     resp = aff_pop.response(s{i});
 %     fr{i} = calcFR(r{i}, plot_flag)
-%     %take out neurons that fire less than 2 spikes per second
-%     r_new = excludeNeurons(r, 2);
+    %take out neurons that fire less than 2 spikes per second
+    resp_new = excludeNeurons(esp, 2);
     r{i} = resp;
     response_fig = figure;
     plot(resp)
@@ -48,6 +48,9 @@ for i = 1:length(ts_structs)
     xticks(x)
     xticklabels({'PCs','RAs','SAs'})
     ylabel("Hz")
+    
+    total_force = sum(s{i}.profile(1,:));
+    disp(strcat("Total area: ", num2str(total_force)));
     
     force_profile = shape2profilometry(ts_structs(i).shape, ...
     s{i}.profile(1,:), ts_structs(i).pins_per_mm);
