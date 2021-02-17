@@ -9,6 +9,9 @@ close all
 
 %% set vars
 ppm = 8;
+save_figures = 1;
+texture_name = "3_mm_grating";
+figure_dir = strcat('../../pngs/feb_17_checkin/', texture_name);
 gel_constant = 1.48;
 log = 1; %yes/no we want the color map to be log scale
 cax = "max"; %we want the max val to be the range
@@ -16,9 +19,18 @@ max_freq = 5; %1 dot per mm is upper freq limit
 one_dim = 0; % yes, this is one dimensional and grating goes horizontal.
 
 %% Texture options
+
+% wool_blend
+% filename_gel
+% filename_nogel
+
+% hucktowel
+% filename_gel
+% filename_nogel
+
 % % upholstery 2 on gel 3
-filename_gel = "210119_dots_gel_3_processed";
-filename_nogel = "210120_dots_no_gel_processed";
+% filename_gel = "210119_dots_gel_3_processed";
+% filename_nogel = "210120_dots_no_gel_processed";
 
 %velvet
 % filename_gel = "210122_velvet_gel_3_processed";
@@ -47,7 +59,7 @@ filename_nogel = "210120_dots_no_gel_processed";
 
 % 1MM GRATING THIN
 % filename_gel = "201116_1mm_grating_35_gel_processed";
-% filename_nogel = "201021_no_gel_1mm_grating";
+% filename_nogel = "201021_1mm_grating_no_gel";
 
 %cross
 % filename_gel = "201119_cross_gel_processed";
@@ -73,7 +85,10 @@ filename_nogel = "210120_dots_no_gel_processed";
 % filename_gel = "200925_dots_gel_processed_aligned";
 % filename_nogel = "200925_dots_no_gel";
 
-
+% 2/16/21 3mm grating,
+filename_gel = "210216_3mm_grating_gel_7_processed"; %gel 7
+% filename_gel = "210216_3mm_grating_gel_11_processed"; %gel 11
+filename_nogel = "210212_3_mm_grating_no_gel_processed";
 
 %% Load data process data
 cd ../../mat_files/
@@ -82,18 +97,23 @@ load(filename_nogel);
 cd ../bensmaia_gelsight_scripts/profilometry_analysis_scripts
 
 gel.profile = gel.profile.*gel_constant; %scale up
-figure
-visualizeProfile(gel);
-figure
-visualizeProfile(no_gel);
+
+
+gel = rotateProfilometry(gel, 90);
+no_gel = rotateProfilometry(no_gel, 90);
 
 if ~checkSizeMatch(gel, no_gel)
     [gel, no_gel] = resampleToMin(gel, no_gel); %resamples to the min resolution
     [gel, no_gel] = bruteCropFit(gel, no_gel); %crops to same size
 end
 
-gel = rotateProfilometry(gel, 90);
-no_gel = rotateProfilometry(no_gel, 90);
+
+
+figure
+visualizeProfile(gel);
+figure
+visualizeProfile(no_gel);
+
 
 %% Analyze Empirical Data and Characterize Filter
 vline = 100;
@@ -110,7 +130,27 @@ gel_area = gel.x_axis(end)*gel.y_axis(end);
 
 plot_flag = 1;
 pin_radius = 0.025;
-[new_gel_ts, new_no_gel_ts, skin_surface_ts] = TouchSimSkin(gel, no_gel, ppm, pin_radius, plot_flag);
+[new_gel_ts, new_no_gel_ts, skin_surface_ts, ...
+    gel_fig, no_gel_fig, skin_fig] = TouchSimSkin(gel, no_gel, ppm, pin_radius, plot_flag);
+
+%save surfs
+if save_figures
+    cd(figure_dir)
+    cd('gel')
+    temp = char(filename_gel);
+    date_gel = temp(1:6);
+    saveas(gel_fig, strcat("surf_gel_", texture_name, "_", string(date), '.png'));
+    cd ..
+    cd('real')
+    temp = char(filename_nogel);
+    date_no_gel = temp(1:6);
+    saveas(no_gel_fig, strcat("surf_real_", texture_name, "_", string(date), '.png'));
+    cd ..
+    cd('ts')
+    saveas(skin_fig, strcat("surf_ts_", texture_name, "_", string(date), '.png'));
+    cd ../../../../bensmaia_gelsight_scripts/profilometry_analysis_scripts %out of ts, hucktowel, _checkin, pngs,
+end
+
 
 %get profiles
 touchsim_gel = shape2profilometry(skin_surface_ts.shape, ...
@@ -120,6 +160,10 @@ new_gel = shape2profilometry(new_gel_ts.shape, ...
 new_no_gel = shape2profilometry(new_no_gel_ts.shape, ...
     new_no_gel_ts.offset, new_no_gel_ts.pins_per_mm);
 
+diff1 = displayDirecAverage(new_gel, 'v');
+diff2 = displayDirecAverage(touchsim_gel, 'v');
+disp(diff2-diff1);
+
 %show the profiles
 % figure
 % visualizeProfile(touchsim_gel);
@@ -128,7 +172,7 @@ new_no_gel = shape2profilometry(new_no_gel_ts.shape, ...
 % figure
 % visualizeProfile(new_no_gel);
 
-a = affpop_hand('D2d', 0.7);
+aff_pop = affpop_hand('D2d', 1);
 
 cd ../touchsim_gelsight
 setup_path;
@@ -143,72 +187,37 @@ cd ../profilometry_analysis_scripts/
 % pressures = ampCurve(ts_struct, pin_radius, 12*20, gel_mass, amplitudes, plot_flag);
 
 
-skin_surface_ts.amp = 1.55; %velvet
+skin_surface_ts.amp =  1+max(skin_surface_ts.offset) - min(skin_surface_ts.offset); %velvet
 % skin_surface_ts.amp = 1.95; %1/19 dots
-new_gel_ts.amp = max(skin_surface_ts.offset) - min(skin_surface_ts.offset);
+new_gel_ts.amp = skin_surface_ts.amp;
 new_no_gel_ts.amp = 0;
 
 ts_structs = [skin_surface_ts, new_gel_ts];
 %% YOU NEED TO WRITE A FUNCTION HERE
-speed = 40; %mm/s.
-len = 0.15; % s
+speed = 80; %mm/s.
+len = 1; % s
 loc = [0 0];
 samp_freq = 2000; % hz
 ramp_len = 0.2;
-r = {};
-s = {};
-FRs = {};
 plot_flag = 1;
-for i = 1:length(ts_structs)
-    
-    s{i} = stim_scan_shape(ts_structs(i).shape, ts_structs(i).offset, ppm, ...
-        len, samp_freq, ts_structs(i).amp, speed, ts_structs(i).gel_flag);
-    figure
-    plot(s{i})
-    resp = a.response(s{i});
-%     fr{i} = calcFR(r{i}, plot_flag)
-%     %take out neurons that fire less than 2 spikes per second
-%     r_new = excludeNeurons(r, 2);
-    r{i} = resp;
-    figure
-    plot(resp)
-    title(ts_structs(i).name);
-    %calculate mean frs and sd
-    
-    FRs{i,1} = resp.rate(a.iPC);
-    FRs{i,2} = resp.rate(a.iRA);
-    FRs{i,3} = resp.rate(a.iSA1);
-    means = zeros(3,1);
-    sem = means;
-    for j = 1:3
-        means(j)  = mean(FRs{i,j});
-        sem(j) = std(FRs{i,j})/sqrt(length(FRs{i,j}));
+[FRs, figure_handles] = calcResponses(ts_structs, aff_pop, ppm, speed, len, loc, samp_freq, ramp_len);
+
+if save_figures
+    cd(figure_dir)
+    direcs = ["ts", "gel"];
+    dates = [string(date_no_gel), string(date_gel)];
+    for i = 1:size(figure_handles, 1)
+        cd(direcs(i))
+        %saveas(figure_handles{i,1}, strcat("stim_", direcs(i), "_", texture_name, "_", dates(i), '.png'));
+        saveas(figure_handles{i,2}, strcat("response_", direcs(i), "_", texture_name, "_", dates(i), '.png'));
+        saveas(figure_handles{i,3}, strcat("mean_responses_", direcs(i), "_", texture_name, "_", dates(i), '.png'));
+        saveas(figure_handles{i,4}, strcat("force_profile_", direcs(i), "_", texture_name, "_", dates(i), '.png'));
+        saveas(figure_handles{i,5}, strcat("trace_profile_", direcs(i), "_", texture_name, "_", dates(i), '.png'));
+        cd ..
     end
-    FRs{i,4} = means;
-    FRs{i, 5} = sem;
-    x = [1,2,3];
-    
-    figure;
-    bar(x, means);
-    hold on
-    er = errorbar(x,means,means-sem,means+sem);
-    er.Color = [0 0 0];                            
-    er.LineStyle = 'none';  
-    title(strcat(ts_structs(i).name, "firing rate"));
-    xticks(x)
-    xticklabels({'PCs','RAs','SAs'})
-    ylabel("Hz")
-    
-    force_profile = shape2profilometry(ts_structs(i).shape, ...
-    s{i}.profile(1,:), ts_structs(i).pins_per_mm);
-    figure; visualizeProfile(force_profile)
-    title(strcat(ts_structs(i).name, " force profile"));
-    
-    trace_profile = shape2profilometry(ts_structs(i).shape, ...
-    s{i}.trace(1,:), ts_structs(i).pins_per_mm);
-    figure; visualizeProfile(trace_profile)
-    title(strcat(ts_structs(i).name, " trace profile"));
+    cd ../../../../bensmaia_gelsight_scripts/profilometry_analysis_scripts %out of ts, hucktowel, _checkin, pngs,
 end
+
 
 %% characterize filters
 % plot force profiles

@@ -8,7 +8,7 @@ function [image_handle] = visualizeProfile(texture)
 max_filt = max(texture.profile, [], 'all');
 min_filt = min(texture.profile, [], 'all');
 image_handle = imagesc(texture.x_axis, texture.y_axis, texture.profile);
-colormap jet
+colormap autumn
 c = colorbar;
 ylabel(c, 'mm');
 caxis([min_filt, max_filt]);
