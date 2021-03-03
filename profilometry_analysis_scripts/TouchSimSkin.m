@@ -23,6 +23,11 @@ gel_ts.pins_per_mm = pins_per_mm;
 gel_ts.name = "gel surface";
 gel_ts.gel_flag = 1; %gelsight gel profile
 
+% Subtract min offset height
+
+gel_ts.offset = gel_ts.offset - min(gel_ts.offset);
+no_gel_ts.offset = no_gel_ts.offset - min(no_gel_ts.offset);
+
 
 %save(strcat(filename_nogel, "_ts"), "no_gel_ts");
 
@@ -30,7 +35,8 @@ gel_ts.gel_flag = 1; %gelsight gel profile
 cd ../touchsim_gelsight/
 setup_path;
 cd ../profilometry_analysis_scripts/
-[new_offset, P] = skinModel(no_gel_ts.shape, no_gel_ts.offset, pin_radius, plot_flag);
+before_after_plot_flag = 0;
+[new_offset, P] = skinModel(no_gel_ts.shape, no_gel_ts.offset, pin_radius, before_after_plot_flag);
 skin_surface_ts = no_gel_ts;
 skin_surface_ts.offset = new_offset;
 skin_surface_ts.name = "touchsim skin surface";
@@ -45,5 +51,11 @@ if plot_flag
     skin_surf = surfTouchSim(skin_surface_ts.shape, skin_surface_ts.offset);
     title(skin_surface_ts.name)
 end
+
+%zero out offsets
+
+skin_surface_ts.offset = skin_surface_ts.offset - min(skin_surface_ts.offset);
+no_gel_ts.offset = no_gel_ts.offset - min(no_gel_ts.offset);
+gel_ts.offset = gel_ts.offset - min(gel_ts.offset);
 end
 

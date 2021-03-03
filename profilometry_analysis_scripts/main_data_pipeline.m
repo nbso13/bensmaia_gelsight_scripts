@@ -8,34 +8,39 @@ clear
 close all
 
 %% set vars
-ppm = 8;
-save_figures = 1;
-texture_name = "3_mm_grating";
-figure_dir = strcat('../../pngs/feb_17_checkin/', texture_name);
-gel_constant = 1.48;
-log = 1; %yes/no we want the color map to be log scale
-cax = "max"; %we want the max val to be the range
-max_freq = 5; %1 dot per mm is upper freq limit
-one_dim = 0; % yes, this is one dimensional and grating goes horizontal.
+% ppm = 7;
+% save_figures = 0;
+% texture_name = "sueded_cuddle";
+% figure_dir = strcat('../../pngs/feb_23_charles_checkin/', texture_name);
+% gel_constant = 1.48;
+% log = 1; %yes/no we want the color map to be log scale
+% cax = "max"; %we want the max val to be the range
+% max_freq = 5; %1 dot per mm is upper freq limit
+% one_dim = 0; % yes, this is one dimensional and grating goes horizontal.
 
 %% Texture options
 
+% COMPLIANT
+% sueded cuddle
+filename_gel = "210219_sueded_cuddle_gel_7_processed";
+filename_nogel = "210222_sueded_cuddle_no_gel_processed";
+
 % wool_blend
-% filename_gel
-% filename_nogel
+% filename_gel = "210217_wool_blend_gel_7_processed";
+% filename_nogel = "210216_wool_blend_no_gel_processed";
 
 % hucktowel
-% filename_gel
-% filename_nogel
+% filename_gel = "210209_hucktowel_gel_11_processed";
+% filename_nogel = "210204_hucktowel_nogel_processed";
 
-% % upholstery 2 on gel 3
-% filename_gel = "210119_dots_gel_3_processed";
-% filename_nogel = "210120_dots_no_gel_processed";
-
-%velvet
+%velvet REDO
 % filename_gel = "210122_velvet_gel_3_processed";
 % filename_gel = "210122_velvet_gel_4_processed";
 % filename_nogel = "210121_velvet_no_gel_processed";
+
+% CORDUROY REDO
+% filename_gel = "201118_corduroy_35_gel_trimmed";
+% filename_nogel = "201118_corduroy_no_gel_trimmed";
 
 % %upholstery 1 on gel 1
 % filename_gel = "210113_upholstry_36_gel_1_processed";
@@ -49,20 +54,34 @@ one_dim = 0; % yes, this is one dimensional and grating goes horizontal.
 % filename_gel = "210112_upholstry_36_gel_1_processed";
 % filename_nogel = "210111_upholstery_no_gel_processed";
 
-% CORDUROY
-% filename_gel = "201118_corduroy_35_gel_trimmed";
-% filename_nogel = "201118_corduroy_no_gel_trimmed";
+% TO DO
+% Empire Velveteen
+% Taffeta
+% Wool Gabardine
+% Flag/Banner
+% Premier Velvet
+% Wool Crepe
+% Chiffron
+% Swimwear Lining
+% Blizzard Fleece
+% Drapery Tape(Foam Side)
 
-% 2MM GRATING THIN
-% filename_gel = "201116_2mm_grating_35_gel_processed";
-% filename_nogel = "201019_no_gel_2mm_grating";
 
-% 1MM GRATING THIN
-% filename_gel = "201116_1mm_grating_35_gel_processed";
-% filename_nogel = "201021_1mm_grating_no_gel";
+% NON COMPLIANT
+
+% TO DO
+% 12 mm grating
+% 8mm grating
+% 5mm grating
+% 2mm embossed dots
+% 3mm embossed dots
+% 4mm embossed
+% 5
+% 6
 
 %cross
 % filename_gel = "201119_cross_gel_processed";
+% filename_gel = "210219_cross_gel_7_processed";
 % filename_nogel = "201119_cross_no_gel_processed";
 
 % gain_stim
@@ -85,10 +104,48 @@ one_dim = 0; % yes, this is one dimensional and grating goes horizontal.
 % filename_gel = "200925_dots_gel_processed_aligned";
 % filename_nogel = "200925_dots_no_gel";
 
+% 01/19/21 DOTS
+% filename_gel = "210119_dots_gel_3_processed";
+% filename_nogel = "210120_dots_no_gel_processed";
+
+% 2MM GRATING THIN
+% filename_gel = "201116_2mm_grating_35_gel_processed";
+% filename_nogel = "201019_no_gel_2mm_grating";
+
+% 1MM GRATING THIN
+% filename_gel = "201116_1mm_grating_35_gel_processed";
+% filename_nogel = "201021_1mm_grating_no_gel";
+
+
 % 2/16/21 3mm grating,
-filename_gel = "210216_3mm_grating_gel_7_processed"; %gel 7
+% filename_gel = "210216_3mm_grating_gel_7_processed"; %gel 7
 % filename_gel = "210216_3mm_grating_gel_11_processed"; %gel 11
-filename_nogel = "210212_3_mm_grating_no_gel_processed";
+% filename_nogel = "210212_3_mm_grating_no_gel_processed";
+
+% 2/22/21 1mm grating
+% filename_gel = 
+% filename_nogel = "210222_1mm_grating_no_gel_processed";
+
+
+%% set vars
+filename_gel = [];
+filename_nogel = [];
+% figure_dir = "../../pngs/feb_23_charles_checkin/sueded_cuddle";
+figure_dir = [0]; % do not save figures
+ppm = 7;
+ts_amplitude = "max";
+for i = 1:length(filename_gel)
+    [FRs, r, a] = pullResponses(filename_gel, filename_nogel, ppm, ts_amplitude, figure_dir);
+    % ts_frs(k,:) = [FRs{1,4}', FRs{1,5}'];
+    % gel_frs(k,:) = [FRs{2,4}', FRs{2,5}'];
+end
+
+
+
+
+
+
+
 
 %% Load data process data
 cd ../../mat_files/
@@ -98,35 +155,33 @@ cd ../bensmaia_gelsight_scripts/profilometry_analysis_scripts
 
 gel.profile = gel.profile.*gel_constant; %scale up
 
-
-gel = rotateProfilometry(gel, 90);
-no_gel = rotateProfilometry(no_gel, 90);
+gel = rotateProfilometry(gel, 270);
+no_gel = rotateProfilometry(no_gel, 270);
 
 if ~checkSizeMatch(gel, no_gel)
     [gel, no_gel] = resampleToMin(gel, no_gel); %resamples to the min resolution
     [gel, no_gel] = bruteCropFit(gel, no_gel); %crops to same size
 end
 
-
-
 figure
 visualizeProfile(gel);
 figure
 visualizeProfile(no_gel);
 
+%% remove trend
+gel = removeTrend(gel);
 
-%% Analyze Empirical Data and Characterize Filter
-vline = 100;
-hline = 100;
-log = 1;
-cax = "max";
-max_freq = 2;
-plotflag = 1;
-% [gel_amp_ratio_mat, gel_amp_ratio_fx, gel_amp_ratio_fy] = characterizeFilterFull(no_gel, ...
-%     gel, vline, hline, cax, log, plotflag, max_freq, one_dim);
+figure
+visualizeProfile(gel);
+
+no_gel = removeTrend(no_gel);
+
+figure
+visualizeProfile(no_gel);
+
 
 %% generate touchsim models
-gel_area = gel.x_axis(end)*gel.y_axis(end);
+% gel_area = gel.x_axis(end)*gel.y_axis(end);
 
 plot_flag = 1;
 pin_radius = 0.025;
@@ -153,16 +208,37 @@ end
 
 
 %get profiles
-touchsim_gel = shape2profilometry(skin_surface_ts.shape, ...
-    skin_surface_ts.offset, skin_surface_ts.pins_per_mm);
-new_gel = shape2profilometry(new_gel_ts.shape, ...
-    new_gel_ts.offset, new_gel_ts.pins_per_mm);
-new_no_gel = shape2profilometry(new_no_gel_ts.shape, ...
-    new_no_gel_ts.offset, new_no_gel_ts.pins_per_mm);
+% touchsim_gel = shape2profilometry(skin_surface_ts.shape, ...
+%     skin_surface_ts.offset, skin_surface_ts.pins_per_mm);
+% new_gel = shape2profilometry(new_gel_ts.shape, ...
+%     new_gel_ts.offset, new_gel_ts.pins_per_mm);
+% new_no_gel = shape2profilometry(new_no_gel_ts.shape, ...
+%     new_no_gel_ts.offset, new_no_gel_ts.pins_per_mm);
 
-diff1 = displayDirecAverage(new_gel, 'v');
-diff2 = displayDirecAverage(touchsim_gel, 'v');
-disp(strcat("difference in maxima: ", num2str(diff2-diff1));
+
+% [~, ~, fig_handles_gel] = characterizeFilterNew(new_no_gel, new_gel, vline, hline, plot_flag, [1, 2]);
+% [~, ~, fig_handles_ts] = characterizeFilterNew(new_no_gel, touchsim_gel, vline, hline, plot_flag, [1, 2]);
+%save freq figures
+% if save_figures
+%     cd(figure_dir)
+%     cd('gel')
+%     temp = char(filename_gel);
+%     date_gel = temp(1:6);
+%     saveas(fig_handles_gel(1), strcat("gel_filt_", texture_name, "_", string(date), '.png'));
+%     saveas(fig_handles_gel(2), strcat("gel_freq_", texture_name, "_", string(date), '.png'));
+%     cd ..
+%     cd('ts')
+%     temp = char(filename_nogel);
+%     date_no_gel = temp(1:6);
+%     saveas(fig_handles_ts(1), strcat("ts_filt_", texture_name, "_", string(date), '.png'));
+%     saveas(fig_handles_ts(2), strcat("ts_freq_", texture_name, "_", string(date), '.png'));
+%     cd ../../../../bensmaia_gelsight_scripts/profilometry_analysis_scripts %out of ts, hucktowel, _checkin, pngs,
+% end
+
+%% COMPARE GRATING CONFORMANCE
+% diff1 = displayDirecAverage(new_gel, 'v');
+% diff2 = displayDirecAverage(touchsim_gel, 'v');
+% disp(strcat("difference in maxima: ", num2str(diff2-diff1)));
 
 %show the profiles
 % figure
@@ -172,13 +248,11 @@ disp(strcat("difference in maxima: ", num2str(diff2-diff1));
 % figure
 % visualizeProfile(new_no_gel);
 
-aff_pop = affpop_hand('D2d', 1);
-
 cd ../touchsim_gelsight
 setup_path;
 cd ../profilometry_analysis_scripts/
 
-% 
+%% pressure matching procedure
 % amplitudes = 0:0.2:1;
 % gel_mass = 200; %200 grams used
 % gel_area = 27*12; %mm sq
@@ -186,21 +260,30 @@ cd ../profilometry_analysis_scripts/
 % ts_struct = skin_surface_ts;
 % pressures = ampCurve(ts_struct, pin_radius, 12*20, gel_mass, amplitudes, plot_flag);
 
+%% Neural Data
+% amps = 0.05:0.05:0.4;
+% gel_frs = zeros(length(amps), 6);
+% ts_frs = zeros(length(amps), 6);
+plot_flag = 1;
+% for k = 1:length(amps)
+aff_pop = affpop_hand('D2d', 0.8);
 
-skin_surface_ts.amp =  2; %velvet
+skin_surface_ts.amp = max(skin_surface_ts.offset); %max(skin_surface_ts.offset);
 % skin_surface_ts.amp = 1.95; %1/19 dots
-new_gel_ts.amp = skin_surface_ts.amp+0.3;
+new_gel_ts.amp = max(new_gel_ts.offset); %max(new_gel_ts.offset);
 new_no_gel_ts.amp = 0;
-
 ts_structs = [skin_surface_ts, new_gel_ts];
 speed = 80; %mm/s.
-len = 1; % s
+len = 0.4; % s
 loc = [0 0];
 samp_freq = 2000; % hz
-ramp_len = 0.2;
-plot_flag = 1;
+ramp_len = 0.01;
+%% calc_responses
+[FRs, r, a, figure_handles] = calcResponses(ts_structs, aff_pop, ppm, speed, len, loc, samp_freq, ramp_len, plot_flag);
+% ts_frs(k,:) = [FRs{1,4}', FRs{1,5}'];
+% gel_frs(k,:) = [FRs{2,4}', FRs{2,5}'];
+% end
 
-[FRs, figure_handles] = calcResponses(ts_structs, aff_pop, ppm, speed, len, loc, samp_freq, ramp_len);
 
 if save_figures
     cd(figure_dir)
@@ -218,7 +301,6 @@ if save_figures
     cd ../../../bensmaia_gelsight_scripts/profilometry_analysis_scripts %out of ts, hucktowel, _checkin, pngs,
 end
 
-
 %% characterize filters
 % plot force profiles
 
@@ -227,8 +309,11 @@ plot_flag = 1;
 vline = 10;
 hline = 10;
 cd ../profilometry_analysis_scripts/
+characterizeFilterNew(new_no_gel, new_gel, vline, hline, plot_flag, [1, 2]);
 characterizeFilterFull(new_no_gel, touchsim_gel, vline, hline, cax, log, plot_flag, max_freq, one_dim);
 characterizeFilterFull(new_no_gel, new_gel, vline, hline, cax, log, plot_flag, max_freq, one_dim);
+
+
 
 %% Make Simulated dots
 ratio_mat_size = size(gel_amp_ratio_mat);
@@ -370,4 +455,30 @@ characterizeFilterFull(dot_pattern, filt_dots, vline, hline, cax, log, plotflag)
 % plot_flag = 1;
 % characterizeFilterFull(no_gel, filt_dots, vline, hline, cax, log, plot_flag, max_freq, one_dim);
 
+%% Analyze Empirical Data and Characterize Filter
+vline = 1;
+hline = 1;
+log = 1;
+cax = "max";
+max_freq = 2;
+plot_flag = 1;
+% [gel_amp_ratio_mat, gel_amp_ratio_fx, gel_amp_ratio_fy] = characterizeFilterFull(no_gel, ...
+%     gel, vline, hline, cax, log, plot_flag, max_freq, one_dim);
+
+
+% Thesis thinking;
+
+% Characterizing the action of the skin.
+% Need to reread skin mechanics papers. And touchsim. And Gelsight. and tribology.
+% 
+% 1. Is it well approximated by a linear filter? Compare touchsim and gelsight frequency responses. freqz2
+% 2. Is the filter linear or non-linear?
+% 3. space variant or space invariant?
+% 4. Causal or noncausal.
+% 5. IIR or FIR?
+% 6. Determine transfer function. OR determine convolution of the space-domain input with the filter's impulse response.
+% 2. How about a gaussian filter?
+% 2. Examine different textures and fourier transforms.
+% 5. Give some impulse.
+% 6. Give some step. input
 

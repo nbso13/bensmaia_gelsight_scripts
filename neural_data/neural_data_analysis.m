@@ -13,19 +13,26 @@ load('TextureNames')
 good_neurons = 1:39;
 % text_nums = [6, 9, 13, 21, 25, 37, 31, 50:55];
 
-text_nums = [50];
-sub_plot_y_len = 1;
-sub_plot_x_len = 1;
+text_nums = [7, 31, 4, 42, 9, 50, 49];
+sub_plot_y_len = 3;
+sub_plot_x_len = 3;
 
+
+activities = struct;
+
+activities.names = ["wool_blend", "velvet", "hucktowel", "sueded_cuddle", "corduroy", "1mm_grating", "3mm_grating"];
+activities.real = zeros(length(activities.names), 6);
 speeds = [80];
-for j = 1:3
+for j = 1:length(speeds)
     speed  = speeds(j);
     neuron_identities = {iPC, iRA, iSA};
     figure('Position', [100, 100, 500, 500]);
     for i = 1:length(text_nums)
         subplot(sub_plot_y_len,sub_plot_x_len,i)
-        plotFiringRates(rates, good_neurons, htxt_name, neuron_identities, text_nums(i), speed, 1);
+        [means, sems] = plotFiringRates(rates, good_neurons, htxt_name, neuron_identities, text_nums(i), speed, 1);
+        activities.real(i,:) = [means, sems];
         ylim([0 inf])
+        
     end
     
     figure('Position', [400, 400, 800, 500]);

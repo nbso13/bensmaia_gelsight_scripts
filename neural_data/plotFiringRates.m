@@ -1,4 +1,4 @@
-function [PC_mean, RA_mean, SA_mean] = plotFiringRates(rates, good_neurons, names, neuron_identities, texture_num, speed, excludeNeurons)
+function [means, sem] = plotFiringRates(rates, good_neurons, names, neuron_identities, texture_num, speed, excludeNeurons)
 %plotFiringRates plots mean firing rates for each afferent for a given
 %texture at a given speed. If exclude neurons is positive, excludes neurons
 %that don't fire.
@@ -59,7 +59,7 @@ b.CData(1,:) = [1 0.62 0];
 b.CData(2,:) = [0.2 0.2 1];
 b.CData(3,:) = [0.2 0.85 0.2];
 hold on
-er = errorbar(x,means,means-sem,means+sem);
+er = errorbar(x,means,sem);
 er.Color = [0 0 0];                            
 er.LineStyle = 'none';  
 title(strcat(name_str, " firing rate, ", num2str(speed), " mm/s"));
@@ -68,6 +68,3 @@ xticklabels({strcat('PCs, n=', num2str(length(~isnan(pcs_flat)))),...
     strcat('RAs, n=', num2str(length(~isnan(ras_flat)))),...
     strcat('SAs, n=', num2str(length(~isnan(sas_flat))))});
 ylabel("Hz")
-PC_mean = stats{1,1};
-RA_mean = stats{1,2};
-SA_mean = stats{1,3};
