@@ -20,6 +20,6 @@ re_shaped  = reshape(pin_offset',size(X));
 % plot result
 surf_fig = figure;
 surf(X, Y, re_shaped, 'edgecolor', 'none');
-colormap autumn;
+colormap parula;
 end
 

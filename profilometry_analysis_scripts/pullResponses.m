@@ -1,4 +1,4 @@
-function [FRs, response_collection, aff_pop_final] = pullResponses(filename_gel, filename_nogel, ppm, ts_amplitude, figure_dir)
+function [FRs_ts, FRs_gel, response_collection, aff_pop_final] = pullResponses(filename_gel, filename_nogel, ppm, ts_amplitude, figure_dir)
 %pullResponses: given struct filenames and other hyperparams, calc firing
 %rates. filenames indicate mat file name. ppm is pins per millimeter for
 %touchsim model. ts amplitude indicates how much of the texture to input to
@@ -6,7 +6,7 @@ function [FRs, response_collection, aff_pop_final] = pullResponses(filename_gel,
 %dir is a string, save figures there.
 
 % presets
-len = 0.4; % s, length of indentation in time
+len = 1; % s, length of indentation in time
 loc = [0 0]; %location on finger
 samp_freq = 2000; % hz
 ramp_len = 0.01; %length of ramping on, in seconds
@@ -23,7 +23,7 @@ if isstring(figure_dir)
     disp(strcat("Saving figures to ", figure_dir));
 end
 
-disp("Loading data...")
+disp(strcat("Loading data from ", filename_gel));
 
 cd ../../mat_files/
 load(filename_gel);
@@ -103,7 +103,7 @@ else
     plot_flag = 0;
 end
 
-[FRs, response_collection, aff_pop_final, figure_handles] = calcResponses(ts_structs, aff_pop, ppm, speed, len, loc, samp_freq, ramp_len, plot_flag);
+[FRs_ts, FRs_gel, response_collection, aff_pop_final, figure_handles] = calcResponses(skin_surface_ts, new_gel_ts, aff_pop, ppm, speed, len, loc, samp_freq, ramp_len, plot_flag);
 
 if save_figures
     cd(figure_dir)

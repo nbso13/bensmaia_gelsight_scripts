@@ -1,12 +1,12 @@
-function [FRs r, a, figure_handles] = calcResponses(ts_structs, aff_pop, ppm, speed, len, loc, samp_freq, ramp_len, plot_flag)
+function [FRs_ts, FRs_gel, r, a, figure_handles] = calcResponses(ts, gel, aff_pop, ppm, speed, len, loc, samp_freq, ramp_len, plot_flag)
 %calcResponses given parameters, scans textures in ts structs across hand
 %and measures response in aff_pop. FRs are returned.
 original_aff_pop = aff_pop;
 r = {};
 s = {};
 a = {};
-FRs = {};
 figure_handles = {};
+ts_structs = [ts, gel];
 for i = 1:length(ts_structs)
     aff_pop = original_aff_pop;
     s{i} = stim_scan_shape(ts_structs(i).shape, ts_structs(i).offset, ppm, ...
@@ -78,6 +78,13 @@ for i = 1:length(ts_structs)
         figure_handles{i, 4} = force_profile_fig;
         figure_handles{i, 5} = trace_profile_fig;
     end
+end
+FRs_ts = {};
+FRs_gel = {};
+
+for i = 1:length(FRs)
+    FRs_ts{i} = FRs{1,i};
+    FRs_gel{i} = FRs{2,i};
 end
 
 end

@@ -8,7 +8,7 @@ clear
 close all
 
 %% set vars
-ppm = 7;
+ppm = 10;
 save_figures = 0;
 texture_name = "sueded_cuddle";
 figure_dir = strcat('../../pngs/feb_23_charles_checkin/', texture_name);
@@ -21,9 +21,9 @@ one_dim = 0; % yes, this is one dimensional and grating goes horizontal.
 %% Texture options
 
 % COMPLIANT
-% sueded cuddle
-filename_gel = "210219_sueded_cuddle_gel_7_processed";
-filename_nogel = "210222_sueded_cuddle_no_gel_processed";
+% % sueded cuddle
+% filename_gel = "210219_sueded_cuddle_gel_7_processed";
+% filename_nogel = "210222_sueded_cuddle_no_gel_processed";
 
 % wool_blend
 % filename_gel = "210217_wool_blend_gel_7_processed";
@@ -122,9 +122,22 @@ filename_nogel = "210222_sueded_cuddle_no_gel_processed";
 % filename_gel = "210216_3mm_grating_gel_11_processed"; %gel 11
 % filename_nogel = "210212_3_mm_grating_no_gel_processed";
 
-% 2/22/21 1mm grating
-% filename_gel = 
-% filename_nogel = "210222_1mm_grating_no_gel_processed";
+
+% 1MM GRATING 2/23
+% filename_gel = "210223_1mm_grating_gel_7_processed";
+% filename_gel = "210223_1mm_grating_gel_11_processed";
+% filename_nogel = "210115_1mm_grating_no_gel_processed";
+
+
+% 1MM GRATING 2/26
+% filename_gel = "210226_1mm_grating_gel_7_100_grams_processed";
+% filename_gel = "210226_1mm_grating_gel_7_200_grams_processed";
+% filename_nogel = "210115_1mm_grating_no_gel_processed";
+
+% 3MM GRATING 2/23
+% filename_gel = "210226_3mm_grating_gel_7_100_grams_processed";
+filename_gel = "210226_3mm_grating_gel_7_200_grams_processed";
+filename_nogel = "210212_3_mm_grating_no_gel_processed";
 
 
 
@@ -134,10 +147,12 @@ load(filename_gel);
 load(filename_nogel);
 cd ../bensmaia_gelsight_scripts/profilometry_analysis_scripts
 
-gel.profile = gel.profile.*gel_constant; %scale up
-
-gel = rotateProfilometry(gel, 270);
-no_gel = rotateProfilometry(no_gel, 270);
+if ~isfield(gel, 'scaled')
+    gel.profile = gel.profile.*gel_constant; %scale up
+end
+% 
+% gel = rotateProfilometry(gel, 270);
+% no_gel = rotateProfilometry(no_gel, 270);
 
 if ~checkSizeMatch(gel, no_gel)
     [gel, no_gel] = resampleToMin(gel, no_gel); %resamples to the min resolution
@@ -148,18 +163,6 @@ figure
 visualizeProfile(gel);
 figure
 visualizeProfile(no_gel);
-
-%% remove trend
-gel = removeTrend(gel);
-
-figure
-visualizeProfile(gel);
-
-no_gel = removeTrend(no_gel);
-
-figure
-visualizeProfile(no_gel);
-
 
 %% generate touchsim models
 % gel_area = gel.x_axis(end)*gel.y_axis(end);
@@ -189,12 +192,12 @@ end
 
 
 %get profiles
-% touchsim_gel = shape2profilometry(skin_surface_ts.shape, ...
-%     skin_surface_ts.offset, skin_surface_ts.pins_per_mm);
-% new_gel = shape2profilometry(new_gel_ts.shape, ...
-%     new_gel_ts.offset, new_gel_ts.pins_per_mm);
-% new_no_gel = shape2profilometry(new_no_gel_ts.shape, ...
-%     new_no_gel_ts.offset, new_no_gel_ts.pins_per_mm);
+touchsim_gel = shape2profilometry(skin_surface_ts.shape, ...
+    skin_surface_ts.offset, skin_surface_ts.pins_per_mm);
+new_gel = shape2profilometry(new_gel_ts.shape, ...
+    new_gel_ts.offset, new_gel_ts.pins_per_mm);
+new_no_gel = shape2profilometry(new_no_gel_ts.shape, ...
+    new_no_gel_ts.offset, new_no_gel_ts.pins_per_mm);
 
 
 % [~, ~, fig_handles_gel] = characterizeFilterNew(new_no_gel, new_gel, vline, hline, plot_flag, [1, 2]);
@@ -216,10 +219,11 @@ end
 %     cd ../../../../bensmaia_gelsight_scripts/profilometry_analysis_scripts %out of ts, hucktowel, _checkin, pngs,
 % end
 
-%% COMPARE GRATING CONFORMANCE
-% diff1 = displayDirecAverage(new_gel, 'v');
-% diff2 = displayDirecAverage(touchsim_gel, 'v');
-% disp(strcat("difference in maxima: ", num2str(diff2-diff1)));
+% COMPARE GRATING CONFORMANCE
+[diff1, trace, axis, fig_handle_gel] = displayDirecAverage(new_gel, 'v');
+title("3mm Grating, Gel 7, 200 grams")
+[diff2, ~, ~, fig_handle] = displayDirecAverage(touchsim_gel, 'v');
+disp(strcat("difference in maxima: ", num2str(diff2-diff1)));
 
 %show the profiles
 % figure
