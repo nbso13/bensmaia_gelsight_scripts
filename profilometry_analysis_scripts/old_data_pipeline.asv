@@ -142,18 +142,18 @@ filename_gel = "210310_wool_blend_gel_11_100_grams_processed";
 % filename_nogel = "210115_1mm_grating_no_gel_processed";
 
 % 3MM GRATING 2/23
-filename_gel = "210226_3mm_grating_gel_7_100_grams_processed";
+% filename_gel = "210226_3mm_grating_gel_7_100_grams_processed";
 % filename_gel = "210226_3mm_grating_gel_7_200_grams_processed";
 % filename_gel = '210309_gel_16_3mm_grating_100_grams_processed';
 % filename_gel = '210309_gel_16_3mm_grating_200_grams_processed';
 % filename_gel = '210309_gel_11_3mm_grating_100_grams_processed';
 % filename_gel = '210309_PROBABLY_gel_11_3mm_grating_200_grams_processed';
-filename_nogel = "210212_3_mm_grating_no_gel_processed";
+% filename_nogel = "210212_3_mm_grating_no_gel_processed";
 
 
 % 5mm GRATING 3/10
-% filename_gel = '210310_5mm_grating_gel_11_100_grams_processed';
-% filename_nogel = "210310_5mm_grating_no_gel_processed";
+filename_gel = '210310_5mm_grating_gel_11_100_grams_processed';
+filename_nogel = "210310_5mm_grating_no_gel_processed";
 
 %% Load data process data
 cd ../../mat_files/
@@ -183,14 +183,8 @@ visualizeProfile(no_gel);
 
 plot_flag = 1;
 pin_radius = 0.025;
-
-[new_gel_ts, new_no_gel_ts, skin_surface_ts, ...
-    gel_fig, no_gel_fig, skin_fig] = TouchSimSkin(gel, gel, ppm, pin_radius, plot_flag);
-
 [new_gel_ts, new_no_gel_ts, skin_surface_ts, ...
     gel_fig, no_gel_fig, skin_fig] = TouchSimSkin(gel, no_gel, ppm, pin_radius, plot_flag);
-
-
 
 %save surfs
 if save_figures
@@ -219,9 +213,6 @@ new_gel = shape2profilometry(new_gel_ts.shape, ...
 new_no_gel = shape2profilometry(new_no_gel_ts.shape, ...
     new_no_gel_ts.offset, new_no_gel_ts.pins_per_mm);
 
-[new_gel_ts, new_no_gel_ts, skin_surface_ts, ...
-    gel_fig, no_gel_fig, skin_fig] = TouchSimSkin(gel, touchsim_gel, ppm, pin_radius, plot_flag);
-
 
 % [~, ~, fig_handles_gel] = characterizeFilterNew(new_no_gel, new_gel, vline, hline, plot_flag, [1, 2]);
 % [~, ~, fig_handles_ts] = characterizeFilterNew(new_no_gel, touchsim_gel, vline, hline, plot_flag, [1, 2]);
@@ -243,10 +234,10 @@ new_no_gel = shape2profilometry(new_no_gel_ts.shape, ...
 % end
 
 % COMPARE GRATING CONFORMANCE
-% [diff1, trace, axis, fig_handle_gel] = displayDirecAverage(new_gel, 'v');
-% title(filename_gel)
-% [diff2, ~, ~, fig_handle] = displayDirecAverage(touchsim_gel, 'v');
-% disp(strcat("difference in maxima: ", num2str(diff2-diff1)));
+[diff1, trace, axis, fig_handle_gel] = displayDirecAverage(new_gel, 'v');
+title(filename_gel)
+[diff2, ~, ~, fig_handle] = displayDirecAverage(touchsim_gel, 'v');
+disp(strcat("difference in maxima: ", num2str(diff2-diff1)));
 
 %show the profiles
 % figure

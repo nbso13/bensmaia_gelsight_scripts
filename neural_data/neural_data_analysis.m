@@ -1,5 +1,7 @@
 %% Analyzing Neural Responses Periphery to Textures
 
+clear 
+close all
 
 load('RawPAFData.mat')
 load('TextureNames')
@@ -12,14 +14,14 @@ load('TextureNames')
 good_neurons = 1:39;
 % text_nums = [6, 9, 13, 21, 25, 37, 31, 50:55];
 
-text_nums = [45];
-sub_plot_y_len = 1;
-sub_plot_x_len = 1;
+text_nums = [7, 31, 4, 42, 45, 50, 49, 48];
+sub_plot_y_len = 3;
+sub_plot_x_len = 3;
 
 
 activities = struct;
 
-activities.names = [ "blizzard_fleece" ];
+activities.names = ["wool_blend","velvet","hucktowel","sueded_cuddle","blizzard_fleece","1mm_grating","3mm_grating", "5mm_grating"];
 activities.real = zeros(length(activities.names), 6);
 speeds = [80];
 for j = 1:length(speeds)
