@@ -11,6 +11,7 @@
 
 % activities.gel = [];
 % activities.ts = [];
+
 %% set vars
 % filename_gel = ["210219_sueded_cuddle_gel_7_processed", "210217_wool_blend_gel_7_processed", ...
 %     "210209_hucktowel_gel_11_processed", "210122_velvet_gel_4_processed", ...
@@ -66,10 +67,6 @@ filename_nogel = [
     "210212_3_mm_grating_no_gel_processed", ...
     "210310_5mm_grating_no_gel_processed"];
 
-% figure_dir = "../../pngs/feb_23_charles_checkin/sueded_cuddle";
-figure_dir = 0; % do not save figures
-ppm = 7;
-ts_amplitude = "max";
 
 % for i = 1:length(filename_gel)
 %     processAndUpdate(filename_gel(i), 1);
@@ -78,8 +75,16 @@ ts_amplitude = "max";
 %     close all
 % end
 
+
+% figure_dir = "../../pngs/feb_23_charles_checkin/sueded_cuddle";
+figure_dir = 0; % do not save figures
+ppm = 7;
+top_neuron_number = 10;
+ts_amplitude = "max";
+
+
 for i = 1:length(filename_gel)
-    [FRs_ts, FRs_gel, r, a] = pullResponses(filename_gel(i), filename_nogel(i), ppm, ts_amplitude, figure_dir);
+    [FRs_ts, FRs_gel, r, a] = pullResponses(filename_gel(i), filename_nogel(i), ppm, top_neuron_number, ts_amplitude, figure_dir);
     mean_ts = FRs_ts{4}';
     sem_ts = FRs_ts{5}';
     mean_gel = FRs_gel{4}';
@@ -89,7 +94,13 @@ for i = 1:length(filename_gel)
     close all
 end
 
-save("march_10_final_activities" , "activities")
+c= date;
+
+save(strcat(c,"_activities") , "activities");
+
+motherOfAllPlotsFunc(activities);
+
+
 
 %% Texture options
 

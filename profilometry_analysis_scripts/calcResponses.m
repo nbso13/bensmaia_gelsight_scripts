@@ -1,4 +1,5 @@
-function [FRs_ts, FRs_gel, r, a, figure_handles] = calcResponses(ts, gel, aff_pop, ppm, speed, len, loc, samp_freq, ramp_len, plot_flag)
+function [FRs_ts, FRs_gel, r, a, figure_handles] = calcResponses(ts, gel, ...
+    ppm, speed, len, loc, samp_freq, ramp_len, top_neuron_number, plot_flag)
 %calcResponses given parameters, scans textures in ts structs across hand
 %and measures response in aff_pop. FRs are returned.
 original_aff_pop = aff_pop;
@@ -18,7 +19,7 @@ for i = 1:length(ts_structs)
     resp = aff_pop.response(s{i});
 %     fr{i} = calcFR(r{i}, plot_flag)
     %take out all but the top 15-30 most active neurons
-    [resp_new, aff_pop_new] = excludeNeurons(resp, 10, aff_pop);
+    [resp_new, aff_pop_new] = excludeNeurons(resp, top_neuron_number, aff_pop);
     r{i} = resp_new;
     a{i} = aff_pop_new;
     if plot_flag

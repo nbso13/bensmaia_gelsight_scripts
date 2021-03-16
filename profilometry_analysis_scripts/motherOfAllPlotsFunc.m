@@ -1,18 +1,13 @@
-%% mother of all plots
-% Feb 24
+function [] = motherOfAllPlotsFunc(activities)
+%motherOfAllPlots takes in activity statistics from real afferents and
+%simulated afferents from touchsim and gelsight and compares the simulation
+%to the real values.
 
-close all
-clear;
-
-load('activities_max_indentation_200_grams.mat')
-
-%% Find best amplitude for each texture
 num_textures = length(activities.names);
 
 aff_class = ["PCs", "RAs", "SA1s"];
 figure;
 scatter_list = [];
-r_sqs = []; %top row, gel for each afferent, bottom row,
 for i = 1:3 %for each afferent
     subplot(2, 3, i)
     hold on;
@@ -66,7 +61,5 @@ for i = 1:3
     xlabel("Real Recorded Activity (Hz)");
     ylabel("TouchSim Simulated Activity (Hz)");
 end
-
-        
-        
+end
 
