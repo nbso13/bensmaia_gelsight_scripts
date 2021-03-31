@@ -1,4 +1,5 @@
-function [FRs_ts, FRs_gel, response_collection, aff_pop_final] = pullResponses(filename_gel, filename_nogel, ppm, top_neuron_number, ts_amplitude, figure_dir)
+function [FRs_ts, FRs_gel, response_collection, aff_pop_final] = pullResponses(filename_gel, ...
+    filename_nogel, ppm, top_neuron_number, ts_amplitude, speed, pin_radius, aff_density, figure_dir)
 %pullResponses: given struct filenames and other hyperparams, calc firing
 %rates. filenames indicate mat file name. ppm is pins per millimeter for
 %touchsim model. ts amplitude indicates how much of the texture to input to
@@ -11,8 +12,8 @@ loc = [0 0]; %location on finger
 samp_freq = 2000; % hz
 ramp_len = 0.01; %length of ramping on, in seconds
 gel_constant = 1.48; %empirically derived factor to scale profilometry through gel
-aff_density = 0.8; %afferent population density
-speed = 80; %mm/s
+
+
 %% Load data and process data
 
 save_figures = 0;
@@ -26,12 +27,14 @@ end
 disp(strcat("Loading data from ", filename_gel));
 
 cd ../../mat_files/
-load(filename_gel);
-load(filename_nogel);
+load(filename_gel, "gel");
+load(filename_nogel, "no_gel");
 cd ../bensmaia_gelsight_scripts/profilometry_analysis_scripts
 
 if ~isfield(gel, 'scaled')
+    disp(strcat(filename_gel, " apparently not scaled - scaling up by gel constant."));
     gel.profile = gel.profile.*gel_constant; %scale up
+    
 end
 
 
@@ -42,39 +45,39 @@ if ~checkSizeMatch(gel, no_gel)
 end
 
 figure
+subplot(1,2,1)
 visualizeProfile(gel);
-figure
+title("Gel")
+subplot(1,2,2)
 visualizeProfile(no_gel);
+title("No Gel")
+sgtitle("Profiles after cropping and resampling.");
 
 
 
 %% build models
-str = input("View touchsim surfaces? (y/n)", 's');
+% str = input("View touchsim surfaces? (y/n)", 's');
 disp("Building surface models...")
-if str == "y"
-    plot_flag = 1;
-else
-    plot_flag = 0;
-end
-pin_radius = 0.025;
+% if str == "y"
+%     plot_flag = 1;
+% else
+%     plot_flag = 0;
+% end
+
+plot_flag = 1;
+
 [new_gel_ts, new_no_gel_ts, skin_surface_ts, ...
-    gel_fig, no_gel_fig, skin_fig] = TouchSimSkin(gel, no_gel, ppm, pin_radius, plot_flag);
+    surf_figures] = TouchSimSkin(gel, no_gel, ppm, pin_radius, plot_flag);
+gcf;
+sgtitle(filename_gel);
 
 if save_figures
+    sgtitle(texture_name);
     cd(figure_dir)
-    cd('gel')
     temp = char(filename_gel);
     date_gel = temp(1:6);
-    saveas(gel_fig, strcat("surf_gel_", texture_name, "_", string(date), '.png'));
-    cd ..
-    cd('real')
-    temp = char(filename_nogel);
-    date_no_gel = temp(1:6);
-    saveas(no_gel_fig, strcat("surf_real_", texture_name, "_", string(date), '.png'));
-    cd ..
-    cd('ts')
-    saveas(skin_fig, strcat("surf_ts_", texture_name, "_", string(date), '.png'));
-    cd ../../../../bensmaia_gelsight_scripts/profilometry_analysis_scripts %out of ts, hucktowel, _checkin, pngs,
+    saveas(surf_figures, strcat("surfs_", texture_name, "_", string(date), '.png'));
+    cd ../../../bensmaia_gelsight_scripts/profilometry_analysis_scripts %out of ts, hucktowel, _checkin, pngs,
 end
 
 %% set up touchsim
@@ -96,12 +99,12 @@ new_no_gel_ts.amp = 0;
 ts_structs = [skin_surface_ts, new_gel_ts];
 
 %% calc_responses
-str = input("Calculating neural responses. Display figures? (y/n)", 's');
-if str == "y"
-    plot_flag = 1;
-else
-    plot_flag = 0;
-end
+% str = input("Calculating neural responses. Display figures? (y/n)", 's');
+% if str == "y"
+%     plot_flag = 1;
+% else
+%     plot_flag = 0;
+% end
 
 [FRs_ts, FRs_gel, response_collection, aff_pop_final, figure_handles] = calcResponses(skin_surface_ts,...
     new_gel_ts, aff_pop, ppm, speed, len, loc, samp_freq, ramp_len, top_neuron_number, plot_flag);
@@ -112,11 +115,8 @@ if save_figures
     dates = [string(date_no_gel), string(date_gel)];
     for i = 1:size(figure_handles, 1)
         cd(direcs(i))
-        %saveas(figure_handles{i,1}, strcat("stim_", direcs(i), "_", texture_name, "_", dates(i), '.png'));
+        saveas(figure_handles{i,1}, strcat("stim_", direcs(i), "_", texture_name, "_", dates(i), '.png'));
         saveas(figure_handles{i,2}, strcat("response_", direcs(i), "_", texture_name, "_", dates(i), '.png'));
-        saveas(figure_handles{i,3}, strcat("mean_responses_", direcs(i), "_", texture_name, "_", dates(i), '.png'));
-        saveas(figure_handles{i,4}, strcat("force_profile_", direcs(i), "_", texture_name, "_", dates(i), '.png'));
-        saveas(figure_handles{i,5}, strcat("trace_profile_", direcs(i), "_", texture_name, "_", dates(i), '.png'));
         cd ..
     end
     cd ../../../bensmaia_gelsight_scripts/profilometry_analysis_scripts %out of ts, hucktowel, _checkin, pngs,

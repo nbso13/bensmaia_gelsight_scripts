@@ -18,7 +18,6 @@ x_axis = xax(1:length(y_axis):length(xax));
 [X, Y] = meshgrid(x_axis, y_axis);
 re_shaped  = reshape(pin_offset',size(X));
 % plot result
-surf_fig = figure;
 surf(X, Y, re_shaped, 'edgecolor', 'none');
 colormap parula;
 end

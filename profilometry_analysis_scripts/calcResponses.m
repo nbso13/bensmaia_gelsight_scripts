@@ -1,5 +1,5 @@
 function [FRs_ts, FRs_gel, r, a, figure_handles] = calcResponses(ts, gel, ...
-    ppm, speed, len, loc, samp_freq, ramp_len, top_neuron_number, plot_flag)
+    aff_pop, ppm, speed, len, loc, samp_freq, ramp_len, top_neuron_number, plot_flag)
 %calcResponses given parameters, scans textures in ts structs across hand
 %and measures response in aff_pop. FRs are returned.
 original_aff_pop = aff_pop;
@@ -24,6 +24,7 @@ for i = 1:length(ts_structs)
     a{i} = aff_pop_new;
     if plot_flag
         response_fig = figure;
+        subplot(2,2,1);
         plot(resp_new)
         title(ts_structs(i).name);
     end
@@ -42,7 +43,7 @@ for i = 1:length(ts_structs)
     FRs{i, 5} = sem;
     x = [1,2,3];
     if plot_flag
-        mean_response_fig = figure;
+        subplot(2,2,2)
         bar(x, means);
         hold on
         b = bar(x,means);
@@ -67,17 +68,15 @@ for i = 1:length(ts_structs)
         s{i}.trace(1,:), ts_structs(i).pins_per_mm);
     
     if plot_flag
-        force_profile_fig = figure; visualizeProfile(force_profile);
+        subplot(2,2,3); visualizeProfile(force_profile);
         title(strcat(ts_structs(i).name, " force profile"));
         disp(strcat("Total forces: ", num2str(sum(sum(force_profile.profile)))));
-        trace_profile_fig = figure; visualizeProfile(trace_profile);
+        subplot(2,2,4); visualizeProfile(trace_profile);
         title(strcat(ts_structs(i).name, " trace profile"));
+        sgtitle(strcat(ts_structs(i).name, " Responses"));
         
         figure_handles{i, 1} = stim_fig;
         figure_handles{i, 2} = response_fig;
-        figure_handles{i, 3} = mean_response_fig;
-        figure_handles{i, 4} = force_profile_fig;
-        figure_handles{i, 5} = trace_profile_fig;
     end
 end
 FRs_ts = {};

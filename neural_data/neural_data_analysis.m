@@ -1,7 +1,7 @@
 %% Analyzing Neural Responses Periphery to Textures
 
-clear 
-close all
+% clear 
+% close all
 
 load('RawPAFData.mat')
 load('TextureNames')
@@ -14,14 +14,16 @@ load('TextureNames')
 good_neurons = 1:39;
 % text_nums = [6, 9, 13, 21, 25, 37, 31, 50:55];
 
-text_nums = [7, 31, 4, 42, 45, 50, 49, 48];
+text_nums = [7, 31, 4, 42, 9, 45];
+%  50, 49, 48
 sub_plot_y_len = 3;
 sub_plot_x_len = 3;
 
 
 activities = struct;
 
-activities.names = ["wool_blend","velvet","hucktowel","sueded_cuddle","blizzard_fleece","1mm_grating","3mm_grating", "5mm_grating"];
+activities.names = ["wool_blend","velvet","hucktowel","sueded_cuddle", "corduroy", "blizzard_fleece"];
+%"1mm_grating","3mm_grating", "5mm_grating"
 activities.real = zeros(length(activities.names), 6);
 speeds = [80];
 for j = 1:length(speeds)
@@ -42,6 +44,11 @@ for j = 1:length(speeds)
         plotRasters(spikes, good_neurons, htxt_name, neuron_identities, text_nums(i), speed);
     end
 end
+
+cd ../profilometry_analysis_scripts/activities
+save("real_activities", "activities");
+cd ..
+
 
 
 ind = speed/40;
@@ -75,7 +82,6 @@ title(strcat(htxt_name{texture_num}, " firing rate"));
 xticks(x)
 xticklabels({'PCs','RAs','SAs'})
 ylabel("Hz")
-
 
 
 
