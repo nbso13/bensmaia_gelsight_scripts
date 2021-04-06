@@ -1,5 +1,6 @@
 function [FRs_ts, FRs_gel, response_collection, aff_pop_final] = pullResponses(filename_gel, ...
-    filename_nogel, ppm, top_neuron_number, ts_amplitude, speed, pin_radius, aff_density, figure_dir)
+    filename_nogel, ppm, top_neuron_number, ts_amplitude, len, speed, pin_radius, aff_density, ...
+     texture_rates, neuron_selection_modes, figure_dir)
 %pullResponses: given struct filenames and other hyperparams, calc firing
 %rates. filenames indicate mat file name. ppm is pins per millimeter for
 %touchsim model. ts amplitude indicates how much of the texture to input to
@@ -7,11 +8,11 @@ function [FRs_ts, FRs_gel, response_collection, aff_pop_final] = pullResponses(f
 %dir is a string, save figures there.
 
 % presets
-len = 1; % s, length of indentation in time
 loc = [0 0]; %location on finger
 samp_freq = 2000; % hz
 ramp_len = 0.01; %length of ramping on, in seconds
 gel_constant = 1.48; %empirically derived factor to scale profilometry through gel
+    
 
 
 %% Load data and process data
@@ -53,23 +54,30 @@ visualizeProfile(no_gel);
 title("No Gel")
 sgtitle("Profiles after cropping and resampling.");
 
+% calculate length of time of scan
 
+if isstring(len) %then we do one full scan through
+    len = gel.x_axis(end)/speed;
+end
 
 %% build models
-% str = input("View touchsim surfaces? (y/n)", 's');
+str = input("View touchsim surfaces? (y/n)", 's');
 disp("Building surface models...")
-% if str == "y"
-%     plot_flag = 1;
-% else
-%     plot_flag = 0;
-% end
+if str == "y"
+    plot_flag = 1;
+else
+    plot_flag = 0;
+end
 
-plot_flag = 1;
-
+% plot_flag = 0;
+if plot_flag
 [new_gel_ts, new_no_gel_ts, skin_surface_ts, ...
     surf_figures] = TouchSimSkin(gel, no_gel, ppm, pin_radius, plot_flag);
-gcf;
-sgtitle(filename_gel);
+    gcf;
+    sgtitle(filename_gel);
+else
+    [new_gel_ts, new_no_gel_ts, skin_surface_ts] = TouchSimSkin(gel, no_gel, ppm, pin_radius, plot_flag);
+end
 
 if save_figures
     sgtitle(texture_name);
@@ -85,7 +93,6 @@ end
 cd ../touchsim_gelsight
 setup_path;
 cd ../profilometry_analysis_scripts/
-aff_pop = affpop_hand('D2d',aff_density);
 
 if ts_amplitude == "max"
     skin_surface_ts.amp = max(skin_surface_ts.offset); %max(skin_surface_ts.offset);
@@ -99,15 +106,16 @@ new_no_gel_ts.amp = 0;
 ts_structs = [skin_surface_ts, new_gel_ts];
 
 %% calc_responses
-% str = input("Calculating neural responses. Display figures? (y/n)", 's');
-% if str == "y"
-%     plot_flag = 1;
-% else
-%     plot_flag = 0;
-% end
+str = input("Calculating neural responses. Display figures? (y/n)", 's');
+if str == "y"
+    plot_flag = 1;
+else
+    plot_flag = 0;
+end
 
 [FRs_ts, FRs_gel, response_collection, aff_pop_final, figure_handles] = calcResponses(skin_surface_ts,...
-    new_gel_ts, aff_pop, ppm, speed, len, loc, samp_freq, ramp_len, top_neuron_number, plot_flag);
+    new_gel_ts, aff_density, ppm, speed, len, loc, samp_freq, ramp_len, top_neuron_number, ...
+    texture_rates, neuron_selection_modes, plot_flag);
 
 if save_figures
     cd(figure_dir)

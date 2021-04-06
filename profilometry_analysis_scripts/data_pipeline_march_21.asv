@@ -10,7 +10,6 @@ close all
 %TO DO: 
 - finish implementing chooseNeurons
 - fix excludeNeurons to be for each given afferent
-- welsh spectra (normalized!)
 - produce following figures:
 
 FIGURE 1: Apparatus
@@ -38,7 +37,8 @@ FIGURE 7: Comparison of afferent RMSEs across experimental conditions - matching
 SI Figure 1: Gain match
 SI Figure 2: Finger match re instron
 
-Write up results
+W
+
 
 THEN work on instron
 

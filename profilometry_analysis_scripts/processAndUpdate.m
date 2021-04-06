@@ -54,10 +54,14 @@ figure
 visualizeProfile(prof);
 str = input("detrend profile? (y/n)", 's');
 if str == "y"
-    prof = removeTrend(prof);
-    prof.detrended = 1;
+    new_prof = removeTrend(prof);
+    new_prof.detrended = 1;
     figure
-    visualizeProfile(prof);
+    visualizeProfile(new_prof);
+    str = input("undo detrend? (y/n)", 's');
+        if str == "n"
+            prof = new_prof;
+        end
 end
 
 % take out minimum

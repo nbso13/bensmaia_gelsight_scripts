@@ -14,16 +14,18 @@ load('TextureNames')
 good_neurons = 1:39;
 % text_nums = [6, 9, 13, 21, 25, 37, 31, 50:55];
 
-text_nums = [7, 31, 4, 42, 9, 45];
-%  50, 49, 48
+text_nums = [50, 49];
+% 7, 31, 4, 42, 9, 45
+%   48
 sub_plot_y_len = 3;
 sub_plot_x_len = 3;
 
 
 activities = struct;
 
-activities.names = ["wool_blend","velvet","hucktowel","sueded_cuddle", "corduroy", "blizzard_fleece"];
+activities.names = ["1mm_grating","3mm_grating"];
 %"1mm_grating","3mm_grating", "5mm_grating"
+% "wool_blend","velvet","hucktowel","sueded_cuddle", "corduroy", "blizzard_fleece"
 activities.real = zeros(length(activities.names), 6);
 speeds = [80];
 for j = 1:length(speeds)

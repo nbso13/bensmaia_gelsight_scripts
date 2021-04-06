@@ -26,8 +26,8 @@ for i = 1:3 %for each afferent
     plot(x,y);
     mdl = fitlm(activities.real(:,i),activities.gel(:,i));
     [r, p] = corrcoef(activities.real(:,i),activities.gel(:,i));
-    r_sq_str = {strcat("r^2 = ", num2str(round(mdl.Rsquared.Ordinary, 3))), ...
-        strcat("p = ", num2str(round(p(1,2), 3)))};
+    r_sq_str = {strcat("RMSE = ", num2str(round(rmse_calc(activities.real(:,i),activities.gel(:,i)))))};
+    %strcat("p = ", num2str(round(p(1,2), 3)))
     text(x(end), x(end), r_sq_str, 'HorizontalAlignment','right');
     xlabel("Real Recorded Activity (Hz)");
     ylabel("Gel Simulated Activity (Hz)");
@@ -55,11 +55,15 @@ for i = 1:3
     plot(x,y);
     mdl = fitlm(activities.real(:,i),activities.ts(:,i));
     [r, p] = corrcoef(activities.real(:,i),activities.ts(:,i));
-    r_sq_str = {strcat("r^2 = ", num2str(round(mdl.Rsquared.Ordinary, 3))), ...
-        strcat("p = ", num2str(round(p(1,2), 3)))};
+    r_sq_str = {strcat("RMSE = ", num2str(round(rmse_calc(activities.real(:,i),activities.ts(:,i)))))};
+    %strcat("p = ", num2str(round(p(1,2), 3)))
     text(x(end), x(end), r_sq_str, 'HorizontalAlignment','right');
     xlabel("Real Recorded Activity (Hz)");
     ylabel("TouchSim Simulated Activity (Hz)");
 end
+
 end
 
+function [rmse] = rmse_calc(real_rates, sim_rates)
+    rmse = sqrt(mean((real_rates-sim_rates).^2));
+end

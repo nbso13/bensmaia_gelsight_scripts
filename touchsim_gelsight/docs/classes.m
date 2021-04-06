@@ -73,7 +73,7 @@ a.idx
 %%
 
 % pick the first RA model, place at [1 1], and turn off input jitter
-a = Afferent('RA','idx',1,'location',[1 1],'noisy',false);
+a = Afferent('RA','idx',1,'location',[0 0],'noisy',false);
 a.location
 
 %%
