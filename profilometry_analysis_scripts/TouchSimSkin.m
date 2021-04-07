@@ -59,7 +59,10 @@ end
 %zero out offsets
 
 skin_surface_ts.offset = skin_surface_ts.offset - min(skin_surface_ts.offset);
+skin_surface_ts.area = no_gel.x_axis(end)*no_gel.y_axis(end);
 no_gel_ts.offset = no_gel_ts.offset - min(no_gel_ts.offset);
+no_gel_ts.area = no_gel.x_axis(end)*no_gel.y_axis(end);
 gel_ts.offset = gel_ts.offset - min(gel_ts.offset);
+gel_ts.area = gel.x_axis(end)*gel.y_axis(end);
 end
 

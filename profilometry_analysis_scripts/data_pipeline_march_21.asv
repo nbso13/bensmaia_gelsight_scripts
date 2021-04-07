@@ -8,55 +8,75 @@ clear
 close all
 
 %TO DO: 
-- finish implementing chooseNeurons
-- fix excludeNeurons to be for each given afferent
-- produce following figures:
+% - welsh spectra (normalized!)
+% - produce following figures:
 
-FIGURE 1: Apparatus
-
-FIGURE 2A B and C: Grating, Corduroy, blizzard fleece profiles no gel
-FIFUGRE 2DE and F: same, with touchsim
-FIGURE 2GH and I: same, with gelsight
-
-FIGURE 3 ABC: Power spectra no gel
-DEF: Power spectra touch sim
-GHI: Power spectra gel
-
-FIGURE 4A: Power spectra ratio no_gel touchsim, FOR COMPLIANT TEXTURES
-Figure 4B: power spectra ratio no gel, gel, FOR COMPLIANT TEXTURES
-
-FIGURE 5A: Comparison of spectra between real spike trains and  no gel profiles
-FIGURE 5B: real spike trains and gel profiles
-FIGURE 6C: real spike trains and  touchsim profiles
-
-FIGURE 6: Mother of all plots
-
-FIGURE 7: Comparison of afferent RMSEs across experimental conditions - matching contact conditions
-
-
-SI Figure 1: Gain match
-SI Figure 2: Finger match re instron
-
-W
-
-
-THEN work on instron
+% FIGURE 1: Apparatus
+% 
+% FIGURE 2A B and C: Grating, Corduroy, blizzard fleece profiles no gel
+% FIFUGRE 2DE and F: same, with touchsim
+% FIGURE 2GH and I: same, with gelsight
+% 
+% FIGURE 3 ABC: Power spectra no gel
+% DEF: Power spectra touch sim
+% GHI: Power spectra gel
+% 
+% FIGURE 4A: Power spectra ratio no_gel touchsim, FOR COMPLIANT TEXTURES
+% Figure 4B: power spectra ratio no gel, gel, FOR COMPLIANT TEXTURES
+% 
+% FIGURE 5A: Comparison of spectra between real spike trains and  no gel profiles
+% FIGURE 5B: real spike trains and gel profiles
+% FIGURE 6C: real spike trains and  touchsim profiles
+% 
+% FIGURE 6: Mother of all plots
+% 
+% FIGURE 7: Comparison of afferent RMSEs across experimental conditions - matching contact conditions
+% 
+% 
+% SI Figure 1: Gain match
+% SI Figure 2: Finger match re instron
+% 
+% Write up results
+% 
+% THEN work on instron
 
 %% set vars
 % figure_dir = "../../pngs/feb_23_charles_checkin/sueded_cuddle";
 figure_dir = 0; % do not save figures
 
-filename_gel = [ 
-    "210304_1mm_grating_gel_11_100_grams_processed",...
-    "210304_3mm_grating_gel_11_100_grams_processed"];
+
+cd ../neural_data
+load("RawPAFData")
+load("TextureNames")
+cd ../profilometry_analysis_scripts
+
+good_neurons = 1:39;
+% text_nums = [6, 9, 13, 21, 25, 37, 31, 50:55];
+texture_nums = [50, 49];
+
+%pull names
+for i = 1:length(htxt_name)
+    texture_names(i) = string(htxt_name{i});
+end
+
+
+filename_gel = ["210217_wool_blend_gel_7_processed", ...
+    "210223_velvet_gel_7_processed", ...
+    "210209_hucktowel_gel_11_processed",  ...
+    "210219_sueded_cuddle_gel_7_processed",...
+    "201118_corduroy_35_gel_trimmed", ...
+    "210226_blizzard_fleece_gel_7_200_grams_processed"];
+
+"210304_1mm_grating_gel_11_100_grams_processed",...
+    "210304_3mm_grating_gel_11_100_grams_processed"
 % "210223_1mm_grating_gel_11_processed",...
 %     "210216_3mm_grating_gel_7_processed",...
-%      "210217_wool_blend_gel_7_processed", ...
-%     "210223_velvet_gel_7_processed", ...
-%     "210209_hucktowel_gel_11_processed",  ...
-%     "210219_sueded_cuddle_gel_7_processed",...
-%     "201118_corduroy_35_gel_trimmed", ...
-%     "210226_blizzard_fleece_gel_7_200_grams_processed", ...
+     "210217_wool_blend_gel_7_processed", ...
+    "210223_velvet_gel_7_processed", ...
+    "210209_hucktowel_gel_11_processed",  ...
+    "210219_sueded_cuddle_gel_7_processed",...
+    "201118_corduroy_35_gel_trimmed", ...
+    "210226_blizzard_fleece_gel_7_200_grams_processed", ...
 %     "210310_wool_blend_gel_11_100_grams_processed", ...
 %     "210304_velvet_gel_11_100_grams_processed", ...
 %     "210304_hucktowel_gel_11_100_grams_processed", ...
@@ -65,28 +85,27 @@ filename_gel = [
 %     "210310_5mm_grating_gel_11_100_grams_processed"];
 
 
-filename_nogel = ["201021_1mm_grating_no_gel",...
-    "210212_3_mm_grating_no_gel_processed"];
-
+filename_nogel = ["210216_wool_blend_no_gel_processed", ...
+    "210121_velvet_no_gel_processed", ...
+    "210204_hucktowel_nogel_processed",  ...
+    "210222_sueded_cuddle_no_gel_processed",...
+    "201118_corduroy_no_gel_trimmed", ...
+    "210226_blizzard_fleece_no_gel_processed"];
+% "201021_1mm_grating_no_gel",...
+%     "210212_3_mm_grating_no_gel_processed"
 % ,...
-%     "210310_5mm_grating_no_gel_processed",...
-%     "210216_wool_blend_no_gel_processed", ...
-%     "210121_velvet_no_gel_processed", ...
-%     "210204_hucktowel_nogel_processed",  ...
-%     "210222_sueded_cuddle_no_gel_processed",...
-%     "201118_corduroy_no_gel_trimmed", ...
-%     "210226_blizzard_fleece_no_gel_processed"
+    
 
 %HYPERPARAMS
 ppm = 7;
-top_neuron_number = 20;
+top_neuron_number = 10;
 ts_amplitude = "max";
-aff_density = 0.8; %afferent population density
+aff_density = 1; %afferent population density
 speed = 80; %mm/s
 pin_radius = 0.025;
 gel_weight = 200;
 gel_num = 0;
-texture_type = "noncompliant"; %compliant, noncompliant, or combined
+texture_type = "compliant"; %compliant, noncompliant, or combined
 len = "full"; %seconds. 12 mm length / 80 mm/s so no edge scan.
 % ramp len
 % sample frequency in time
@@ -99,25 +118,10 @@ len = "full"; %seconds. 12 mm length / 80 mm/s so no edge scan.
 
 %% pull activities and real rates for each texture (for best neuron comparison)
 
-cd activities
-load("real_activities")
-cd ..
 
 
-cd ../neural_data
-load("RawPAFData")
-load("TextureNames")
-cd ../profilometry_analysis_scripts
 
-
-for i = 1:length(htxt_name)
-    texture_names(i) = string(htxt_name{i});
-end
-
-
-good_neurons = 1:39;
-% text_nums = [6, 9, 13, 21, 25, 37, 31, 50:55];
-texture_nums = [50, 49];
+my_texture_names = texture_names(texture_nums);
 
 disp(texture_names(texture_nums));
 if ~((length(texture_nums) == length(filename_gel)) && (length(filename_gel) == length(filename_nogel)))
@@ -126,7 +130,7 @@ end
 
 neuron_identities = {iPC, iRA, iSA};
 excludeNeurons = 1; %don't average neurons that don't fire
-activities = pullRealActivities(rates, texture_names, good_neurons, neuron_identities, texture_nums, speed, excludeNeurons);
+activities = pullRealActivities(rates, my_texture_names, good_neurons, neuron_identities, texture_nums, speed, excludeNeurons);
 
 
 
@@ -145,7 +149,9 @@ activities = pullRealActivities(rates, texture_names, good_neurons, neuron_ident
 % modes: "area" - all afferents in area
 %        "top"   - average of n=top_neuron_number neurons that respond
 %        "best" -  average of closest n=top_neuron_number
-neuron_selection_modes = ["best", "best", "best"];
+%        "best_area" - average of closest n=top neuron number in texture
+%        area
+neuron_selection_modes = ["best", "best_area", "best_area"];
 tic
 for i = 1:length(filename_gel)
     texture_rates = activities.real(i,1:3);
@@ -186,9 +192,9 @@ title_str = strcat(texture_type, "_activities_", c, "_",...
     num2str(ppm), "_", ...
     num2str(speed), "_",...
     num2str(aff_density), ...
-    modes, ".mat");
+    neuron_selection_modes, ".mat");
 
-save(title_str, "activities");
+% save(title_str, "activities");
 cd ..
 motherOfAllPlotsFunc(activities);
 sgtitle(title_str) 

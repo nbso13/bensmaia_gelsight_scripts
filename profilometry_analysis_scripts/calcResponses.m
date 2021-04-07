@@ -1,5 +1,5 @@
 function [FRs_ts, FRs_gel, r, a, figure_handles] = calcResponses(ts, gel, ...
-    aff_density, ppm, speed, len, loc, samp_freq, ramp_len, top_neuron_number, ...
+    aff_density, ppm, speed, len, samp_freq, top_neuron_number, ...
     texture_rates, neuron_selection_modes, plot_flag)
 %calcResponses given parameters, scans textures in ts structs across hand
 %and measures response in aff_pop. FRs are returned.
@@ -11,21 +11,21 @@ ts_structs = [ts, gel];
 for i = 1:length(ts_structs)
     aff_pop = affpop_hand('D2d',aff_density);
     s{i} = stim_scan_shape(ts_structs(i).shape, ts_structs(i).offset, ppm, ...
-        len, loc, samp_freq, ts_structs(i).amp, speed, ts_structs(i).gel_flag);
+        len, samp_freq, ts_structs(i).amp, speed, ts_structs(i).gel_flag);
     if plot_flag
         stim_fig = figure;
         plot(s{i})
-        aff_fig = figure;
-        plot(aff_pop)
-        title("aff pop old")
+%         aff_fig = figure;
+%         plot(aff_pop)
+%         title("aff pop old")
     end
     
     resp = aff_pop.response(s{i});
     
-    min_x = min(ts_structs(i).shape(1, :)); %grabbing extent of pins on hand coordinate system
-    max_x = max(ts_structs(i).shape(1, :));
-    min_y = min(ts_structs(i).shape(2, :));
-    max_y = max(ts_structs(i).shape(2, :));
+    min_x = min(ts_structs(i).shape(:, 1)); %grabbing extent of pins on hand coordinate system
+    max_x = max(ts_structs(i).shape(:, 1));
+    min_y = min(ts_structs(i).shape(:, 2));
+    max_y = max(ts_structs(i).shape(:, 2));
     
     loc = [min_x, max_x, min_y, max_y];
     [resp_new, aff_pop_new] = chooseNeurons(resp, neuron_selection_modes, ...
@@ -34,9 +34,9 @@ for i = 1:length(ts_structs)
     a{i} = aff_pop_new;
     
     if plot_flag
-        aff_pop_new_fig = figure;
-        plot(aff_pop_new)
-        title("aff pop new")
+%         aff_pop_new_fig = figure;
+%         plot(aff_pop_new)
+%         title("aff pop new")
         response_fig = figure;
         subplot(2,2,1);
         plot(resp_new)
@@ -74,9 +74,12 @@ for i = 1:length(ts_structs)
         ylabel("Hz")
     end
     total_force = sum(s{i}.profile(1,:));
+    total_area = ts_structs(i).area;
 %     total_area ts_structs(i).x_axis(end) * ts_structs(i).y_axis(end)
 %     total_pressure
     disp(strcat("Total force: ", num2str(total_force)));
+    disp(strcat("Total area: ", num2str(total_area), " sq mm"));
+    disp(strcat("Total Pressure: ", num2str(total_force/(total_area/1000000)), " Pa"));
     
     force_profile = shape2profilometry(ts_structs(i).shape, ...
         s{i}.profile(1,:), ts_structs(i).pins_per_mm);
@@ -86,7 +89,6 @@ for i = 1:length(ts_structs)
     if plot_flag
         subplot(2,2,3); visualizeProfile(force_profile);
         title(strcat(ts_structs(i).name, " force profile"));
-        disp(strcat("Total forces: ", num2str(sum(sum(force_profile.profile)))));
         subplot(2,2,4); visualizeProfile(trace_profile);
         title(strcat(ts_structs(i).name, " trace profile"));
         sgtitle(strcat(ts_structs(i).name, " Responses"));

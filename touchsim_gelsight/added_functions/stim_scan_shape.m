@@ -46,7 +46,7 @@ if size(shape,1)>1
 end
 
 %trace shape
-t = zeros(samp_freq*len,1);
+t = zeros(int64(samp_freq*len),1);
 trace = repmat(t,[1 size(shape,1)]);
 
 % make pin_offset so that tip of texture contacts skin, plus given

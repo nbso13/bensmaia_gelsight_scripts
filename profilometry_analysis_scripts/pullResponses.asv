@@ -107,7 +107,7 @@ end
 new_gel_ts.amp = max(new_gel_ts.offset); %max(new_gel_ts.offset);
 new_no_gel_ts.amp = 0;
 
-skin_surface_profile = shape2profilometry(skin_surface_ts.shape, skin_surface_ts.offset, ppm);
+skin_surface_profile = shape2profile(skin_surface_ts.shape, skin_surface_ts.offset, ppm);
 [pxx_ts, f_ts] = welchProfile(skin_surface_profile);
 %% calc_responses
 % str = input("Calculating neural responses. Display figures? (y/n)", 's');
@@ -120,8 +120,7 @@ end
 
 if plot_flag
     welch_fig = figure;
-    interp_gel = interp1(f_gel, pxx_gel, f_no_gel);
-    interp_ts = interp1(f_ts, pxx_ts, f_no_gel);
+    intrp_gel = interp1(f_gel, pxx_gel, f_no_gel);
     subplot(2,3,1)
     plotWelch(pxx_no_gel, f_no_gel);
     title("No Gel")
@@ -129,16 +128,9 @@ if plot_flag
     plotWelch(pxx_gel, f_gel);
     title("Gel")
     subplot(2,3,3)
-    plotWelch(pxx_ts, f_ts);
-    title("TouchSim")
-    subplot(2,3,5)
-    plotWelch(interp_gel./pxx_no_gel, f_no_gel)
-    title("Gel : No Gel ratio")
-    subplot(2,3,6)
-    plotWelch(interp_ts./pxx_no_gel, f_no_gel)
-    title("TS : No Gel ratio")
-    sgtitle(strcat("Normalized Profile Power Spectra"));
-end
+    plotWelch(pxx_no_gel, f_no_gel);
+    title("No Gel")
+    sgtitle("Normalized Profile Power Spectra")
     
 [FRs_ts, FRs_gel, response_collection, aff_pop_final, figure_handles] = calcResponses(skin_surface_ts,...
     new_gel_ts, aff_density, ppm, speed, len, samp_freq, top_neuron_number, ...
@@ -154,7 +146,6 @@ if save_figures
         saveas(figure_handles{i,2}, strcat("response_", direcs(i), "_", texture_name, "_", dates(i), '.png'));
         cd ..
     end
-    saveas(welch_fig, strcat("welch_result", direcs(i), "_", texture_name, "_", dates(i), '.png'));
     cd ../../../bensmaia_gelsight_scripts/profilometry_analysis_scripts %out of ts, hucktowel, _checkin, pngs,
 end
 
