@@ -13,21 +13,22 @@ load('TextureNames')
 % good_neurons = [2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 18 22 25 28 33 34];
 good_neurons = 1:39;
 % text_nums = [6, 9, 13, 21, 25, 37, 31, 50:55];
-
-text_nums = [50, 49];
+% generate real rasters and rates
+text_nums = [9];
 % 7, 31, 4, 42, 9, 45
-%   48
-sub_plot_y_len = 3;
-sub_plot_x_len = 3;
+%   48  9, 45
+sub_plot_y_len = 1;
+sub_plot_x_len = 1;
 
 
 activities = struct;
 
-activities.names = ["1mm_grating","3mm_grating"];
-%"1mm_grating","3mm_grating", "5mm_grating"
+activities.names = ["corduroy"];
+%"1mm_grating","3mm_grating", "5mm_grating" "corduroy", "blizzard fleece"
 % "wool_blend","velvet","hucktowel","sueded_cuddle", "corduroy", "blizzard_fleece"
 activities.real = zeros(length(activities.names), 6);
 speeds = [80];
+time_length = 0.4;
 for j = 1:length(speeds)
     speed  = speeds(j);
     neuron_identities = {iPC, iRA, iSA};
@@ -43,13 +44,13 @@ for j = 1:length(speeds)
     figure('Position', [400, 400, 800, 500]);
     for i = 1:length(text_nums)
         subplot(sub_plot_y_len,sub_plot_x_len,i)
-        plotRasters(spikes, good_neurons, htxt_name, neuron_identities, text_nums(i), speed);
+        plotRasters(spikes, time_length, good_neurons, htxt_name, neuron_identities, text_nums(i), speed);
     end
 end
 
-cd ../profilometry_analysis_scripts/activities
-save("real_activities", "activities");
-cd ..
+% cd ../profilometry_analysis_scripts/activities
+% save("real_activities", "activities");
+% cd ..
 
 
 

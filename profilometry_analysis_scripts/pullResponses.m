@@ -1,5 +1,5 @@
 function [FRs_ts, FRs_gel, response_collection, aff_pop_final, welch_results] = pullResponses(filename_gel, ...
-    filename_nogel, ppm, top_neuron_number, ts_amplitude, len, speed, pin_radius, aff_density, ...
+    filename_nogel, ppm, stopBand, top_neuron_number, ts_amplitude, len, speed, pin_radius, aff_density, ...
      texture_rates, neuron_selection_modes, figure_dir)
 %pullResponses: given struct filenames and other hyperparams, calc firing
 %rates. filenames indicate mat file name. ppm is pins per millimeter for
@@ -37,34 +37,42 @@ if ~isfield(gel, 'scaled')
     
 end
 
-[pxx_gel, f_gel] = welchProfile(gel);
-[pxx_no_gel, f_no_gel] = welchProfile(no_gel);
+% freq = 0.1; %2/mm
+% amp = 1500;
+% res = 10;
+% window_size = 5000;
+% gel = generate_texture("grating", freq, amp, 10, res, window_size);
 
 
 disp("Adjusting crop and sample rate...")
 if ~checkSizeMatch(gel, no_gel)
-    [gel, no_gel] = resampleToMin(gel, no_gel); %resamples to the min resolution
+%     [gel, no_gel] = resampleToMin(gel, no_gel); %resamples to the min resolution
     %[gel, no_gel] = bruteCropFit(gel, no_gel); %crops to same size
 end
 
-figure
+
+gel = removeLowFreq(gel, stopBand);
+no_gel = removeLowFreq(no_gel, stopBand);
+
 subplot(1,2,1)
 visualizeProfile(gel);
-title("Gel")
+title("Gel after filtering")
 subplot(1,2,2)
 visualizeProfile(no_gel);
-title("No Gel")
-sgtitle("Profiles after cropping and resampling.");
+title("No Gel after filtering")
+
+[pxx_gel, f_gel] = welchProfile(gel);
+[pxx_no_gel, f_no_gel] = welchProfile(no_gel);
 
 % calculate length of time of scan
 
-if isstring(len) %then we do one full scan through
+if isstring(len) %then we do two full scans through
     len = 2*gel.x_axis(end)/speed;
 end
 
 %% build models
 % str = input("View touchsim surfaces? (y/n)", 's');
-str = 'n';
+str = 'y';
 disp("Building surface models...")
 if str == "y"
     plot_flag = 1;
@@ -107,8 +115,11 @@ end
 new_gel_ts.amp = max(new_gel_ts.offset); %max(new_gel_ts.offset);
 new_no_gel_ts.amp = 0;
 
+% calculate welch's method
 skin_surface_profile = shape2profilometry(skin_surface_ts.shape, skin_surface_ts.offset, ppm);
+skin_surface_profile = rotateProfilometry(skin_surface_profile, 90);
 [pxx_ts, f_ts] = welchProfile(skin_surface_profile);
+
 %% calc_responses
 % str = input("Calculating neural responses. Display figures? (y/n)", 's');
 str = 'y';
@@ -134,10 +145,26 @@ if plot_flag
     subplot(2,3,5)
     plotWelch(interp_gel./pxx_no_gel, f_no_gel)
     title("Gel : No Gel ratio")
+    ylabel("Ratio")
+    yticklabels('auto')
     subplot(2,3,6)
     plotWelch(interp_ts./pxx_no_gel, f_no_gel)
+    ylabel("Ratio")
+    yticklabels('auto')
     title("TS : No Gel ratio")
     sgtitle(strcat("Normalized Profile Power Spectra"));
+    
+%     fftfig = figure;
+%     subplot(1,3,1)
+%     calcPlot2dFFT(gel);
+%     title("Gel FFT")
+%     subplot(1,3,2)
+%     calcPlot2dFFT(no_gel);
+%     title("No Gel 2D FFT")
+%     subplot(1,3, 3)
+%     calcPlot2dFFT(skin_surface_profile);
+%     title("TouchSim 2D FFT")
+%     sgtitle(strcat("2D FFTs"));
 end
     
 [FRs_ts, FRs_gel, response_collection, aff_pop_final, figure_handles] = calcResponses(skin_surface_ts,...
@@ -154,7 +181,7 @@ if save_figures
         saveas(figure_handles{i,2}, strcat("response_", direcs(i), "_", texture_name, "_", dates(i), '.png'));
         cd ..
     end
-    saveas(welch_fig, strcat("welch_result", direcs(i), "_", texture_name, "_", dates(i), '.png'));
+%     saveas(welch_fig, strcat("welch_result", direcs(i), "_", texture_name, "_", dates(i), '.png'));
     cd ../../../bensmaia_gelsight_scripts/profilometry_analysis_scripts %out of ts, hucktowel, _checkin, pngs,
 end
 

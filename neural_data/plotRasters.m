@@ -1,4 +1,4 @@
-function [] = plotRasters(spikes,good_neurons, names, neuron_identities, texture_num, speed)
+function [] = plotRasters(spikes, time_length, good_neurons, names, neuron_identities, texture_num, speed)
 %plotRasters takes spiketrains for a given texture at a given speed and
 %plots the raster. SAs are green, RAs are blue, PCs are orange.
 good_logit = zeros(39,1);
@@ -39,8 +39,12 @@ for i = 1:length(neurons)
                 continue
             else
                 for m = 1:length(spike_train)
+                    if spike_train(m) > time_length
+                        break
+                    end
                     line([spike_train(m) spike_train(m)], [plotter-1 plotter], 'Color', colors(i, :));
                     %Create a tick mark at x = t1(i) with a height of 1
+                    
                     
                 end
                 plotter = plotter + 1;

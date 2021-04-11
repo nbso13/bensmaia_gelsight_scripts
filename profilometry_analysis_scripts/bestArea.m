@@ -39,6 +39,10 @@ rate_array = resp.rate(mask); % separate list of rates
 rate_array = abs(rate_array - target_rate);
 master_indices_array = indices(mask); % separate lists of indices of target afferent
 [~, sorted_indices] = sort(rate_array, 'ascend'); %sorted rates of afferent class
+if top_neurons > length(sorted_indices)
+    top_neurons = length(sorted_indices);
+    disp(strcat("Only ", num2str(top_neurons), " neurons, including all."));
+end
 top_indices = sorted_indices(1:top_neurons); %top indices
 number_total_afferents = length(sorted_indices);
 aff_indices_mask = zeros(1, number_total_afferents); % make mask to find the top master indices

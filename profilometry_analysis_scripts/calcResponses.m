@@ -8,6 +8,7 @@ s = {};
 a = {};
 figure_handles = {};
 ts_structs = [ts, gel];
+
 for i = 1:length(ts_structs)
     aff_pop = affpop_hand('D2d',aff_density);
     s{i} = stim_scan_shape(ts_structs(i).shape, ts_structs(i).offset, ppm, ...
@@ -15,9 +16,9 @@ for i = 1:length(ts_structs)
     if plot_flag
         stim_fig = figure;
         plot(s{i})
-%         aff_fig = figure;
-%         plot(aff_pop)
-%         title("aff pop old")
+        aff_fig = figure;
+        plot(aff_pop)
+        title("aff pop old")
     end
     
     resp = aff_pop.response(s{i});
@@ -28,17 +29,18 @@ for i = 1:length(ts_structs)
     max_y = max(ts_structs(i).shape(:, 2));
     
     loc = [min_x, max_x, min_y, max_y];
+    
     [resp_new, aff_pop_new] = chooseNeurons(resp, neuron_selection_modes, ...
         texture_rates, top_neuron_number, aff_pop, loc);
     r{i} = resp_new;
     a{i} = aff_pop_new;
     
     if plot_flag
-%         aff_pop_new_fig = figure;
-%         plot(aff_pop_new)
-%         title("aff pop new")
+        aff_pop_new_fig = figure;
+        plot(aff_pop_new)
+        title("aff pop new")
         response_fig = figure;
-        subplot(2,2,1);
+        subplot(2,1,1);
         plot(resp_new)
         title(ts_structs(i).name);
     end
@@ -49,15 +51,18 @@ for i = 1:length(ts_structs)
     FRs{i,3} = resp_new.rate(aff_pop_new.iSA1);
     means = zeros(3,1);
     sem = means;
+    
     for j = 1:3
         means(j)  = mean(FRs{i,j});
         sem(j) = std(FRs{i,j})/sqrt(length(FRs{i,j}));
     end
+    
     FRs{i,4} = means;
     FRs{i, 5} = sem;
     x = [1,2,3];
+    
     if plot_flag
-        subplot(2,2,2)
+        subplot(2,1,2)
         bar(x, means);
         hold on
         b = bar(x,means);
@@ -87,11 +92,11 @@ for i = 1:length(ts_structs)
         s{i}.trace(1,:), ts_structs(i).pins_per_mm);
     
     if plot_flag
-        subplot(2,2,3); visualizeProfile(force_profile);
-        title(strcat(ts_structs(i).name, " force profile"));
-        subplot(2,2,4); visualizeProfile(trace_profile);
-        title(strcat(ts_structs(i).name, " trace profile"));
-        sgtitle(strcat(ts_structs(i).name, " Responses"));
+%         subplot(2,2,3); visualizeProfile(force_profile);
+%         title(strcat(ts_structs(i).name, " force profile"));
+%         subplot(2,2,4); visualizeProfile(trace_profile);
+%         title(strcat(ts_structs(i).name, " trace profile"));
+%         sgtitle(strcat(ts_structs(i).name, " Responses"));
         
         figure_handles{i, 1} = stim_fig;
         figure_handles{i, 2} = response_fig;

@@ -1,9 +1,11 @@
-function [] = motherOfAllPlotsFunc(activities)
+function [rmses] = motherOfAllPlotsFunc(activities)
 %motherOfAllPlots takes in activity statistics from real afferents and
 %simulated afferents from touchsim and gelsight and compares the simulation
 %to the real values.
 
 num_textures = length(activities.names);
+
+rmses = zeros(2, 3);
 
 aff_class = ["PCs", "RAs", "SA1s"];
 figure;
@@ -26,9 +28,10 @@ for i = 1:3 %for each afferent
     plot(x,y);
     mdl = fitlm(activities.real(:,i),activities.gel(:,i));
     [r, p] = corrcoef(activities.real(:,i),activities.gel(:,i));
-    r_sq_str = {strcat("RMSE = ", num2str(round(rmse_calc(activities.real(:,i),activities.gel(:,i)))))};
+    rmses(1,i) = rmse_calc(activities.real(:,i),activities.gel(:,i));
+    r_sq_str = {strcat("RMSE = ", num2str(round(rmses(1,i))))};
     %strcat("p = ", num2str(round(p(1,2), 3)))
-    text(x(end), x(end), r_sq_str, 'HorizontalAlignment','right');
+    text(x(round(end/2)), x(end)+5, r_sq_str, 'HorizontalAlignment','right');
     xlabel("Real Recorded Activity (Hz)");
     ylabel("Gel Simulated Activity (Hz)");
     if (i == 1)
@@ -55,9 +58,10 @@ for i = 1:3
     plot(x,y);
     mdl = fitlm(activities.real(:,i),activities.ts(:,i));
     [r, p] = corrcoef(activities.real(:,i),activities.ts(:,i));
-    r_sq_str = {strcat("RMSE = ", num2str(round(rmse_calc(activities.real(:,i),activities.ts(:,i)))))};
+    rmses(2, i) = rmse_calc(activities.real(:,i),activities.ts(:,i));
+    r_sq_str = {strcat("RMSE = ", num2str(round(rmses(2, i))))};
     %strcat("p = ", num2str(round(p(1,2), 3)))
-    text(x(end), x(end), r_sq_str, 'HorizontalAlignment','right');
+    text(x(round(end/2)), x(end)+5, r_sq_str, 'HorizontalAlignment','right');
     xlabel("Real Recorded Activity (Hz)");
     ylabel("TouchSim Simulated Activity (Hz)");
 end

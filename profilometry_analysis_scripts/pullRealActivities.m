@@ -6,6 +6,9 @@ function [activities] = pullRealActivities(rates, names, good_neurons, neuron_id
 %average firing rate. Next three columns are standard error on the mean of
 %same afferent classes.
 
+if texture_nums == 1
+    error("for now, this doesn't work with only one texture.")
+end
 %determine "good neuron" indices
 good_logit = zeros(39,1);
 for i = 1:length(good_logit)

@@ -4,7 +4,7 @@ gel_constant = 1.48;
 cd ../../mat_files/
 load(filename_prof);
 cd ../bensmaia_gelsight_scripts/profilometry_analysis_scripts
-disp(strcat("PROCESSING ", filename_prof));
+
 if gel_flag
     prof = gel;
 else
@@ -78,7 +78,6 @@ end
 
 %% fill missing
 if sum(isnan(prof.profile(:))) > 0
-    disp("INPAINTING NANS")
     prof.profile = inpaint_nans(prof.profile);
 end
 
