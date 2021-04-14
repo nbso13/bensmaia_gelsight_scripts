@@ -1,8 +1,9 @@
-function [gel_ts, no_gel_ts, skin_surface_ts, surf_figures, P] = TouchSimSkin(gel, no_gel, pins_per_mm, pin_radius, plot_flag)
+function [gel_ts, no_gel_ts, skin_surface_ts, surf_figures, P] = TouchSimSkin(gel, no_gel, pins_per_mm, pin_radius, amplitudes, plot_flag)
 %touchsimskin takes in two profilometry structs and returns the gel but
 %downsampled as the rest of them are, the "new gel" or the touchsim version
 %model of the skin mech and the new_no_gel, downsampled to touchsim level.
 %P returned is local stresses as calculated for touchsim gel.
+%amplitudes is amplitude gel then amplitude ts.
 gel_surf = 0;
 no_gel_surf = 0;
 skin_surf = 0;
@@ -58,11 +59,11 @@ end
 
 %zero out offsets
 
-skin_surface_ts.offset = skin_surface_ts.offset - min(skin_surface_ts.offset);
+skin_surface_ts.offset = skin_surface_ts.offset - min(skin_surface_ts.offset) + amplitudes(2);
 skin_surface_ts.area = no_gel.x_axis(end)*no_gel.y_axis(end);
 no_gel_ts.offset = no_gel_ts.offset - min(no_gel_ts.offset);
 no_gel_ts.area = no_gel.x_axis(end)*no_gel.y_axis(end);
-gel_ts.offset = gel_ts.offset - min(gel_ts.offset);
+gel_ts.offset = gel_ts.offset - min(gel_ts.offset) + amplitudes(1);
 gel_ts.area = gel.x_axis(end)*gel.y_axis(end);
 end
 

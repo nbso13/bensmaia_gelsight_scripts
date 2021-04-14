@@ -49,12 +49,13 @@ end
 t = zeros(int64(samp_freq*len),1);
 trace = repmat(t,[1 size(shape,1)]);
 
-% make pin_offset so that tip of texture contacts skin, plus given
-% amplitude
-pin_offset = pin_offset - max(pin_offset)+amp;
-disp(strcat("stim_scan_shape: Indenting at ", num2str(max(pin_offset)), "mm amplitude."));
-pin_offset(pin_offset<0) = 0; %zero negative values
+med = median(pin_offset);
+disp(strcat("stim_scan_shape: Indenting at ", num2str(max(pin_offset)), "mm median amplitude."));
 
+if sum(pin_offset<0)>0
+    pin_offset(pin_offset<0) = 0; %zero negative values
+    disp("found negative values and zero'd out.")
+end
 %find x coord num
 %first x val
 x1 = shape(1,1);

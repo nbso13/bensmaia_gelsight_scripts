@@ -1,46 +1,47 @@
 close all
 clear
 
-gel_constant = 1.48; %empirically derived factor to scale profilometry through gel
-    
+
 
 
 %% Load data and process data
-
-filename_gel = "210217_wool_blend_gel_7_processed";
+% "210217_wool_blend_gel_7_processed"
+% "210121_velvet_no_gel_processed"
+filename_gel = "210223_velvet_gel_7_processed";
 disp(strcat("Loading data from ", filename_gel));
 
 cd ../../mat_files/
 load(filename_gel, "gel");
 cd ../bensmaia_gelsight_scripts/profilometry_analysis_scripts
-
+prof = gel;
 
 % freq = 0.12; %2/mm
 % amp = 1500;
 % res = 0.8;
 % window_size = 5000;
-% gel = generate_texture("grating", freq, amp, 10, res, window_size);
+% prof = generate_texture("grating", freq, amp, 10, res, window_size);
 
 
-[pxx_gel, f_gel] = welchProfile(gel);
+[pxx_prof, f_prof] = welchProfile(prof);
 figure; 
 subplot(2,2,1)
-plotWelch(pxx_gel, f_gel);
+plotWelch(pxx_prof, f_prof);
 title("Before filtering")
 
 subplot(2,2,2)
-visualizeProfile(gel);
+visualizeProfile(prof);
 title("Gel")
 
 
-stopBand =0.5; %anything under 0.5/mm ie happens once every two mm. freq is too low.
-gel_new = removeLowFreq(gel, stopBand);
+stopBand =1; %anything under 0.5/mm ie happens once every two mm. freq is too low.
+prof_new = removeLowFreq(prof, stopBand, 'charles');
 
-[pxx_gel_new, f_gel_new] = welchProfile(gel_new);
+[pxx_prof_new, f_prof_new] = welchProfile(prof_new);
+figure(1);
 subplot(2,2,3)
-plotWelch(pxx_gel_new, f_gel_new);
+plotWelch(pxx_prof_new, f_prof_new);
 title("After filtering")
 
 subplot(2,2,4)
-visualizeProfile(gel_new);
+visualizeProfile(prof_new);
 title("Gel")

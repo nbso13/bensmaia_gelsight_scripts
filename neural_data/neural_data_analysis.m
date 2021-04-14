@@ -28,7 +28,7 @@ activities.names = ["corduroy"];
 % "wool_blend","velvet","hucktowel","sueded_cuddle", "corduroy", "blizzard_fleece"
 activities.real = zeros(length(activities.names), 6);
 speeds = [80];
-time_length = 0.4;
+time_length = 2;
 for j = 1:length(speeds)
     speed  = speeds(j);
     neuron_identities = {iPC, iRA, iSA};

@@ -12,7 +12,7 @@ ts_structs = [ts, gel];
 for i = 1:length(ts_structs)
     aff_pop = affpop_hand('D2d',aff_density);
     s{i} = stim_scan_shape(ts_structs(i).shape, ts_structs(i).offset, ppm, ...
-        len, samp_freq, ts_structs(i).amp, speed, ts_structs(i).gel_flag);
+        len, samp_freq, speed, ts_structs(i).gel_flag);
     if plot_flag
         stim_fig = figure;
         plot(s{i})

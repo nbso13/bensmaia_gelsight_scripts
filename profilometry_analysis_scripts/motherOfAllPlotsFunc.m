@@ -26,8 +26,8 @@ for i = 1:3 %for each afferent
     x = 1:max(max(activities.real(:,i)), max(activities.gel(:, i)));
     y = x;
     plot(x,y);
-    mdl = fitlm(activities.real(:,i),activities.gel(:,i));
-    [r, p] = corrcoef(activities.real(:,i),activities.gel(:,i));
+%     mdl = fitlm(activities.real(:,i),activities.gel(:,i));
+%     [r, p] = corrcoef(activities.real(:,i),activities.gel(:,i));
     rmses(1,i) = rmse_calc(activities.real(:,i),activities.gel(:,i));
     r_sq_str = {strcat("RMSE = ", num2str(round(rmses(1,i))))};
     %strcat("p = ", num2str(round(p(1,2), 3)))

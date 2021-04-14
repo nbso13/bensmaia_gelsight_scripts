@@ -1,5 +1,5 @@
-function [FRs_ts, FRs_gel, response_collection, aff_pop_final, welch_results] = pullResponses(filename_gel, ...
-    filename_nogel, ppm, stopBand, top_neuron_number, ts_amplitude, len, speed, pin_radius, aff_density, ...
+function [FRs_ts, FRs_gel, response_collection, aff_pop_final] = pullResponses(gel, ...
+    no_gel, ppm, top_neuron_number, amplitude, len, speed, pin_radius, aff_density, ...
      texture_rates, neuron_selection_modes, figure_dir)
 %pullResponses: given struct filenames and other hyperparams, calc firing
 %rates. filenames indicate mat file name. ppm is pins per millimeter for
@@ -10,9 +10,6 @@ function [FRs_ts, FRs_gel, response_collection, aff_pop_final, welch_results] = 
 % presets
 samp_freq = 2000; % hz
 ramp_len = 0.01; %length of ramping on, in seconds
-gel_constant = 1.48; %empirically derived factor to scale profilometry through gel
-    
-
 
 %% Load data and process data
 
@@ -24,45 +21,17 @@ if isstring(figure_dir)
     disp(strcat("Saving figures to ", figure_dir));
 end
 
-disp(strcat("Loading data from ", filename_gel));
-
-cd ../../mat_files/
-load(filename_gel, "gel");
-load(filename_nogel, "no_gel");
-cd ../bensmaia_gelsight_scripts/profilometry_analysis_scripts
-
-if ~isfield(gel, 'scaled')
-    disp(strcat(filename_gel, " apparently not scaled - scaling up by gel constant."));
-    gel.profile = gel.profile.*gel_constant; %scale up
-    
-end
 
 % freq = 0.1; %2/mm
 % amp = 1500;
 % res = 10;
 % window_size = 5000;
 % gel = generate_texture("grating", freq, amp, 10, res, window_size);
-
-
-disp("Adjusting crop and sample rate...")
-if ~checkSizeMatch(gel, no_gel)
+% disp("Adjusting crop and sample rate...")
+% if ~checkSizeMatch(gel, no_gel)
 %     [gel, no_gel] = resampleToMin(gel, no_gel); %resamples to the min resolution
-    %[gel, no_gel] = bruteCropFit(gel, no_gel); %crops to same size
-end
-
-
-gel = removeLowFreq(gel, stopBand);
-no_gel = removeLowFreq(no_gel, stopBand);
-
-subplot(1,2,1)
-visualizeProfile(gel);
-title("Gel after filtering")
-subplot(1,2,2)
-visualizeProfile(no_gel);
-title("No Gel after filtering")
-
-[pxx_gel, f_gel] = welchProfile(gel);
-[pxx_no_gel, f_no_gel] = welchProfile(no_gel);
+%     [gel, no_gel] = bruteCropFit(gel, no_gel); %crops to same size
+% end
 
 % calculate length of time of scan
 
@@ -72,7 +41,7 @@ end
 
 %% build models
 % str = input("View touchsim surfaces? (y/n)", 's');
-str = 'y';
+str = 'n';
 disp("Building surface models...")
 if str == "y"
     plot_flag = 1;
@@ -105,66 +74,35 @@ cd ../touchsim_gelsight
 setup_path;
 cd ../profilometry_analysis_scripts/
 
-if ts_amplitude == "max"
-    skin_surface_ts.amp = max(skin_surface_ts.offset); %max(skin_surface_ts.offset);
-else
-    skin_surface_ts.amp = ts_amplitude; %max(skin_surface_ts.offset);
+skin_surface_ts.offset = skin_surface_ts.offset- min(skin_surface_ts.offset);
+new_gel_ts.offset = new_gel_ts.offset- min(new_gel_ts.offset);
+gel_amplitude = 0;
+ts_amplitude = 0;
+ %figure out amplitude
+if amplitude ~= "max"
+     %if it is max, just completely indent both profiles from min to max, but no added amp.
+    if (amplitude > median(new_gel_ts.offset)) && (amplitude > median(skin_surface_ts.offset))
+        disp("amplitudes both low, adjusting to given value")
+        gel_amplitude = amplitude - median(new_gel_ts.offset);
+        ts_amplitude = amplitude - median(skin_surface_ts.offset);
+    end
 end
 
 % skin_surface_ts.amp = 1.95; %1/19 dots
-new_gel_ts.amp = max(new_gel_ts.offset); %max(new_gel_ts.offset);
-new_no_gel_ts.amp = 0;
+skin_surface_ts.offset = skin_surface_ts.offset + ts_amplitude;
+new_gel_ts.offset = new_gel_ts.offset + gel_amplitude;
 
 % calculate welch's method
 skin_surface_profile = shape2profilometry(skin_surface_ts.shape, skin_surface_ts.offset, ppm);
-skin_surface_profile = rotateProfilometry(skin_surface_profile, 90);
 [pxx_ts, f_ts] = welchProfile(skin_surface_profile);
 
 %% calc_responses
 % str = input("Calculating neural responses. Display figures? (y/n)", 's');
-str = 'y';
+str = 'n';
 if str == "y"
     plot_flag = 1;
 else
     plot_flag = 0;
-end
-
-if plot_flag
-    welch_fig = figure;
-    interp_gel = interp1(f_gel, pxx_gel, f_no_gel);
-    interp_ts = interp1(f_ts, pxx_ts, f_no_gel);
-    subplot(2,3,1)
-    plotWelch(pxx_no_gel, f_no_gel);
-    title("No Gel")
-    subplot(2,3,2)
-    plotWelch(pxx_gel, f_gel);
-    title("Gel")
-    subplot(2,3,3)
-    plotWelch(pxx_ts, f_ts);
-    title("TouchSim")
-    subplot(2,3,5)
-    plotWelch(interp_gel./pxx_no_gel, f_no_gel)
-    title("Gel : No Gel ratio")
-    ylabel("Ratio")
-    yticklabels('auto')
-    subplot(2,3,6)
-    plotWelch(interp_ts./pxx_no_gel, f_no_gel)
-    ylabel("Ratio")
-    yticklabels('auto')
-    title("TS : No Gel ratio")
-    sgtitle(strcat("Normalized Profile Power Spectra"));
-    
-%     fftfig = figure;
-%     subplot(1,3,1)
-%     calcPlot2dFFT(gel);
-%     title("Gel FFT")
-%     subplot(1,3,2)
-%     calcPlot2dFFT(no_gel);
-%     title("No Gel 2D FFT")
-%     subplot(1,3, 3)
-%     calcPlot2dFFT(skin_surface_profile);
-%     title("TouchSim 2D FFT")
-%     sgtitle(strcat("2D FFTs"));
 end
     
 [FRs_ts, FRs_gel, response_collection, aff_pop_final, figure_handles] = calcResponses(skin_surface_ts,...
@@ -184,11 +122,5 @@ if save_figures
 %     saveas(welch_fig, strcat("welch_result", direcs(i), "_", texture_name, "_", dates(i), '.png'));
     cd ../../../bensmaia_gelsight_scripts/profilometry_analysis_scripts %out of ts, hucktowel, _checkin, pngs,
 end
-
-welch_results = {};
-welch_results{1,1} = pxx_gel; welch_results{1,2} = f_gel;
-welch_results{2,1} = pxx_no_gel; welch_results{2,2} = f_no_gel;
-welch_results{3,1} = pxx_ts; welch_results{3,2} = f_ts;
-
 end
 

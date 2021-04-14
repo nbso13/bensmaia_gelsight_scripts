@@ -12,6 +12,7 @@ else
 end
 
 if gel_flag && ~isfield(prof,'scaled') % if its a gel and not yet scaled
+    disp("scaling by gel factor!")
 	prof.profile = prof.profile.*gel_constant; %scale up
     prof.scaled = gel_constant;
 end
@@ -24,6 +25,7 @@ rotate_gel = 0;
 if ~rotate_gel == 0
     prof = rotateProfilometry(prof, rotate_gel);
 end
+
 
 
 %% name

@@ -38,9 +38,9 @@ ras = spikes_mat(:, iRA, :);
 sas = spikes_mat(:, iSA, :);
 afferents = {pcs, ras, sas};
 
-samp_period = 0.001; %seconds LATER MULT BY 80mm/s
-dec_place = -1*log10(samp_period);
-time_axis = 0:samp_period:1;
+sample_freq = 0.001; %seconds LATER MULT BY 80mm/s
+dec_place = -1*log10(sample_freq);
+time_axis = 0:sample_freq:1-sample_freq;
 averaged_spike_trains = zeros(length(texture_nums), 3, length(time_axis)); % 3 being the number of aff classes (PC, RA, SA)
 
 win_size = 11;
@@ -57,7 +57,7 @@ for i = 1:length(texture_nums)
                 run = aff{i,k,m};
                 if ~isempty(run) %if this afferent class for this texture for this neuron on this trial is not empty
                     run = round(run, dec_place);
-                    run = run.*(10^dec_place) + 1; %turning spike times into indices
+                    run = run.*(10^dec_place); %turning spike times into indices
                     mean_train(run) = mean_train(run)+1;
                     train_count = train_count + 1;
                 end
@@ -72,7 +72,7 @@ for i = 1:length(texture_nums)
     end
 end
 
-space_vec = time_axis.*speed; %now x vector is in mm.
+space_vec = time_vec.*speed; %now x vector is in mm.
 
 rates_mat = rates{ind};
 rates_mat = squeeze(rates_mat(texture_nums,:, :));
