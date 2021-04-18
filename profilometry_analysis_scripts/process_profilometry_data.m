@@ -2,9 +2,8 @@
 clear
 close all
 %% Load data
-file_names = {"210304_velvet_gel_11_100_grams", "210304_blizzard_fleece_gel_11_100_grams",...
-    "210304_3mm_grating_gel_11_100_grams", "210304_1mm_grating_gel_11_100_grams",};
-gel_id = [1, 1, 1, 1, 1]; %1 if gel 0 if nah
+file_names = {"210414_2mm_dots_no_gel"};
+gel_id = [0]; %1 if gel 0 if nah
 
 for index = 1:length(file_names)
     close all

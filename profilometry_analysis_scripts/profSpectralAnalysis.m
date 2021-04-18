@@ -42,6 +42,12 @@ title(no_gel.name)
 [pxx_gel, f_gel] = welchProfile(gel);
 [pxx_no_gel, f_no_gel] = welchProfile(no_gel);
 
+%normalize
+
+pxx_gel = pxx_gel./(max(pxx_gel));
+pxx_no_gel = pxx_no_gel./(max(pxx_no_gel));
+
+
 subplot(2, 3, 4)
 plotWelch(pxx_gel, f_gel)
 title(strcat(gel.name, " PSD"));

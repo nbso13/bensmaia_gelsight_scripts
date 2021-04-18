@@ -6,30 +6,30 @@
 % cd ~/Documents/bensmaia_lab/bensmaia_gelsight_scripts/profilometry_analysis_scripts
 clear
 close all
-% 
+%
 % TO DO:
 % - welsh spectra (normalized!)
 % - produce following figures:
-% 
+%
 % FIGURE 1: Apparatus
-% 
+%
 % FIGURE 2A B and C: Grating, Corduroy, blizzard fleece profiles no gel
 % FIFUGRE 2DE and F: same, with touchsim
 % FIGURE 2GH and I: same, with gelsight
-% 
+%
 % FIGURE 3 ABC: Power spectra no gel
 % DEF: Power spectra touch sim
 % GHI: Power spectra gel
-% 
+%
 % FIGURE 4A: Power spectra ratio no_gel touchsim, FOR COMPLIANT TEXTURES
 % Figure 4B: power spectra ratio no gel, gel, FOR COMPLIANT TEXTURES
-% 
+%
 % FIGURE 5A: Comparison of spectra between real spike trains and  no gel profiles
 % FIGURE 5B: real spike trains and gel profiles
 % FIGURE 6C: real spike trains and  touchsim profiles
-% 
+%
 % FIGURE 6: Mother of all plots
-% 
+%
 % FIGURE 7: Comparison of afferent RMSEs across experimental conditions - matching contact conditions
 %
 %
@@ -50,8 +50,8 @@ load("RawPAFData")
 load("TextureNames")
 cd ../profilometry_analysis_scripts
 
-good_neurons = 1:39;
-texture_nums = [ 7, 9, 45, 31, 4, 42];
+good_neurons = [2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 18 22 25 28 33 34];
+texture_nums = [ 9, 45, 50];
 % texture_nums = [50, 49];
 
 %pull names
@@ -60,16 +60,15 @@ for i = 1:length(htxt_name)
 end
 
 
-filename_gel = ["210217_wool_blend_gel_7_processed", ...
-    "201118_corduroy_35_gel_trimmed", ...
+filename_gel = ["201118_corduroy_35_gel_trimmed", ...
     "210226_blizzard_fleece_gel_7_200_grams_processed", ...
-    "210223_velvet_gel_7_processed", ...
-    "210209_hucktowel_gel_11_processed",  ...
-    "210219_sueded_cuddle_gel_7_processed"];
+    "210223_1mm_grating_gel_11_processed"];
 
-% %      ,...
-%     "210223_1mm_grating_gel_11_processed",...
-%     "210216_3mm_grating_gel_7_processed"
+% "210223_velvet_gel_7_processed", ...
+%     "210209_hucktowel_gel_11_processed",  ...
+%     "210219_sueded_cuddle_gel_7_processed",...
+%     "210217_wool_blend_gel_7_processed", ...
+% "210216_3mm_grating_gel_7_processed"
 % "210217_wool_blend_gel_7_processed", ...
 %     "210223_velvet_gel_7_processed", ...
 %     "210209_hucktowel_gel_11_processed",  ...
@@ -84,16 +83,16 @@ filename_gel = ["210217_wool_blend_gel_7_processed", ...
 %     "210310_5mm_grating_gel_11_100_grams_processed"];
 
 
-filename_nogel = ["210216_wool_blend_no_gel_processed", ...
-    "201118_corduroy_no_gel_trimmed", ...
-    "210226_blizzard_fleece_no_gel_processed", ...
-    "210121_velvet_no_gel_processed", ...
-    "210204_hucktowel_nogel_processed",  ...
-    "210222_sueded_cuddle_no_gel_processed"];
-% ,...
-%     "201021_1mm_grating_no_gel",...
+filename_nogel = ["201118_corduroy_no_gel_trimmed", ...
+    "210226_blizzard_fleece_no_gel_processed",...
+    "201021_1mm_grating_no_gel"];
+    
+%     "210216_wool_blend_no_gel_processed", ...
+% "210121_velvet_no_gel_processed", ...
+%     "210204_hucktowel_nogel_processed",  ...
+%     "210222_sueded_cuddle_no_gel_processed",...
+%     
 %     "210212_3_mm_grating_no_gel_processed"
-
 %HYPERPARAMS
 ppm = 7;
 top_neuron_number = 20;
@@ -106,6 +105,7 @@ gel_num = 0;
 texture_type = "compliant"; %compliant, noncompliant, or combined
 len = "full"; %seconds. 12 mm length / 80 mm/s so no edge scan.
 stopBand = 0.3; %frequencies below 0.5 are noise
+gauss_kernel_size = 5;
 % ramp len
 % sample frequency in time
 % afferent density
@@ -125,7 +125,9 @@ end
 
 neuron_identities = {iPC, iRA, iSA};
 excludeNeurons = 1; %don't average neurons that don't fire
-[activities, av_spike_trains, space_vec] = pullRealActivities(rates, spikes, my_texture_names, good_neurons, neuron_identities, texture_nums, speed, excludeNeurons);
+[activities, av_spike_trains, space_vec] = pullRealActivities(rates, spikes, ...
+    my_texture_names, good_neurons, neuron_identities, texture_nums, ...
+    speed, excludeNeurons, gauss_kernel_size);
 
 
 
@@ -147,7 +149,7 @@ for i = 1:length(filename_gel)
     load(filename_gel(i), "gel");
     load(filename_nogel(i), "no_gel");
     cd ../bensmaia_gelsight_scripts/profilometry_analysis_scripts
-
+    
     disp(strcat("Highpass filter at ", num2str(stopBand), " per mm."));
     gel = removeLowFreq(gel, stopBand, 'charles');
     no_gel = removeLowFreq(no_gel, stopBand, 'charles');
@@ -160,25 +162,50 @@ for i = 1:length(filename_gel)
     disp(strcat("Calculating power spectra of rates and correlating to profile spectra"));
     [spike_psds, f_rate] = rateSpectralAnalysis(squeeze(av_spike_trains(i, :, :)), space_vec);
     
-    correlation(i, :) = spike_train_profile_corr(gel_psd, f_gel, no_gel_psd, f_no_gel, spike_psds, f_rate);
-    
-    disp(strcat("Calculating neural response."));
-    %activities
-    texture_rates = activities.real(i,1:3);
-    [FRs_ts, FRs_gel, r, a] = pullResponses(gel, ...
-        no_gel, ppm, top_neuron_number, ...
-        amplitude, len, speed, pin_radius, aff_density, ...
-        texture_rates, neuron_selection_modes, figure_dir);
-    mean_ts = FRs_ts{4}';
-    sem_ts = FRs_ts{5}';
-    mean_gel = FRs_gel{4}';
-    sem_gel = FRs_gel{5}';
-    activities.ts(i,:) = [mean_ts, sem_ts];
-    activities.gel(i,:) = [mean_gel, sem_gel];
+    [cor, spectra_fig] = spike_train_profile_corr(no_gel.name, gel_psd, f_gel, no_gel_psd, f_no_gel, spike_psds, f_rate);
+    correlation(i, :) = cor;
+    %
+    %     disp(strcat("Calculating neural response."));
+    %     %activities
+    %     texture_rates = activities.real(i,1:3);
+    %     [FRs_ts, FRs_gel, r, a] = pullResponses(gel, ...
+    %         no_gel, ppm, top_neuron_number, ...
+    %         amplitude, len, speed, pin_radius, aff_density, ...
+    %         texture_rates, neuron_selection_modes, figure_dir);
+    %     mean_ts = FRs_ts{4}';
+    %     sem_ts = FRs_ts{5}';
+    %     mean_gel = FRs_gel{4}';
+    %     sem_gel = FRs_gel{5}';
+    %     activities.ts(i,:) = [mean_ts, sem_ts];
+    %     activities.gel(i,:) = [mean_gel, sem_gel];
     
 end
 total_time = toc;
 disp(strcat("average time per texture: ", num2str(total_time/length(filename_gel))))
+
+
+%% plotting correlations
+figure;
+names = ["PCs", "RAs", "SAs"];
+for i = 1:3
+    subplot(1, 3, i)
+    hold on
+    for j = 1:size(correlation, 1)
+        scatter(correlation(j, i), correlation(j, i+3), 'filled')
+    end
+    x = 1:max(max(correlation(:, i)), max(correlation(:, i+3)));
+    y = x;
+    plot(x,y, 'k');
+    xlim([0 inf])
+    ylim([0 inf])
+    if i == 1
+        legend(my_texture_names)
+        ylabel("No Gel Correlation")
+    end
+    xlabel("Gel Correlation")
+    title(names(i));
+end
+sgtitle("Gel vs No Gel Profiles")
 
 
 

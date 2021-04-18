@@ -84,12 +84,9 @@ if str == "y"
             gcf;
             visualizeProfile(prof);
             title(strcat("Truncated to ", str));
-            str = input("Redo truncation? (y/n)");
+            str = input("Undo truncation?", 's');
             if str == "y"
-                prof = old_prof;
-            elseif str == "n"
-                truncate_prof = 0;
-            end
+                prof = old_
         end
     end
 end

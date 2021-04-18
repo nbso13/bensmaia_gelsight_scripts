@@ -1,4 +1,6 @@
-function [activities, averaged_spike_trains, space_vec] = pullRealActivities(rates, spikes, names, good_neurons, neuron_identities, texture_nums, speed, excludeNeurons)
+function [activities, averaged_spike_trains, space_vec] = pullRealActivities(rates, ...
+    spikes, names, good_neurons, neuron_identities, texture_nums, speed, ...
+    excludeNeurons, gauss_kernel_size)
 %pullRealRates grabs real neural data, and calculated rates for each
 %neuron, sorts into afferent class, calculates mean firing rate for each
 %texture for each afferent, and returns a mean_rates array, where rows are
@@ -43,7 +45,7 @@ dec_place = -1*log10(samp_period);
 time_axis = 0:samp_period:1;
 averaged_spike_trains = zeros(length(texture_nums), 3, length(time_axis)); % 3 being the number of aff classes (PC, RA, SA)
 
-win_size = 11;
+win_size = gauss_kernel_size;
 win = gausswin(win_size);
 pad_size = (win_size-1)/2;
 
