@@ -1,0 +1,2 @@
+Noise
+Compare actual vs fitted rates for noise stimuli.

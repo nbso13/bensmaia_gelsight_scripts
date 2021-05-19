@@ -8,7 +8,7 @@ figure;
 % demean
 spike_psds = [];
 for i = 1:3
-    spike_train = aff_spike_trains(i, :) - mean(aff_spike_trains(i, :));
+    spike_train = aff_spike_trains(i, :) - mean(aff_spike_trains(i, :)); %demean
     spike_train = spike_train';
     samp_period = space_axis(2);
     fs = 1/samp_period; % samples per mm

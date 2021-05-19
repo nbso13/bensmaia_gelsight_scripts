@@ -1,6 +1,6 @@
 function [activities, averaged_spike_trains, space_vec] = pullRealActivities(rates, ...
     spikes, names, good_neurons, neuron_identities, texture_nums, speed, ...
-    excludeNeurons, gauss_kernel_size)
+    excludeNeurons, gauss_flag, gauss_kernel_size, time_samp_period)
 %pullRealRates grabs real neural data, and calculated rates for each
 %neuron, sorts into afferent class, calculates mean firing rate for each
 %texture for each afferent, and returns a mean_rates array, where rows are
@@ -11,6 +11,7 @@ function [activities, averaged_spike_trains, space_vec] = pullRealActivities(rat
 if texture_nums == 1
     error("for now, this doesn't work with only one texture.")
 end
+
 %determine "good neuron" indices
 good_logit = zeros(39,1);
 for i = 1:length(good_logit)
@@ -40,27 +41,26 @@ ras = spikes_mat(:, iRA, :);
 sas = spikes_mat(:, iSA, :);
 afferents = {pcs, ras, sas};
 
-samp_period = 0.001; %seconds LATER MULT BY 80mm/s
+samp_period = time_samp_period; %seconds LATER MULT BY 80mm/s
 dec_place = -1*log10(samp_period);
 time_axis = 0:samp_period:1;
 averaged_spike_trains = zeros(length(texture_nums), 3, length(time_axis)); % 3 being the number of aff classes (PC, RA, SA)
 
 win_size = gauss_kernel_size;
 win = gausswin(win_size);
-pad_size = (win_size-1)/2;
 
-for i = 1:length(texture_nums)
-    for j = 1:3
+for i = 1:length(texture_nums) %for every texture
+    for j = 1:3 %for each different afferent type
         aff = afferents{j};
         mean_train = zeros(1, length(time_axis));
         train_count = 0;
-        for k = 1:size(aff, 2)
-            for m = 1:4
-                run = aff{i,k,m};
-                if ~isempty(run) %if this afferent class for this texture for this neuron on this trial is not empty
-                    run = round(run, dec_place);
+        for k = 1:size(aff, 2) %for every neuron of that afferent
+            for m = 1:4 %for each possible trial
+                run = aff{i,k,m}; %grab the spike times for that texture, aff type, and trial
+                if ~isempty(run) %if this is not empty
+                    run = round(run, dec_place); %round spike times as appropriate
                     run = run.*(10^dec_place) + 1; %turning spike times into indices
-                    mean_train(run) = mean_train(run)+1;
+                    mean_train(run) = mean_train(run)+1; %add one at each appropriate index
                     train_count = train_count + 1;
                 end
             end
@@ -69,12 +69,17 @@ for i = 1:length(texture_nums)
 %         pad_before = mean_train(1:pad_size);
 %         pad_after = mean_train(end-pad_size:end);
 %         mean_train = [pad_before, mean_train, pad_after];
-        mean_train = conv(mean_train, win, 'same');
+
+        if gauss_flag
+            mean_train = conv(mean_train, win, 'same');
+        end
         averaged_spike_trains(i, j, :) = mean_train;
     end
 end
 
 space_vec = time_axis.*speed; %now x vector is in mm.
+
+%% REPEATING FOR RATES
 
 rates_mat = rates{ind};
 rates_mat = squeeze(rates_mat(texture_nums,:, :));

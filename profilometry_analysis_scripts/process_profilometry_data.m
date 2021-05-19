@@ -2,8 +2,10 @@
 clear
 close all
 %% Load data
-file_names = {"210414_2mm_dots_no_gel"};
-gel_id = [0]; %1 if gel 0 if nah
+file_names = {"210428_thick_corduroy_gel_19_100_grams", ...
+    "210428_empire_velveteen_gel_19_100_grams", ...
+    "210428_velour_gel_19_100_grams"};
+gel_id = [1, 1, 1]; %1 if gel 0 if nah
 
 for index = 1:length(file_names)
     close all
@@ -71,4 +73,5 @@ for index = 1:length(file_names)
     cd ../bensmaia_gelsight_scripts/profilometry_analysis_scripts
     
     [prof] = processAndUpdate(filename, GEL);
+    
 end

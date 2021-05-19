@@ -51,7 +51,8 @@ load("TextureNames")
 cd ../profilometry_analysis_scripts
 
 good_neurons = [2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 18 22 25 28 33 34];
-texture_nums = [ 9, 45, 50];
+% good_neurons = 1:39;
+texture_nums = [ 25, 45, 50];
 % texture_nums = [50, 49];
 
 %pull names
@@ -86,7 +87,7 @@ filename_gel = ["201118_corduroy_35_gel_trimmed", ...
 filename_nogel = ["201118_corduroy_no_gel_trimmed", ...
     "210226_blizzard_fleece_no_gel_processed",...
     "201021_1mm_grating_no_gel"];
-    
+%     
 %     "210216_wool_blend_no_gel_processed", ...
 % "210121_velvet_no_gel_processed", ...
 %     "210204_hucktowel_nogel_processed",  ...
@@ -106,6 +107,8 @@ texture_type = "compliant"; %compliant, noncompliant, or combined
 len = "full"; %seconds. 12 mm length / 80 mm/s so no edge scan.
 stopBand = 0.3; %frequencies below 0.5 are noise
 gauss_kernel_size = 5;
+gauss_flag = 0; %if yes, convolve with gaussian of size gauss_kernel_size
+time_samp_period = 0.001; %millisecond time resolution
 % ramp len
 % sample frequency in time
 % afferent density
@@ -127,7 +130,7 @@ neuron_identities = {iPC, iRA, iSA};
 excludeNeurons = 1; %don't average neurons that don't fire
 [activities, av_spike_trains, space_vec] = pullRealActivities(rates, spikes, ...
     my_texture_names, good_neurons, neuron_identities, texture_nums, ...
-    speed, excludeNeurons, gauss_kernel_size);
+    speed, excludeNeurons, gauss_flag, gauss_kernel_size, time_samp_period);
 
 
 
@@ -141,6 +144,9 @@ excludeNeurons = 1; %don't average neurons that don't fire
 neuron_selection_modes = ["top", "area", "area"];
 
 correlation = zeros(length(filename_gel), 6); %for each afferent, the correlation with gel profile, then with no_gel profile
+
+
+
 tic
 for i = 1:length(filename_gel)
     %load
@@ -154,59 +160,24 @@ for i = 1:length(filename_gel)
     gel = removeLowFreq(gel, stopBand, 'charles');
     no_gel = removeLowFreq(no_gel, stopBand, 'charles');
     
-    %profile and gel power spectra
-    disp(strcat("Calculating power spectra of profiles"));
-    [gel_psd, f_gel, no_gel_psd, f_no_gel, gel_to_nogel_ratio] = profSpectralAnalysis(gel, no_gel); %ratio freq axis is no gel.
     
-    %rates power spectra
-    disp(strcat("Calculating power spectra of rates and correlating to profile spectra"));
-    [spike_psds, f_rate] = rateSpectralAnalysis(squeeze(av_spike_trains(i, :, :)), space_vec);
-    
-    [cor, spectra_fig] = spike_train_profile_corr(no_gel.name, gel_psd, f_gel, no_gel_psd, f_no_gel, spike_psds, f_rate);
-    correlation(i, :) = cor;
-    %
-    %     disp(strcat("Calculating neural response."));
-    %     %activities
-    %     texture_rates = activities.real(i,1:3);
-    %     [FRs_ts, FRs_gel, r, a] = pullResponses(gel, ...
-    %         no_gel, ppm, top_neuron_number, ...
-    %         amplitude, len, speed, pin_radius, aff_density, ...
-    %         texture_rates, neuron_selection_modes, figure_dir);
-    %     mean_ts = FRs_ts{4}';
-    %     sem_ts = FRs_ts{5}';
-    %     mean_gel = FRs_gel{4}';
-    %     sem_gel = FRs_gel{5}';
-    %     activities.ts(i,:) = [mean_ts, sem_ts];
-    %     activities.gel(i,:) = [mean_gel, sem_gel];
+        disp(strcat("Calculating neural response."));
+        %activities
+        texture_rates = activities.real(i,1:3);
+        [FRs_ts, FRs_gel, r, a] = pullResponses(gel, ...
+            no_gel, ppm, top_neuron_number, ...
+            amplitude, len, speed, pin_radius, aff_density, ...
+            texture_rates, neuron_selection_modes, figure_dir);
+        mean_ts = FRs_ts{4}';
+        sem_ts = FRs_ts{5}';
+        mean_gel = FRs_gel{4}';
+        sem_gel = FRs_gel{5}';
+        activities.ts(i,:) = [mean_ts, sem_ts];
+        activities.gel(i,:) = [mean_gel, sem_gel];
     
 end
 total_time = toc;
 disp(strcat("average time per texture: ", num2str(total_time/length(filename_gel))))
-
-
-%% plotting correlations
-figure;
-names = ["PCs", "RAs", "SAs"];
-for i = 1:3
-    subplot(1, 3, i)
-    hold on
-    for j = 1:size(correlation, 1)
-        scatter(correlation(j, i), correlation(j, i+3), 'filled')
-    end
-    x = 1:max(max(correlation(:, i)), max(correlation(:, i+3)));
-    y = x;
-    plot(x,y, 'k');
-    xlim([0 inf])
-    ylim([0 inf])
-    if i == 1
-        legend(my_texture_names)
-        ylabel("No Gel Correlation")
-    end
-    xlabel("Gel Correlation")
-    title(names(i));
-end
-sgtitle("Gel vs No Gel Profiles")
-
 
 
 

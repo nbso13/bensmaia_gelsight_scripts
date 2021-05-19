@@ -1,0 +1,31 @@
+\paragraph{Manfredi et al. 2012 (Manfredi\_decay.m)}\underline{Figure 1D} Frequency-dependent decay of vibration amplitude with distance.
+\vspace{1cm} \begin{figure} \centering 
+ \includegraphics[width=.3\linewidth,height=.6\textheight,keepaspectratio]{Manfredi_decay01_data}\includegraphics[width=.3\linewidth,,height=.6\textheight,keepaspectratio]{Manfredi_decay01_curr}
+\caption*{Model figure timestamp: 31-Jul-2015 14:17:29}
+ \end{figure}\newpage
+\paragraph{Manfredi et al. 2012 (Manfredi\_decay.m)}\underline{Figure 2} Decay exponents as a function of frequency.
+\vspace{1cm} \begin{figure} \centering 
+ \includegraphics[width=.3\linewidth,height=.6\textheight,keepaspectratio]{Manfredi_decay02_data}\includegraphics[width=.3\linewidth,,height=.6\textheight,keepaspectratio]{Manfredi_decay02_curr}
+\caption*{Model figure timestamp: 31-Jul-2015 14:17:29}
+ \end{figure}\newpage
+\paragraph{Johansson \& Flanagan 2009 (RF\_size.m)}\underline{Table 1} Receptive field sizes for different receptor types.
+\vspace{1cm} \begin{figure} \centering 
+ \includegraphics[width=.3\linewidth,height=.6\textheight,keepaspectratio]{RF_size01_data}\includegraphics[width=.3\linewidth,,height=.6\textheight,keepaspectratio]{RF_size01_curr}
+\caption*{Model figure timestamp: 31-Jul-2015 14:17:57}
+ \end{figure}\newpage
+\paragraph{Johnson 1973 (decay\_dist\_RA.m)}\underline{Fig 7} Reproduce distance versus minimal phase loc amp data
+\vspace{1cm} \begin{figure} \centering 
+ \includegraphics[width=.3\linewidth,height=.6\textheight,keepaspectratio]{decay_dist_RA01_data}\includegraphics[width=.3\linewidth,height=.6\textheight,keepaspectratio]{decay_dist_RA01_orig}\includegraphics[width=.3\linewidth,,height=.6\textheight,keepaspectratio]{decay_dist_RA01_curr}
+\caption*{Model figure timestamp: 31-Jul-2015 14:18:01}
+ \end{figure}\newpage
+\paragraph{Johnson 1973 (decay\_dist\_RA.m)}\underline{Fig 6} Reproduce distance versus minimal amp for response data
+\vspace{1cm} \begin{figure} \centering 
+ \includegraphics[width=.3\linewidth,height=.6\textheight,keepaspectratio]{decay_dist_RA02_data}\includegraphics[width=.3\linewidth,height=.6\textheight,keepaspectratio]{decay_dist_RA02_orig}\includegraphics[width=.3\linewidth,,height=.6\textheight,keepaspectratio]{decay_dist_RA02_curr}
+\caption*{Model figure timestamp: 31-Jul-2015 14:18:01}
+ \end{figure}\newpage
+\paragraph{Johnson 1973 (decay\_dist\_RA.m)}\underline{Fig 3} Reproduce amplitude versus number of spikes per cycle
+\vspace{1cm} \begin{figure} \centering 
+ \includegraphics[width=.3\linewidth,height=.6\textheight,keepaspectratio]{decay_dist_RA03_data}\includegraphics[width=.3\linewidth,height=.6\textheight,keepaspectratio]{decay_dist_RA03_orig}\includegraphics[width=.3\linewidth,,height=.6\textheight,keepaspectratio]{decay_dist_RA03_curr}
+\caption*{Model figure timestamp: 31-Jul-2015 14:18:01}
+ \end{figure}\newpage
+

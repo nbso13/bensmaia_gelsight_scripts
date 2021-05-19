@@ -1,0 +1,2 @@
+Talbot et al. 1968
+Reproduce entrainment figs from Talbot et al. 1968.

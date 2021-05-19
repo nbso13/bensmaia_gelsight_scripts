@@ -1,6 +1,6 @@
 function [prof] = processAndUpdate(filename_prof, gel_flag)
 %detrends, scales, rotates, truncates, and saves profilometry inputs
-gel_constant = 1.48;
+
 cd ../../mat_files/
 load(filename_prof);
 cd ../bensmaia_gelsight_scripts/profilometry_analysis_scripts
@@ -11,22 +11,43 @@ else
     prof = no_gel;
 end
 
-if gel_flag && ~isfield(prof,'scaled') % if its a gel and not yet scaled
-    disp("scaling by gel factor!")
-	prof.profile = prof.profile.*gel_constant; %scale up
-    prof.scaled = gel_constant;
+
+figure;
+visualizeProfile(prof);
+title("Profile Before Scale")
+
+if gel_flag % if its a gel
+    if ~isfield(prof, "scaled") % if not scaled
+        str = input("Gel not yet scaled. Scale factor? (multiplier or gel_identity)", 's');
+        if str2double(str)>3
+            scale_factor = gel_id_to_factor(str);
+        else
+            scale_factor = str2double(str);
+        end
+        prof.profile = prof.profile.*scale_factor; %scale up
+        prof.scaled = scale_factor;
+    else %it has been scaled
+        str = input(strcat("Gel already scaled at ", num2str(prof.scaled), ". Rescale? (n or scale factor, or gel number)"), 's');
+        if ~(str == "n") %if they do want to rescale
+            if str2double(str)>3
+                scale_factor = gel_id_to_factor(str);
+            else
+                scale_factor = str2double(str);
+            end
+            prof.profile = (prof.profile./prof.scaled).*scale_factor; %unscale earlier scaler and rescale
+            prof.scaled = scale_factor;
+        end
+    end
 end
 
 figure;
 visualizeProfile(prof);
-title("Profile")
+title("Profile After Scale")
 rotate_gel = input("Scanning left to right. Rotate profile counterclockwise? (enter #, 0 - 360)");
 % rotate_gel = 0;
 if ~rotate_gel == 0
     prof = rotateProfilometry(prof, rotate_gel);
 end
-
-
 
 %% name
 
@@ -37,7 +58,7 @@ if ~isfield(prof, 'name')
         prof.name = str;
     end
 end
-     
+
 
 
 %% crop
@@ -84,7 +105,7 @@ if str == "y"
             gcf;
             visualizeProfile(prof);
             title(strcat("Truncated to ", str));
-            str = input("Redo truncation? (y/n)");
+            str = input("Redo truncation? (y/n)", 's');
             if str == "y"
                 prof = old_prof;
             elseif str == "n"
@@ -111,9 +132,9 @@ if str == "y"
     figure
     visualizeProfile(new_prof);
     str = input("undo detrend? (y/n)", 's');
-        if str == "n"
-            prof = new_prof;
-        end
+    if str == "n"
+        prof = new_prof;
+    end
 end
 
 % take out minimum
@@ -137,4 +158,23 @@ if str == "y"
     cd ../bensmaia_gelsight_scripts/profilometry_analysis_scripts
 end
 
+end
+
+function [factor] = gel_id_to_factor(id_str)
+
+gel_7_factor = 1.4479;
+gel_11_factor = 1.4145;
+gel_18_factor = 1.4418;
+gel_19_factor  = 1.4388;
+if strcmp(id_str, "7")
+    factor = gel_7_factor;
+elseif strcmp(id_str, "11")
+    factor = gel_11_factor;
+elseif strcmp(id_str, "18")
+    factor = gel_18_factor;
+elseif strcmp(id_str, "19")
+    factor = gel_19_factor;
+else
+    error("Gel ID not recognized.")
+end
 end

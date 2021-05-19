@@ -1,0 +1,3 @@
+Sinusoids
+Compare actual vs fitted ISI for sinusoids (SA maps).
+

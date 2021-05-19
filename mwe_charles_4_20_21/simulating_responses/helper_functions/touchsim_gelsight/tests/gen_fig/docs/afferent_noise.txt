@@ -1,0 +1,2 @@
+Single afferent fits
+Compare noise across different trials.

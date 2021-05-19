@@ -1,0 +1,1 @@
+Population mean spike per cycle

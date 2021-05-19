@@ -37,10 +37,10 @@ end
 
 
 
-
-for i = 1:length(filename_nogel)
-    processAndUpdate(filename_nogel(i), 0);
-    close all
-end
+% 
+% for i = 1:length(filename_nogel)
+%     processAndUpdate(filename_nogel(i), 0);
+%     close all
+% end
 
 

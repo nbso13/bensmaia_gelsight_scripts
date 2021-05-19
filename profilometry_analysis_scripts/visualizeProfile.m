@@ -5,10 +5,11 @@ function [image_handle] = visualizeProfile(texture)
 %     axes_in = gca;
 % end
 %axes(handles.axes_in); %set the current axes to axes_in
+turb = jet(256);
 max_filt = max(texture.profile(:));
 min_filt = min(texture.profile(:));
 image_handle = imagesc(texture.x_axis, texture.y_axis, texture.profile);
-colormap parula
+colormap(turb)
 c = colorbar;
 ylabel(c, 'mm');
 caxis([min_filt, max_filt]);
