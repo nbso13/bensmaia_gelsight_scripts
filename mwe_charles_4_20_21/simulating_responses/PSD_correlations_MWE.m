@@ -5,7 +5,8 @@
 
 clear
 close all
-
+local_data_path_str = "../../mwe_data/";
+local_path_back = "/../bensmaia_gelsight_scripts/mwe_charles_4_20_21/simulating_responses";
 addpath("helper_functions")
 
 %% set vars

@@ -101,13 +101,8 @@ for i = 1:length(full_rates) %for each afferent type
     end
     mean_rates(:, i) = mean(aff_rates, 2, 'omitnan');
     mean_rates(:, i+3) = std(aff_rates, 0, 2, 'omitnan')/sqrt(length(~isnan(aff_rates)));
-    for j = 1:length(texture_nums) 
-        %setting up raw rates, cell array texture_num by 3, each entry a vector of non-nan rates for that aff and that texture
-         aff_texture_rates = aff_rates(j, :);
-         aff_texture_rates = aff_texture_rates(logical(~isnan(aff_texture_rates)));
-         %grab non-nan
-         raw_rates{j, i} = aff_texture_rates;
-    end
+    for j = 1:length(texture_nums)
+        raw_rates{ , i} = 
 end
 
 activities = struct;
