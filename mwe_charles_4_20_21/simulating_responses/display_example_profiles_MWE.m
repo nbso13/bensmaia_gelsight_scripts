@@ -2,12 +2,11 @@
 % Author: Nick Ornstein
 % Group: Bensmaia Lab
 % Project: Gelsight Profilometry
-% Date: March 31 2020
-% cd ~/Documents/bensmaia_lab/bensmaia_gelsight_scripts/profilometry_analysis_scripts
+% Date: June 2021
 clear
 close all
-local_data_path_str = "../../mwe_data/";
-local_path_back = "/../bensmaia_gelsight_scripts/mwe_charles_4_20_21/simulating_responses";
+local_data_path_str = "../../../mwe_data/sim_data";
+local_path_back = "../../bensmaia_gelsight_scripts/mwe_charles_4_20_21/simulating_responses";
 addpath("helper_functions")
 
 %% set vars
@@ -67,9 +66,9 @@ filename_nogel = "210222_sueded_cuddle_no_gel_processed";
 filename_gel = "210217_wool_blend_gel_7_processed";
 %load
 disp(strcat("Loading data from ", filename_gel));
-cd data
+cd(local_data_path_str)
 load(filename_nogel, "no_gel");
-cd ..
+cd(local_path_back)
 
 disp(strcat("Highpass filter at ", num2str(stopBand), " per mm."));
 

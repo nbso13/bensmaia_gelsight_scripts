@@ -2,8 +2,7 @@
 % Author: Nick Ornstein
 % Group: Bensmaia Lab
 % Project: Gelsight Profilometry
-% Date: March 31 2020
-% cd ~/Documents/bensmaia_lab/bensmaia_gelsight_scripts/profilometry_analysis_scripts
+% Date: June 2021
 clear
 close all
 local_data_path_str = "../../../mwe_data/";

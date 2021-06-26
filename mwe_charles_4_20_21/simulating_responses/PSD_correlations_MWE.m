@@ -5,16 +5,16 @@
 
 clear
 close all
-local_data_path_str = "../../mwe_data/";
-local_path_back = "/../bensmaia_gelsight_scripts/mwe_charles_4_20_21/simulating_responses";
+local_data_path_str = "../../../mwe_data/";
+local_path_back = "../../bensmaia_gelsight_scripts/mwe_charles_4_20_21/simulating_responses";
 addpath("helper_functions")
 
 %% set vars
 
-cd neural_data
+cd(strcat(local_data_path_str, "neural_data"))
 load("RawPAFData")
 load("TextureNames")
-cd ..
+cd(local_path_back)
 
 
 load('colorscheme');
@@ -124,10 +124,10 @@ tic
 for i = 1:num_textures
     %load
     disp(strcat("Loading data from ", filename_gel(i)));
-    cd data
+    cd(strcat(local_data_path_str, "sim_data"))
     load(filename_gel(i), "gel");
     load(filename_nogel(i), "no_gel");
-    cd ..
+    cd(local_path_back)
     
     disp(strcat("Highpass filter at ", num2str(stopBand), " per mm."));
     gel = removeLowFreq(gel, stopBand, 'charles');
