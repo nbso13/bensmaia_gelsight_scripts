@@ -29,6 +29,10 @@ cd(strcat("..", local_path_back));
 
 % good_neurons = [2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 18 22 25 28 33 34];
 good_neurons = 1:39;
+
+
+
+
 % texture_nums = [31, 25, 45, 7, 4, 42, 33, 9, 21, 38, 44]; %  49, 50, 55
 % texture_nums = [45, 4, 31, 42, 7, 38, 9]; %100 gram textures
 % texture_nums = [7, 50];
