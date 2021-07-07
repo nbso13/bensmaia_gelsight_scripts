@@ -1,5 +1,5 @@
-function [FRs_ts, FRs_gel, r, a, figure_handles] = calcResponses(ts, gel, ...
-    aff_density, ppm, speed, len, samp_freq, top_neuron_number, ...
+function [FRs_ts, FRs_gel, r, a, figure_handles] = calcResponses(aff_pop, ts, gel, ...
+     ppm, speed, len, samp_freq, top_neuron_number, ...
     texture_rates, neuron_selection_modes, plot_flag)
 %calcResponses given parameters, scans textures in ts structs across hand
 %and measures response in aff_pop. FRs are returned.
@@ -10,7 +10,7 @@ figure_handles = {};
 ts_structs = [ts, gel];
 response_fig = figure;
 for i = 1:length(ts_structs)
-    aff_pop = affpop_hand('D2d',aff_density);
+    
     s{i} = stim_scan_shape(ts_structs(i).shape, ts_structs(i).offset, ppm, ...
         len, samp_freq, speed, ts_structs(i).gel_flag);
 
@@ -29,9 +29,6 @@ for i = 1:length(ts_structs)
     a{i} = aff_pop_new;
     
     if plot_flag
-%         aff_pop_new_fig = figure;
-%         plot(aff_pop_new)
-%         title("aff pop")
         figure(response_fig);
         subplot(2,3,i);
         plot(resp_new);

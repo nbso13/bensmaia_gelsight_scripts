@@ -31,10 +31,10 @@ cd(strcat("..", local_path_back));
 good_neurons = 1:39;
 % texture_nums = [31, 25, 45, 7, 4, 42, 33, 9, 21, 38, 44]; %  49, 50, 55
 % texture_nums = [45, 4, 31, 42, 7, 38, 9]; %100 gram textures
-% texture_nums = [7, 50];
+texture_nums = [7, 50];
 % texture_nums = [25, 45, 50];
 % texture_nums = [49, 50, 55];
-texture_nums = [45, 9, 55];
+% texture_nums = [45, 55];
 
 %pull names
 for i = 1:length(htxt_name)
