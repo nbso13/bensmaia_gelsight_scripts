@@ -5,176 +5,43 @@
 % Date: June 2021
 clear
 close all
-local_data_path_str = "../../../mwe_data/";
-local_path_back = "/../bensmaia_gelsight_scripts/mwe_charles_4_20_21/simulating_responses";
-addpath('helper_functions')
-cd helper_functions/touchsim_gelsight
-setup_path;
-cd ../..
 
-load('colorscheme')
-%% set vars
-figure_dir = 0; % do not save figures
+%setup vars
+[local_data_path_str, local_path_back, colorscheme, figure_dir, ...
+    aff_colors, neuron_id, rates, spikes, htxt_name] = setup_vars();
 
-PC_COLOR =  [255 127 0]/255;
-RA_COLOR =  [30 120 180]/255;
-SA_COLOR = [50 160 40]/255;
+% choose which texture set to analyze
+name_str = 'all'; % 'all', 'compliant', 'noncompliant', '100grams', 'test'
+ [texture_nums, filename_gel, filename_nogel, texture_names, ...
+    my_texture_names] = assign_names(name_str, htxt_name);
 
-aff_colors = {PC_COLOR, RA_COLOR, SA_COLOR};
-
-cd(strcat(local_data_path_str, "neural_data"))
-load("RawPAFData")
-load("TextureNames")
-cd(strcat("..", local_path_back));
-
+% choose good neurons
 % good_neurons = [2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 18 22 25 28 33 34];
 good_neurons = 1:39;
 
-
-
-
-% texture_nums = [31, 25, 45, 7, 4, 42, 33, 9, 21, 38, 44]; %  49, 50, 55
-% texture_nums = [45, 4, 31, 42, 7, 38, 9]; %100 gram textures
-% texture_nums = [7, 50];
-% texture_nums = [25, 45, 50];
-% texture_nums = [49, 50, 55];
-texture_nums = [45, 9, 55];
-
-%pull names
-for i = 1:length(htxt_name)
-    texture_names(i) = string(htxt_name{i});
-end
-
-% filename_gel = ["210223_velvet_gel_7_processed", ...
-%     "201118_corduroy_35_gel_trimmed", ...
-%     "210226_blizzard_fleece_gel_7_200_grams_processed", ...
-%     "210217_wool_blend_gel_7_processed", ...
-%     "210209_hucktowel_gel_11_processed",  ...
-%     "210219_sueded_cuddle_gel_7_processed",...
-%     "210423_gel_18_careerwear_flannel_200_grams_processed",...
-%     "210423_gel_18_thick_corduroy_200_grams_processed", ...
-%     "210423_gel_18_premier_velvet_200_grams_processed", ...
-%     "210423_gel_18_velour_200_grams_processed", ...
-%     "210423_gel_19_snowflake_knitside_200_grams_processed"];
-
-%     
-% filename_gel = ["210304_blizzard_fleece_gel_11_100_grams_processed", ...
-%     "210304_hucktowel_gel_11_100_grams_processed", ...
-%     "210304_velvet_gel_11_100_grams_processed", ...
-%     "210310_sueded_cuddle_gel_11_100_grams_processed" ...
-%     "210310_wool_blend_gel_11_100_grams_processed", ...
-%     "210428_velour_gel_19_100_grams_processed",...
-%     "210428_thick_corduroy_gel_19_100_grams_processed"]; % 100 gram
-% filename_gel = ["210217_wool_blend_gel_7_processed",  "210223_1mm_grating_gel_11_processed"];
-% filename_gel = ["201118_corduroy_35_gel_trimmed", ...
-%     "210226_blizzard_fleece_gel_7_200_grams_processed", ...
-%     "210223_1mm_grating_gel_11_processed"];
-% filename_gel = ["210216_3mm_grating_gel_7_processed", ...
-%     "210223_1mm_grating_gel_11_processed", ...
-%     "210414_2mm_dots_gel_17_200_grams_processed",];
-
-filename_gel = ["210226_blizzard_fleece_gel_7_200_grams_processed", ...
-    "210423_gel_18_thick_corduroy_200_grams_processed", ...
-    "210414_2mm_dots_gel_17_200_grams_processed"];
-
-
-% filename_nogel = ["210121_velvet_no_gel_processed", ...
-%     "201118_corduroy_no_gel_trimmed", ...
-%     "210226_blizzard_fleece_no_gel_processed",...
-%     "210216_wool_blend_no_gel_processed", ...
-%     "210204_hucktowel_nogel_processed",  ...
-%     "210222_sueded_cuddle_no_gel_processed",...
-%     "210423_no_gel_careerwear_flannel_processed", ...
-%     "210423_no_gel_thick_corduroy_processed", ...
-%     "210423_no_gel_premier_velvet_processed", ...
-%     "210423_velour_no_gel_processed", ...
-%     "210423_no_gel_snowflake_knitside_processed"];
-
-%     
-% filename_nogel = ["210226_blizzard_fleece_no_gel_processed",...
-%     "210204_hucktowel_nogel_processed",  ...
-%     "210121_velvet_no_gel_processed", ...
-%     "210222_sueded_cuddle_no_gel_processed",...
-%     "210216_wool_blend_no_gel_processed", ...
-%     "210423_velour_no_gel_processed", ...
-%     "210423_no_gel_thick_corduroy_processed"];
-
-% filename_nogel = ["210216_wool_blend_no_gel_processed", "201021_1mm_grating_no_gel"];
-% filename_nogel = ["201118_corduroy_no_gel_trimmed", ...
-%     "210226_blizzard_fleece_no_gel_processed",...
-%     "201021_1mm_grating_no_gel"];
-% filename_nogel = ["210212_3_mm_grating_no_gel_processed", ...
-% 	"201021_1mm_grating_no_gel",...
-%     "210414_2mm_dots_no_gel_processed"];
-filename_nogel = ["210226_blizzard_fleece_no_gel_processed",...
-    "210423_no_gel_thick_corduroy_processed", ...  
-    "210414_2mm_dots_no_gel_processed"];
-
-
-
 num_textures = length(filename_gel);
 
-%HYPERPARAMS
-scatter_size = 50;
-mean_vs_min = 0; %if 1, mean. if 0, min. FOR SPIKE TIMEs
-ppm = 7;
-top_neuron_number = [60 60 60]; %PC, RA, SA
-% top_neuron_number = [20 20 20]; %PC, RA, SA
-amplitude = "max"; % "max" or value - if value, add in difference between median texture value and this value!
-aff_density = 1; %afferent population density
-speed = 80; %mm/s
-pin_radius = 0.025;% mm
-gel_weight = 200;
-gel_num = 0;
-texture_type = "compliant"; %compliant, noncompliant, or combined
-len = "full"; %seconds. 12 mm length / 80 mm/s so no edge scan.
-stopBand = 0.3; %frequencies below 0.5 are noise
-time_samp_period = 0.001; %millisecond time resolution
-% ramp len
+% set hyper params
+[scatter_size, t_if_mean_f_if_min, ppm, top_neuron_number, ...,
+    amplitude, aff_density, speed, pin_radius, gel_weight, gel_num, texture_type,...
+    len, stopBand, time_samp_period] = set_hyperparams();
 
-%% pull activities and real rates for each texture (for best neuron comparison)
-
-my_texture_names = texture_names(texture_nums);
-
-disp(texture_names(texture_nums));
-if ~((length(texture_nums) == num_textures) && (num_textures == length(filename_nogel)))
-    error("Filenames and/or Texture numbers don't match up.")
-end
-
+% pull activities and real rates for each texture (for best neuron comparison)
 neuron_identities = {iPC, iRA, iSA};
 excludeNeurons = 1; %don't average neurons that don't fire
 [activities, av_spike_trains, space_vec, raw_rates] = pullRealActivities(rates, spikes, ...
     my_texture_names, good_neurons, neuron_identities, texture_nums, ...
     speed, excludeNeurons, time_samp_period);
 
+% set selection modes and initialize aff pop
+neuron_selection_modes = set_modes();
 
-
-%% Run Loop
-% three entries for three afferent types: PC, RA, SA.
-% modes: "area" - all afferents in area
-%        "top"   - average of n=top_neuron_number neurons that respond
-%        "best" -  average of closest n=top_neuron_number
-%        "best_area" - average of closest n=top neuron number in texture
-%        "area_rand" - random n affs in area (that fire)
-%        "all_rand" - random n affs (that fire)
-%        "best_area_match" - match on an afferent by afferent basis, same
-%        as best area
-%        "best_match" - match on an aff by aff basis, same as best
-
-% neuron_selection_modes = ["all_rand", "area_rand", "area_rand"];
-% neuron_selection_modes = ["best", "best_area", "best_area"];
-neuron_selection_modes = ["best_match", "best_area_match", "best_area_match"];
 distances_real_gel = {}; %texture_num x aff identity x [sim neurons x real neurons]
 distances_real_ts = {};
 
+[aff_pop] = make_aff_pop(aff_density);
 
-% generate population of simulated neurons
-aff_pop = affpop_hand('D2d',aff_density);
-
-aff_pop_new_fig = figure;
-plot(aff_pop)
-title("aff pop")
-
+% run loop
 
 tic
 for i = 1:num_textures
@@ -247,7 +114,7 @@ disp(strcat("average time per texture: ", num2str(total_time/num_textures)))
 
 
 
-%% MOAP
+%% Mother of all plots
 % 
 if isstring(amplitude)
     amplitude = 0;
@@ -290,7 +157,7 @@ for i = 1:num_textures % for each texture
         % find means for each texture for each aff class for gel and no gel
         gel_dis = gel_aff_distances{j}; %sim by real afferents
         ts_dis = ts_aff_distances{j};
-        if mean_vs_min
+        if t_if_mean_f_if_min
             spike_distances(i, j*2-1) = mean(gel_dis(:));
             spike_distances(i, j*2) = mean(ts_dis(:));
             sd_spike_distances(i, j*2-1) = std(gel_dis(:))/sqrt(length(gel_dis(:)));
@@ -303,7 +170,7 @@ for i = 1:num_textures % for each texture
     end
 end
 
-if ~mean_vs_min
+if ~t_if_mean_f_if_min
     aff_class_means = zeros(1, 6);
     aff_class_sd = aff_class_means;
     SAs = [];
@@ -330,13 +197,13 @@ aff_names = ["PCs", "RAs", "SAs"];
 sig_mat_textures = zeros(3, num_textures);
 for i = 1:3 %plotting either scatter or bar
     
-    if mean_vs_min
+    if t_if_mean_f_if_min
         subplot(3,1,i);
     else
         subplot(1,3,i);
     end
     
-    if mean_vs_min
+    if t_if_mean_f_if_min % if taking the mean
         significance = zeros(1,num_textures);
         for j = 1:num_textures
             gel_aff_distances = distances_real_gel{j}; distance_mat_gel = gel_aff_distances{i};
@@ -419,5 +286,200 @@ ax = gca;
 ax.FontSize = 12;
 ax.FontWeight = 'bold';
 
+%% functions
+
+function [local_data_path_str, local_path_back, colorscheme, figure_dir, ...
+    aff_colors, neuron_id, rates, spikes, iPC, iRA, iSA, htxt_name] = setup_vars()
+local_data_path_str = "../../../mwe_data/";
+local_path_back = "/../bensmaia_gelsight_scripts/mwe_charles_4_20_21/simulating_responses";
+addpath('helper_functions')
+cd helper_functions/touchsim_gelsight
+setup_path;
+cd ../..
+
+load('colorscheme')
+
+figure_dir = 0; % do not save figures
+
+PC_COLOR =  [255 127 0]/255;
+RA_COLOR =  [30 120 180]/255;
+SA_COLOR = [50 160 40]/255;
+
+aff_colors = {PC_COLOR, RA_COLOR, SA_COLOR};
+
+cd(strcat(local_data_path_str, "neural_data"))
+load("RawPAFData")
+load("TextureNames")
+cd(strcat("..", local_path_back));
+
+end
 
 
+
+function [texture_nums, filename_gel, filename_nogel, texture_names, ...
+    my_texture_names] = assign_names(name_str, htxt_name)
+% assigns filenames based on name_str:
+switch name_str
+    case 'all'
+        filename_gel = ["210223_velvet_gel_7_processed", ...
+        "201118_corduroy_35_gel_trimmed", ...
+        "210226_blizzard_fleece_gel_7_200_grams_processed", ...
+        "210217_wool_blend_gel_7_processed", ...
+        "210209_hucktowel_gel_11_processed",  ...
+        "210219_sueded_cuddle_gel_7_processed",...
+        "210423_gel_18_careerwear_flannel_200_grams_processed",...
+        "210423_gel_18_thick_corduroy_200_grams_processed", ...
+        "210423_gel_18_premier_velvet_200_grams_processed", ...
+        "210423_gel_18_velour_200_grams_processed", ...
+        "210423_gel_19_snowflake_knitside_200_grams_processed",...
+        "210216_3mm_grating_gel_7_processed", ...
+        "210223_1mm_grating_gel_11_processed", ...
+        "210414_2mm_dots_gel_17_200_grams_processed"];
+    filename_nogel = ["210121_velvet_no_gel_processed", ...
+        "201118_corduroy_no_gel_trimmed", ...
+        "210226_blizzard_fleece_no_gel_processed",...
+        "210216_wool_blend_no_gel_processed", ...
+        "210204_hucktowel_nogel_processed",  ...
+        "210222_sueded_cuddle_no_gel_processed",...
+        "210423_no_gel_careerwear_flannel_processed", ...
+        "210423_no_gel_thick_corduroy_processed", ...
+        "210423_no_gel_premier_velvet_processed", ...
+        "210423_velour_no_gel_processed", ...
+        "210423_no_gel_snowflake_knitside_processed",...
+        "210212_3_mm_grating_no_gel_processed", ...
+        "201021_1mm_grating_no_gel",...
+        "210414_2mm_dots_no_gel_processed"];
+    texture_nums = [31, 25, 45, 7, 4, 42, 33, 9, 21, 38, 44, 49, 50, 55];
+
+    case 'compliant'
+        filename_gel = ["210223_velvet_gel_7_processed", ...
+            "201118_corduroy_35_gel_trimmed", ...
+            "210226_blizzard_fleece_gel_7_200_grams_processed", ...
+            "210217_wool_blend_gel_7_processed", ...
+            "210209_hucktowel_gel_11_processed",  ...
+            "210219_sueded_cuddle_gel_7_processed",...
+            "210423_gel_18_careerwear_flannel_200_grams_processed",...
+            "210423_gel_18_thick_corduroy_200_grams_processed", ...
+            "210423_gel_18_premier_velvet_200_grams_processed", ...
+            "210423_gel_18_velour_200_grams_processed", ...
+            "210423_gel_19_snowflake_knitside_200_grams_processed"];
+        filename_nogel = ["210121_velvet_no_gel_processed", ...
+            "201118_corduroy_no_gel_trimmed", ...
+            "210226_blizzard_fleece_no_gel_processed",...
+            "210216_wool_blend_no_gel_processed", ...
+            "210204_hucktowel_nogel_processed",  ...
+            "210222_sueded_cuddle_no_gel_processed",...
+            "210423_no_gel_careerwear_flannel_processed", ...
+            "210423_no_gel_thick_corduroy_processed", ...
+            "210423_no_gel_premier_velvet_processed", ...
+            "210423_velour_no_gel_processed", ...
+            "210423_no_gel_snowflake_knitside_processed"];
+        texture_nums = [31, 25, 45, 7, 4, 42, 33, 9, 21, 38, 44];
+        
+    case 'noncompliant'
+        filename_gel = ["210216_3mm_grating_gel_7_processed", ...
+        "210223_1mm_grating_gel_11_processed", ...
+        "210414_2mm_dots_gel_17_200_grams_processed"];
+        filename_nogel = ["210212_3_mm_grating_no_gel_processed", ...
+            "201021_1mm_grating_no_gel",...
+            "210414_2mm_dots_no_gel_processed"];
+        texture_nums = [49, 50, 55];
+        
+        
+    case '100grams'
+        filename_gel = ["210304_blizzard_fleece_gel_11_100_grams_processed", ...
+            "210304_hucktowel_gel_11_100_grams_processed", ...
+            "210304_velvet_gel_11_100_grams_processed", ...
+            "210310_sueded_cuddle_gel_11_100_grams_processed" ...
+            "210310_wool_blend_gel_11_100_grams_processed", ...
+            "210428_velour_gel_19_100_grams_processed",...
+            "210428_thick_corduroy_gel_19_100_grams_processed"]; 
+        filename_nogel = ["210226_blizzard_fleece_no_gel_processed",...
+            "210204_hucktowel_nogel_processed",  ...
+            "210121_velvet_no_gel_processed", ...
+            "210222_sueded_cuddle_no_gel_processed",...
+            "210216_wool_blend_no_gel_processed", ...
+            "210423_velour_no_gel_processed", ...
+            "210423_no_gel_thick_corduroy_processed"]; 
+        texture_nums = [45, 4, 31, 42, 7, 38, 9]; 
+    case 'test'
+        filename_gel = ["210217_wool_blend_gel_7_processed",  "210223_1mm_grating_gel_11_processed"];
+        filename_nogel = ["210216_wool_blend_no_gel_processed", "201021_1mm_grating_no_gel"];
+        texture_nums = [7, 50];
+    otherwise
+        error("No mode match found - choose test, 100grams, compliant, noncompliant, or all")
+end
+        
+texture_names = [];
+for i = 1:length(htxt_name)
+    texture_names(i) = string(htxt_name{i});
+end
+
+my_texture_names = texture_names(texture_nums);
+
+disp(texture_names(texture_nums));
+if ~((length(texture_nums) == num_textures) && (num_textures == length(filename_nogel)))
+    error("Filenames and/or Texture numbers don't match up.")
+end
+
+end
+    
+% filename_gel = ["201118_corduroy_35_gel_trimmed", ...
+%     "210226_blizzard_fleece_gel_7_200_grams_processed", ...
+%     "210223_1mm_grating_gel_11_processed"];
+
+
+% filename_nogel = ["201118_corduroy_no_gel_trimmed", ...
+%     "210226_blizzard_fleece_no_gel_processed",...
+%     "201021_1mm_grating_no_gel"];
+
+% texture_nums = [25, 45, 50];
+% texture_nums = [49, 50, 55];
+
+
+
+function [scatter_size, t_if_mean_f_if_min, ppm, top_neuron_number, ...,
+    amplitude, aff_density, speed, pin_radius, gel_weight, gel_num, texture_type,...
+    len, stopBand, time_samp_period] = set_hyperparams()
+scatter_size = 50;
+t_if_mean_f_if_min = 0; %if 1, mean. if 0, min. FOR SPIKE TIMEs
+ppm = 7;
+top_neuron_number = [60 60 60]; %PC, RA, SA
+% top_neuron_number = [20 20 20]; %PC, RA, SA
+amplitude = "max"; % "max" or value - if value, add in difference between median texture value and this value!
+aff_density = 1; %afferent population density
+speed = 80; %mm/s
+pin_radius = 0.025;% mm
+gel_weight = 200;
+gel_num = 0;
+texture_type = "compliant"; %compliant, noncompliant, or combined
+len = "full"; %seconds. 12 mm length / 80 mm/s so no edge scan.
+stopBand = 0.3; %frequencies below 0.5 are noise
+time_samp_period = 0.001; %millisecond time resolution
+% ramp len
+end
+
+function [aff_pop] = make_aff_pop(aff_density)
+% generate population of simulated neurons
+aff_pop = affpop_hand('D2d',aff_density);
+
+plot(aff_pop)
+title("aff pop")
+end
+
+function [modes] = set_modes()
+% three entries for three afferent types: PC, RA, SA.
+% modes: "area" - all afferents in area
+%        "top"   - average of n=top_neuron_number neurons that respond
+%        "best" -  average of closest n=top_neuron_number
+%        "best_area" - average of closest n=top neuron number in texture
+%        "area_rand" - random n affs in area (that fire)
+%        "all_rand" - random n affs (that fire)
+%        "best_area_match" - match on an afferent by afferent basis, same
+%        as best area
+%        "best_match" - match on an aff by aff basis, same as best
+
+% neuron_selection_modes = ["all_rand", "area_rand", "area_rand"];
+% neuron_selection_modes = ["best", "best_area", "best_area"];
+modes = ["best_match", "best_area_match", "best_area_match"];
+end

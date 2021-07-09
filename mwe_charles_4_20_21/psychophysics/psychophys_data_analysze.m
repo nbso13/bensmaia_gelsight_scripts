@@ -17,7 +17,7 @@ close all
 [scatter_size, pins_per_mm, stopBand, pin_radius, plot_flag] = setup_variables();
 
 % choose which texture set to analyze
-name_str = '100grams'; % 'all', 'compliant', 'noncompliant', '100grams', 'test'
+name_str = 'compliant'; % 'all', 'compliant', 'noncompliant', '100grams', 'test'
 [texture_nums, filename_gel, filename_nogel] = assign_names(name_str);
 
 %pull texture names
@@ -106,16 +106,16 @@ switch name_str
         texture_nums = [31, 25, 45, 7, 4, 42, 33, 9, 21, 38, 44];
         
     case 'noncompliant'
-        filename_gel = ["210212_3_mm_grating_no_gel_processed", ...
-            "201021_1mm_grating_no_gel",...
-            "210414_2mm_dots_no_gel_processed"];
+        filename_gel = ["210216_3mm_grating_gel_7_processed", ...
+        "210223_1mm_grating_gel_11_processed", ...
+        "210414_2mm_dots_gel_17_200_grams_processed"];
         filename_nogel = ["210212_3_mm_grating_no_gel_processed", ...
             "201021_1mm_grating_no_gel",...
             "210414_2mm_dots_no_gel_processed"];
         texture_nums = [49, 50, 55];
         
         
-    case '100gram'
+    case '100grams'
         filename_gel = ["210304_blizzard_fleece_gel_11_100_grams_processed", ...
             "210304_hucktowel_gel_11_100_grams_processed", ...
             "210304_velvet_gel_11_100_grams_processed", ...
@@ -135,6 +135,8 @@ switch name_str
         filename_gel = ["210217_wool_blend_gel_7_processed",  "210223_1mm_grating_gel_11_processed"];
         filename_nogel = ["210216_wool_blend_no_gel_processed", "201021_1mm_grating_no_gel"];
         texture_nums = [7, 50];
+    otherwise
+        error("No mode match found - choose test, 100grams, compliant, noncompliant, or all")
 end
     
 % filename_gel = ["201118_corduroy_35_gel_trimmed", ...
