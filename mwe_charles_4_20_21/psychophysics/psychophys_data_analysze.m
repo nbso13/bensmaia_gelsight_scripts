@@ -157,9 +157,9 @@ function [local_data_path_str, local_path_back, colorscheme, roughData] = clear_
 local_data_path_str = "../../../mwe_data/";
 local_path_back = "../../bensmaia_gelsight_scripts/mwe_charles_4_20_21/psychophysics";
 
-cd(strcat(local_data_path_str, 'psycho_data'))
+cd(char(strcat(local_data_path_str, 'psycho_data')))
 load("roughData.mat")
-cd(local_path_back);
+cd(char(local_path_back));
 
 cd ../simulating_responses
 
@@ -226,10 +226,10 @@ function [gel, no_gel, gel_ts, no_gel_ts, skin_surface_ts, ...
 for i = 1:num_textures
     %load
     disp(strcat("Loading data from ", filename_gel(i)));
-    cd(strcat(local_data_path_str, "sim_data"));
+    cd(char(strcat(local_data_path_str, "sim_data")));
     load(filename_gel(i), "gel");
     load(filename_nogel(i), "no_gel");
-    cd(strcat("..", local_path_back));
+    cd(char(strcat("..", local_path_back)));
     
     %truncate low values 
 %     bottom_flag = 1;
