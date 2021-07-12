@@ -38,7 +38,7 @@ time = toc;
 disp(strcat("main loop time per texture: ", num2str(time/num_textures)))
 
 %% plotting
-k_len = 3;
+k_len = 5;
 plot_psychophys(k_len, x_axis, roughData, texture_nums, num_textures, ...
     scatter_size, colorscheme, my_texture_names)
 
@@ -202,7 +202,7 @@ end
 
 function [sd_ratio, ...
     comp_ratio, sd, sd_ratio_ts, comp_ratio_ts,...
-    raw_gel_sd_ratio, ts_sd, gel_sd] = setup_loop_vars(num_textures)
+    raw_gel_sd_ratio, ts_sd, ts_rms, gel_rms, gel_sd] = setup_loop_vars(num_textures)
 
 compressions = zeros(num_textures, 1);
 sd_ratio = compressions;
@@ -212,7 +212,9 @@ sd_ratio_ts = compressions;
 comp_ratio_ts = compressions;
 raw_gel_sd_ratio = compressions;
 ts_sd = compressions;
+ts_rms = compressions;
 gel_sd = compressions;
+gel_rms = compressions;
 end
 
 function [gel, no_gel, gel_ts, no_gel_ts, skin_surface_ts, ...
@@ -220,8 +222,10 @@ function [gel, no_gel, gel_ts, no_gel_ts, skin_surface_ts, ...
     filename_nogel, local_data_path_str, local_path_back, stopBand, ...
     pins_per_mm, pin_radius, plot_flag, my_texture_names)
 
-[sd_ratio, comp_ratio, sd, sd_ratio_ts, comp_ratio_ts, ...
-    raw_gel_sd_ratio, ts_sd, gel_sd] = setup_loop_vars(num_textures);
+[sd_ratio, ...
+    comp_ratio, sd, sd_ratio_ts, comp_ratio_ts,...
+    raw_gel_sd_ratio, ts_sd, ts_rms, gel_rms,...
+    gel_sd] = setup_loop_vars(num_textures);
 
 for i = 1:num_textures
     %load
@@ -274,11 +278,13 @@ for i = 1:num_textures
     sd(i) = std(no_gel.profile(:));
     ts_sd(i) = std(skin_surface_ts.profile(:));
     gel_sd(i) = std(gel_ts.profile(:));
+    gel_rms(i) = rms(gel_ts.profile(:));
+    ts_rms(i) = rms(skin_surface_ts.profile(:));
     
     
 end
 
-x_axis = {sd, ts_sd, gel_sd, comp_ratio, sd_ratio, comp_ratio_ts, ...
+x_axis = {sd, ts_sd, gel_sd, ts_rms, gel_rms, comp_ratio, sd_ratio, comp_ratio_ts, ...
     sd_ratio_ts, raw_gel_sd_ratio};
 
 end
@@ -286,12 +292,15 @@ end
 function [] = plot_psychophys(k_len, x_axis, roughData, texture_nums, ...
     num_textures, scatter_size, colorscheme, my_texture_names)
 
-titstrs = ["Raw SD", "TS SD", "Gel SD",  "Gel IQR ratio", ...
+titstrs = ["Raw SD", "TS SD", "Gel SD", "TS RMS", "Gel RMS", "Gel IQR ratio", ...
     "Gel SD ratio", "TS IQR ratio", "TS SD ratio", "Gel Full SD Ratio"];
 num_participants = 8;
 
 correlation_results = zeros(length(x_axis), 2); %first entry mean, then SD
 all_corrs = zeros(length(x_axis), num_participants);
+mean_ratings = mean(roughData.allData, 2);
+sd_ratings = std(roughData.allData, [], 2);
+
 for k = 1:k_len
     x_ax = x_axis{k};
     title_str = titstrs(k);
@@ -299,7 +308,7 @@ for k = 1:k_len
     corrs = zeros(size(roughData.allData, 2), 1);
     slopes = corrs;
     for i = 1:size(roughData.allData, 2)
-        subplot(2,4, i);
+        subplot(3,4, i);
         hold on
         rough_data = roughData.allData(:,i);
         rough_data = rough_data(texture_nums);
@@ -330,6 +339,36 @@ for k = 1:k_len
         corrs(i) = corr_coef;
         title(strcat("Ppnt. ", num2str(i), " r=", num2str(corr_coef)));
     end
+    
+    %plot mean ratings
+    subplot(3, 4, i+1)
+    hold on
+    rough_data = mean_ratings;
+    rough_data = rough_data(texture_nums);
+    error_data = sd_ratings(texture_nums);
+    for j = 1:num_textures
+        scatter(x_ax(j), rough_data(j), scatter_size, colorscheme(j, :), 'filled');
+    end
+    er = errorbar(x_ax, rough_data, error_data, 'vertical', 'linestyle', 'none', 'HandleVisibility','off'); %real
+    er.Color = [0 0 0];
+    er.LineStyle = 'none';
+    xlabel(titstrs(k))
+    ylabel("mean rated roughness")
+    ylim([0 2.5])
+    ax = gca;
+    ax.FontSize = 12;
+    ax.FontWeight = 'bold';
+    
+    coefficients = polyfit(x_ax, rough_data, 1);
+    slopes(i) = coefficients(1);
+    xFit = linspace(min(x_ax), max(x_ax), 1000);
+    yFit = polyval(coefficients , xFit);
+    plot(xFit, yFit, 'k-', 'LineWidth', 2); % Plot fitted line.
+    corr = corrcoef(x_ax, rough_data);
+    corr_coef = corr(1,2);
+    corrs(i) = corr_coef;
+    title(strcat("Mean, r=", num2str(corr_coef)));
+    
     disp(mean(corrs))
     correlation_results(k,1) = mean(corrs);
     correlation_results(k,2) = std(corrs);
@@ -337,7 +376,6 @@ for k = 1:k_len
     disp(strcat(num2str(mean(slopes)), " +/- ", num2str(std(slopes)))); 
     fig.Position = [-113 320 1987 676];
     sgtitle(titstrs(k));
-    
 end
 
 sd_strs = titstrs(1:3);
@@ -351,6 +389,37 @@ xticks([1, 2, 3])
 xticklabels(sd_strs)
 ylabel("Mean+/-SD Correlation Coefficient Across Participants")
 
+
+fig = figure;
+hold on
+ts_rms = x_axis{4};
+gel_rms = x_axis{5};
+title_str = "TS vs Gel RMS";
+for j = 1:num_textures
+    scatter(ts_rms(j), gel_rms(j), scatter_size, colorscheme(j, :), 'filled');
+end
+xlabel("TS RMS")
+ylabel("Gel RMS")
+ax = gca;
+ax.FontSize = 12;
+ax.FontWeight = 'bold';
+
+strs = my_texture_names';
+colors = colorscheme(1:size(strs,1), :);
+leg = legend([color_legend(strs, colors)]);
+leg.Box = 'off';
+
+coefficients = polyfit(ts_rms, gel_rms, 1);
+xFit = linspace(min(ts_rms), max(ts_rms), 1000);
+yFit = polyval(coefficients , xFit);
+plot(xFit, yFit, 'k-', 'LineWidth', 2); % Plot fitted line.
+corr = corrcoef(x_ax, rough_data);
+corr_coef = corr(1,2);
+title(strcat("TS vs Gel RMS, r=", num2str(corr_coef)));
+fig.Position = [-113 320 1987 676];
+
+
+    
 end
 
 %% scrap code

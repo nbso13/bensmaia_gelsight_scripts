@@ -8,7 +8,7 @@ function [FRs_ts, FRs_gel, response_collection, len_scan] = pullResponses(aff_po
 %dir is a string, save figures there.
 
 % presets
-samp_freq = 2000; % hz
+samp_freq = 500; % hz
 
 % calculate length of time of scan
 

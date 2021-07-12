@@ -43,7 +43,9 @@ ind_list = [];
 for i = 1:length(target_rates)
     rate_array_compare = abs(rate_array - target_rates(i));
     [~, sorted_indices] = sort(rate_array_compare, 'ascend'); %sorted rates of afferent class
-    
+    if length(sorted_indices) == 0
+        continue
+    end
     for j = 1:length(sorted_indices) %find best index not already on list
         ind = sorted_indices(j);
         if ~ismember(ind, ind_list)
