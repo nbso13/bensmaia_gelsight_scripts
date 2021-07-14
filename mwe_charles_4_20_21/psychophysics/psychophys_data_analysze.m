@@ -41,9 +41,6 @@ disp(strcat("main loop time per texture: ", num2str(time/num_textures)))
 k_len = 5;
 plot_psychophys(k_len, x_axis, roughData, texture_nums, num_textures, ...
     scatter_size, colorscheme, my_texture_names)
-
-
-
 %% functions
 
 function [texture_nums, filename_gel, filename_nogel] = assign_names(name_str)
