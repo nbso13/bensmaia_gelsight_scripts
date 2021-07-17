@@ -40,8 +40,7 @@ final_mask  = (logical(masks(:,1)) | logical(masks(:,2))) | logical(masks(:,3));
 %restricting responses
 new_responses = resp.responses(final_mask);
 %restricting affpop
-new_aff_pop = resp.affpop;
-new_aff_pop.afferents = new_aff_pop.afferents(final_mask);
+new_aff_pop = AfferentPopulation(resp.affpop.afferents(final_mask));
 new_res_coll = ResponseCollection(new_aff_pop, new_responses, resp.stimulus);
 end
 

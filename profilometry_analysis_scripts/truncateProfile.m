@@ -24,6 +24,8 @@ disp(strcat("Total outliers re-interpolated during truncation: " + num2str(total
 pre_interp = profile_struct.profile;
 pre_interp(mask == 0) = NaN;
 tHeightMap = fillmissing(pre_interp,'linear','EndValues','nearest');
+tHeightMap = tHeightMap - min(tHeightMap(:));
 prof_struct_out = profile_struct;
 prof_struct_out.profile = tHeightMap;
+
 end

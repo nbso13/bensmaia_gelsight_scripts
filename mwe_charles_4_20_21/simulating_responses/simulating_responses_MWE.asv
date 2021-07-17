@@ -8,7 +8,7 @@ close all
 
 %set loop vars
 
-ppms = [10];
+ppms = [7];
 rads = 0.5*1./ppms;
 root_means = {};
 pearsons = {};
@@ -22,7 +22,7 @@ m = 1;% for m = 1:length(ppms)
     aff_colors, neuron_id, rates, spikes, iPC, iRA, iSA, htxt_name] = setup_vars();
 
 % choose which texture set to analyze
-name_str = 'compliant'; % 'all', 'compliant', 'noncompliant', '100grams', 'test'
+name_str = 'test'; % 'all', 'compliant', 'noncompliant', '100grams', 'test'
 [texture_nums, filename_gel, filename_nogel, texture_names, ...
     my_texture_names] = assign_names(name_str, htxt_name);
 
@@ -377,7 +377,8 @@ switch name_str
             "210423_gel_18_thick_corduroy_200_grams_processed", ...
             "210423_gel_18_premier_velvet_200_grams_processed", ...
             "210423_gel_18_velour_200_grams_processed", ...
-            "210423_gel_19_snowflake_knitside_200_grams_processed"];
+            "210423_gel_19_snowflake_knitside_200_grams_processed", ...
+            "210428_empire_velveteen_gel_19_100_grams_processed"];
         
         filename_nogel = ["210121_velvet_no_gel_processed", ...
             "201118_corduroy_no_gel_trimmed", ...
@@ -500,5 +501,5 @@ function [modes] = set_modes()
 %        as best area
 %        "best_match" - match on an aff by aff basis, same as best
 % neuron_selection_modes = ["best", "best_area", "best_area"];
-modes = ["best_match", "best_area_match", "best_area_match"]; %["all_rand", "area_rand", "area_rand"];
+modes = ["all_rand", "area_rand", "area_rand"];
 end

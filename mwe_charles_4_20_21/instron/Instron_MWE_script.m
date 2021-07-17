@@ -3,12 +3,13 @@
 clear
 close all
 
-addpath('data')
+addpath('../../instron_data')
 addpath('helper_functions')
 
 %% Load Person Data
 %run this function if you need to re-process person files.
-% processPersonData('person_data');
+processPersonData('person_data');
+% processNewInstron(
 load('person_files')
 
 %% Visualize Data

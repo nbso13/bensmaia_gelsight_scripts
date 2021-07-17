@@ -1,9 +1,9 @@
 function [prof] = processAndUpdate(filename_prof, gel_flag)
 %detrends, scales, rotates, truncates, and saves profilometry inputs
 
-cd ../../mat_files/
+cd ../../mwe_data/sim_data
 load(filename_prof);
-cd ../bensmaia_gelsight_scripts/profilometry_analysis_scripts
+cd ../../bensmaia_gelsight_scripts/profilometry_analysis_scripts
 disp(strcat("PROCESSING ", filename_prof));
 if gel_flag
     prof = gel;
@@ -83,43 +83,6 @@ while crop
     end
 end
 
-%% Truncate
-
-figure;
-visualizeProfile(prof);
-title("Profile")
-str = input("Truncate Profile? y/n", 's');
-old_prof = prof;
-% str = "n";
-if str == "y"
-    truncate_prof = 1;
-    while truncate_prof
-        if isfield(prof, 'truncated')
-            disp("Already truncated. Don't truncate a profile multiple times.")
-            truncate_prof = 0;
-        else
-            str = input("stds to cut? (number, default 3)", 's');
-            stan_dev = num2str(str);
-            prof = truncateProfile(prof, stan_dev);
-            prof.truncated = stan_dev; %as in, three standard devs has been truncated
-            gcf;
-            visualizeProfile(prof);
-            title(strcat("Truncated to ", str));
-            str = input("Redo truncation? (y/n)", 's');
-            if str == "y"
-                prof = old_prof;
-            elseif str == "n"
-                truncate_prof = 0;
-            end
-        end
-    end
-end
-
-%% fill missing
-if sum(isnan(prof.profile(:))) > 0
-    disp("INPAINTING NANS")
-    prof.profile = inpaint_nans(prof.profile);
-end
 
 %% remove trend
 figure
@@ -143,11 +106,51 @@ figure
 visualizeProfile(prof);
 title(prof.name);
 
+
+%% Truncate
+
+figure;
+visualizeProfile(prof);
+title("Profile")
+str = input("Truncate Profile? y/n", 's');
+old_prof = prof;
+% str = "n";
+if str == "y"
+    truncate_prof = 1;
+    while truncate_prof
+        if isfield(prof, 'truncated')
+            disp("Already truncated. Don't truncate a profile multiple times.")
+            truncate_prof = 0;
+        else
+            str = input("stds to cut? (number, default 3)", 's');
+            stan_dev = str2num(str);
+            prof = truncateProfile(prof, stan_dev);
+            prof.truncated = stan_dev; %as in, three standard devs has been truncated
+            gcf;
+            visualizeProfile(prof);
+            title(strcat("Truncated to ", str));
+            str = input("Redo truncation? (y/n)", 's');
+            if str == "y"
+                prof = old_prof;
+            elseif str == "n"
+                truncate_prof = 0;
+            end
+        end
+    end
+end
+
+%% fill missing
+if sum(isnan(prof.profile(:))) > 0
+    disp("INPAINTING NANS")
+    prof.profile = inpaint_nans(prof.profile);
+end
+
+prof.profile = prof.profile-min(prof.profile(:));
 %% save
 % str = "y";
 str = input("save profile? (y/n)", 's');
 if str == "y"
-    cd ../../mat_files
+    cd ../../mwe_data/sim_data
     if gel_flag
         gel = prof;
         save(filename_prof, 'gel')
@@ -155,7 +158,7 @@ if str == "y"
         no_gel = prof;
         save(filename_prof, 'no_gel')
     end
-    cd ../bensmaia_gelsight_scripts/profilometry_analysis_scripts
+    cd ../../bensmaia_gelsight_scripts/profilometry_analysis_scripts
 end
 
 end

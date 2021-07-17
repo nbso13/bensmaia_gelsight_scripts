@@ -1,11 +1,10 @@
 %% Processing Data
 clear
 close all
+%date - July 15 2021
 %% Load data
-file_names = {"210428_thick_corduroy_gel_19_100_grams", ...
-    "210428_empire_velveteen_gel_19_100_grams", ...
-    "210428_velour_gel_19_100_grams"};
-gel_id = [1, 1, 1]; %1 if gel 0 if nah
+file_names = {"210310_sueded_cuddle_gel_11_100_grams"};
+gel_id = [1]; %1 if gel 0 if nah
 
 for index = 1:length(file_names)
     close all
@@ -61,7 +60,7 @@ for index = 1:length(file_names)
     filename = strcat(file_name, "_processed.mat");
     visualizeProfile(prof);
     
-    cd ../../mat_files
+    cd ../../mwe_data/sim_data
     if GEL
         gel = prof;
         save(filename, "gel");
@@ -70,7 +69,7 @@ for index = 1:length(file_names)
         save(filename, "no_gel");
     end
     
-    cd ../bensmaia_gelsight_scripts/profilometry_analysis_scripts
+    cd ../../bensmaia_gelsight_scripts/profilometry_analysis_scripts
     
     [prof] = processAndUpdate(filename, GEL);
     

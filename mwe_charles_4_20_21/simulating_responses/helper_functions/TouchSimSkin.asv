@@ -18,6 +18,7 @@ no_gel_ts.pins_per_mm = pins_per_mm;
 no_gel_ts.name = no_gel.name;
 no_gel_ts.gel_flag = 0; %not a gel, but the actual textured surface
 
+rotate = 0;
 [shape, offset] = profilometry2shape(gel, pins_per_mm);
 gel_ts = struct;
 gel_ts.shape = shape;

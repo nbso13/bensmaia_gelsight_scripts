@@ -1,0 +1,8 @@
+function [shape_out, offset_out] = rotateTouchsim(shape, offset, angle)
+%rotateTouchsim rotates the touchsim thing by angle.
+
+if angle == 90
+shape_out = shape;
+offset_out = offset;
+end
+

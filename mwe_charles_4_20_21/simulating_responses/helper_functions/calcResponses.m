@@ -1,16 +1,15 @@
-function [FRs_ts, FRs_gel, r, a, figure_handles] = calcResponses(aff_pop, ts, gel, ...
+function [FRs_ts, FRs_gel, r, figure_handles] = calcResponses(aff_pop_in, ts, gel, ...
      ppm, speed, len, samp_freq, top_neuron_number, ...
     texture_rates, neuron_selection_modes, plot_flag)
 %calcResponses given parameters, scans textures in ts structs across hand
 %and measures response in aff_pop. FRs are returned.
 r = {};
 s = {};
-a = {};
 figure_handles = {};
 ts_structs = [ts, gel];
 response_fig = figure;
 for i = 1:length(ts_structs)
-    
+    aff_pop = aff_pop_in;
     s{i} = stim_scan_shape(ts_structs(i).shape, ts_structs(i).offset, ppm, ...
         len, samp_freq, speed, ts_structs(i).gel_flag);
 
@@ -23,10 +22,9 @@ for i = 1:length(ts_structs)
     
     loc = [min_x, max_x, min_y, max_y];
     
-    [resp_new, aff_pop_new] = chooseNeurons(resp, neuron_selection_modes, ...
+    [resp_new] = chooseNeurons(resp, neuron_selection_modes, ...
         texture_rates, top_neuron_number, aff_pop, loc);
     r{i} = resp_new;
-    a{i} = aff_pop_new;
     
     if plot_flag
         figure(response_fig);
@@ -43,9 +41,9 @@ for i = 1:length(ts_structs)
     end
     %calculate mean frs and sd
     
-    FRs{i,1} = resp_new.rate(aff_pop_new.iPC);
-    FRs{i,2} = resp_new.rate(aff_pop_new.iRA);
-    FRs{i,3} = resp_new.rate(aff_pop_new.iSA1);
+    FRs{i,1} = resp_new.rate(resp_new.affpop.iPC);
+    FRs{i,2} = resp_new.rate(resp_new.affpop.iRA);
+    FRs{i,3} = resp_new.rate(resp_new.affpop.iSA1);
     means = zeros(3,1);
     sem = means;
     
@@ -87,7 +85,7 @@ for i = 1:length(ts_structs)
     disp(strcat("Total Pressure: ", num2str(total_force/(total_area/1000000)), " Pa"));
   
 end
-for i = 1:length(s{i})
+for i = 1:length(s)
     figure;
     plot(s{i});
 %     sgtitle(ts_structs(i).name);

@@ -29,6 +29,7 @@ if bottom_flag
     tHeightMap = fillmissing(pre_interp,'constant', min(pre_interp(:)));
 else
     tHeightMap = fillmissing(pre_interp,'linear','EndValues','nearest');
+    tHeightMap = inpaint_nans(tHeightMap);
 end
 prof_struct_out = profile_struct;
 prof_struct_out.profile = tHeightMap- min(tHeightMap(:));
