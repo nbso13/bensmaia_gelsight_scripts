@@ -202,7 +202,6 @@ for i = 1:10
         fs{i,j} = fit(gel_structs{1, i}.data{j}(:, 1), gel_structs{1, i}.data{j}(:, 2), 'poly2');
         ps{1, i} = [ps{1, i}, fs{i, j}.p1];
         ps{2, i} = [ps{2, i}, fs{i, j}.p2];
-        ps{3, i} = [ps{3, i}, fs{i, j}.p3];
     end
 end
 
@@ -214,11 +213,7 @@ hold on
 for i = 1:10
     dates = gel_structs{1,i}.dates_measured;
     days_later = subtract_dates(gel_structs{1, i}.date_made, dates);
-    if i < 6
-        plot(days_later, ps{1,i}, 'Color', colorscheme(3,:));
-    else
-        plot(days_later, ps{1,i}, 'Color', colorscheme(4,:));
-    end
+    plot(days_later, ps{1,i});
 end
 
 %plot p2s over time
@@ -227,23 +222,9 @@ hold on
 for i = 1:10
     dates = gel_structs{1,i}.dates_measured;
     days_later = subtract_dates(gel_structs{1, i}.date_made, dates);
-    if i < 6
-        plot(days_later, ps{2,i}, 'Color', colorscheme(3,:));
+    if i < 5
+    plot(days_later, ps{2,i});
     else
-        plot(days_later, ps{2,i}, 'Color', colorscheme(4,:));
-    end
-end
-
-%plot p3s over time
-figure;
-hold on
-for i = 1:10
-    dates = gel_structs{1,i}.dates_measured;
-    days_later = subtract_dates(gel_structs{1, i}.date_made, dates);
-    if i < 6
-        plot(days_later, ps{3,i}, 'Color', colorscheme(3,:));
-    else
-        plot(days_later, ps{3,i}, 'Color', colorscheme(4,:));
     end
 end
 

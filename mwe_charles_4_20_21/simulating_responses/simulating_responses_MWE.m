@@ -9,6 +9,7 @@ close all
 %set loop vars
 
 ppms = [10];
+flip_flag = 1;
 rads = 0.5*1./ppms;
 root_means = {};
 pearsons = {};
@@ -79,7 +80,7 @@ for i = 1:num_textures
     [FRs_ts, FRs_gel, r, len_scan] = pullResponses(aff_pop, gel, ...
         no_gel, ppms(m), top_neuron_number, ...
         amplitude, len, speed, rads(m), ...
-        texture_rates, neuron_selection_modes, figure_dir);
+        texture_rates, neuron_selection_modes, flip_flag, figure_dir);
     mean_ts = FRs_ts{4}';
     sem_ts = FRs_ts{5}';
     mean_gel = FRs_gel{4}';
@@ -105,7 +106,7 @@ for i = 1:num_textures
     ax = gca;
     ax.FontSize = 12;
     ax.FontWeight = 'bold';
-%     close(h3(1), h3(2), h3(3), h3(4)); %close extraneous figures
+    close(h3(1), h3(2), h3(3), h3(4)); %close extraneous figures
     %
 
     disp("Calculating distance metric between real and sim spike trains...")
@@ -251,8 +252,8 @@ for i = 1:3 %plotting either scatter or bar
         end
         if i == 1
             strs = my_texture_names';
-            colors = colorscheme(1:size(strs,1), :);
-            leg = legend([color_legend(strs, colors)]);
+            colors = colorscheme(1:size(strs,2), :);
+            leg = legend([color_legend(strs', colors)]);
             leg.Box = 0;
         end
         xlabel("No Gel Spike Distance")

@@ -49,8 +49,8 @@ for i = 1:3 %for each afferent
     ylabel("Gel Simulated Activity (Hz)");
     if (i == 1)
         strs = activities.names';
-        colors = colorscheme(1:size(strs,1), :);
-        leg = [color_legend(strs, colors), "unity line"];
+        colors = colorscheme(1:size(strs,2), :);
+        leg = [color_legend(strs', colors), "unity line"];
     	leg = legend(leg);
         leg.Box = 0;
     end
