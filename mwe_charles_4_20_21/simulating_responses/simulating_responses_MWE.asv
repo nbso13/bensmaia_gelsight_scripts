@@ -8,7 +8,7 @@ close all
 
 %set loop vars
 
-ppms = [8];
+ppms = [10];
 flip_flag = 1;
 rads = 0.5*1./ppms;
 root_means = {};
@@ -106,7 +106,7 @@ for i = 1:num_textures
     ax = gca;
     ax.FontSize = 12;
     ax.FontWeight = 'bold';
-    close(h3(1), h3(2), h3(3), h3(4)); %close extraneous figures
+%     close(h3(1), h3(2), h3(3), h3(4)); %close extraneous figures
     %
 
     disp("Calculating distance metric between real and sim spike trains...")
@@ -266,6 +266,10 @@ for i = 1:3 %plotting either scatter or bar
         ax.FontSize = 12;
         ax.FontWeight = 'bold';
     end
+    
+    
+    
+    
 end
 
 % plotting across all textures and just for each class.
@@ -295,6 +299,7 @@ leg.Box = 0;
 ax = gca;
 ax.FontSize = 12;
 ax.FontWeight = 'bold';
+
 %% functions
 
 function [local_data_path_str, local_path_back, colorscheme, figure_dir, ...
@@ -342,7 +347,7 @@ switch name_str
             "210423_gel_19_snowflake_knitside_200_grams_processed",...
             "210728_gel_B5_3_empire_velveteen_processed", ...
             "210728_gel_B5_3_wool_gabardine_processed",...
-            "210729_denim_gel_B5_3_processed", ...
+            
             "210729_snowflake_fuzzyside_gel_B5_3_processed",...
             "210729_microsuede_gel_B5_3_processed", ...
             "210216_3mm_grating_gel_7_processed", ...
@@ -363,12 +368,12 @@ switch name_str
             "210729_wool_garb_no_gel_processed", ...
             "210729_denim_no_gel_processed", ...
             "210729_snowflake_fuzzyside_no_gel_processed", ...
-            "210729_microsuede_no_gel_processed", ...
+            "210729_microsuede_no_gel_processed"];
             "210212_3_mm_grating_no_gel_processed", ...
             "201021_1mm_grating_no_gel",...
             "210414_2mm_dots_no_gel_processed"];
         
-        texture_nums = [31, 25, 45, 7, 4, 42, 33, 9, 21, 38, 44, 6, 15, 2, 43, 20, 49, 50, 55];
+        texture_nums = [31, 25, 45, 7, 4, 42, 33, 9, 21, 38, 44, 6, 15, 49, 50, 55];
         
     case 'compliant'
         filename_gel = ["210223_velvet_gel_7_processed", ...
@@ -402,7 +407,7 @@ switch name_str
             "210729_denim_no_gel_processed", ...
             "210729_snowflake_fuzzyside_no_gel_processed", ...
             "210729_microsuede_no_gel_processed"];
-        texture_nums = [31, 25, 45, 7, 4, 33, 9, 21, 38, 44, 6, 15, 2, 43, 20]; % adding chiffon, suedeside sueded cuddle, satin, 
+        texture_nums = [31, 25, 45, 7, 4, 33, 9, 21, 38, 44, 6, 15]; % adding chiffon, suedeside sueded cuddle, satin, 
         
     case 'noncompliant'
         filename_gel = ["210216_3mm_grating_gel_7_processed", ...
@@ -441,7 +446,7 @@ switch name_str
             "210729_denim_no_gel_processed", ...
             "210729_snowflake_fuzzyside_no_gel_processed", ...
             "210729_microsuede_no_gel_processed"];
-        texture_nums = [6, 15, 2, 43, 20];
+        texture_nums = [6, 15];
     otherwise
         error("No mode match found - choose test, 100grams, compliant, noncompliant, or all")
 end
@@ -514,19 +519,23 @@ function [modes] = set_modes()
 %        as best area
 %        "best_match" - match on an aff by aff basis, same as best
 % neuron_selection_modes = ["best", "best_area", "best_area"];
-modes =  ["all_rand", "area_rand", "area_rand"];
+modes = ["best_match", "best_area_match", "best_area_match"]; %["all_rand", "area_rand", "area_rand"];
 end
 
 
 
 % textures to do
 % - satin
+% - denim
 % organza
 % - chiffon
 % taffeta
+% wool gabardine
 % - flag banner
 % crinkled silk
+% microsuede
 % designer wool
+% - snowflake fleece (fuzzy side)
 % - drapery tape (foam side)
 % corrugated paper
 % wool felt

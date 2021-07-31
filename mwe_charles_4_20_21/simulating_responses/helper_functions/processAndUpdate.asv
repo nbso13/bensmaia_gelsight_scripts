@@ -124,7 +124,7 @@ if gel_flag % if its a gel
         visualizeProfile(prof);
         title("Profile Before Scale")
         str = input("Gel not yet scaled. Scale factor? (multiplier or gel_identity)", 's');
-        if str2double(str)>3 || isnan(str2double(str))
+        if str2double(str)>3 || isnan(str2double(str)
             scale_factor = gel_id_to_factor(str);
         else
             scale_factor = str2double(str);
