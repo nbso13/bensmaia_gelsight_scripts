@@ -12,17 +12,17 @@ addpath("helper_functions")
 
 %% set vars
 % 
-% filename_gel = ["201118_corduroy_35_gel_trimmed", ...
-%     "210226_blizzard_fleece_gel_7_200_grams_processed", ...
-%     "210223_1mm_grating_gel_11_processed"];
+filename_gel = ["201118_corduroy_35_gel_trimmed", ...
+    "210226_blizzard_fleece_gel_7_200_grams_processed", ...
+    "210223_1mm_grating_gel_11_processed"];
 % 
-% filename_nogel = ["201118_corduroy_no_gel_trimmed", ...
-%     "210226_blizzard_fleece_no_gel_processed",...
-%     "201021_1mm_grating_no_gel"];
+filename_nogel = ["201118_corduroy_no_gel_trimmed", ...
+    "210226_blizzard_fleece_no_gel_processed",...
+    "201021_1mm_grating_no_gel"];
 
-filename_gel = ["210310_sueded_cuddle_gel_11_100_grams_processed"];
-
-filename_nogel = ["210222_sueded_cuddle_no_gel_processed"];
+% filename_gel = ["210310_sueded_cuddle_gel_11_100_grams_processed"];
+% 
+% filename_nogel = ["210222_sueded_cuddle_no_gel_processed"];
     
 %HYPERPARAMS
 stopBand = 0.3; %frequencies below 0.5 are noise
@@ -41,10 +41,10 @@ total_texture_number = length(filename_gel);
 
 
 subplot_dim_1 = 2;
-subplot_dim_2 = 1;
+subplot_dim_2 = 2;
 
-    ind_gel = 2;
-    ind_no_gel = 1;
+ind_gel = 2;
+ind_no_gel = 1;
 tic
 for i = 1:length(filename_gel)
     fig = figure;

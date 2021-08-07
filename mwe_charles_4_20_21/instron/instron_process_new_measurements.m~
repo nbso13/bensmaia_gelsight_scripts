@@ -482,14 +482,10 @@ resolution_x = linspace(0, 1.5, 1500);
 % get data from before in that initial indentation value
 initial = temp_data((temp_data(:,1) < initial_indentation), :);
 temp_force = temp_data(:, 2);
-mean_force = mean(initial(:, 2)); % get the mean force in that initial descent
+mean_force = mean(initial(:, 2)); % get the mean
 sd_force = std(initial(:,2));
-% find first index where indentation is greater than init ind value
 more_than_indent = find(temp_data(:,1) > initial_indentation, 1);
-% find the first index, beyond the init indent value, where force exceeds
-% mean force + mult * sd
 ind_contact = find(temp_force(more_than_indent:end) > (mean_force + mult*sd_force), 1);
-% add index for first indent to be able to index original data
 ind_contact = ind_contact + more_than_indent;
 processed_data = temp_data(ind_contact:end, :);
 

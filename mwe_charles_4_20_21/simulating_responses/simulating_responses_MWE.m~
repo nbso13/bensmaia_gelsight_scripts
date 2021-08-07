@@ -513,7 +513,7 @@ function [modes] = set_modes()
 % modes: "area" - all afferents in area
 %        "top"   - average of n=top_neuron_number neurons that respond
 
-% neuron_selection_modes =  
+% neuron_selection_modes =  ["best_match", "best_area_match", "best_area_match"];
 %        "best" -  average of closest n=top_neuron_number 
 %        "best_area" - average of closest n=top neuron number in texture
 %        "area_rand" - random n affs in area (that fire)
@@ -522,7 +522,7 @@ function [modes] = set_modes()
 %        as best area
 %        "best_match" - match on an aff by aff basis, same as best
 % neuron_selection_modes = ["best", "best_area", "best_area"]; "all_rand", "area_rand", "area_rand"
-modes = ["best_match", "best_area_match", "best_area_match"];
+modes =  [];
 end
 
 

@@ -33,7 +33,8 @@ for i = 1:10
     filename = strcat(num2str(date_measured), '_', gel_id_str, '.xls');
     cd '../../../mwe_data/instron_new_data'
     gel_structs{1,i}.data = {};
-    gel_structs{1,i}.data{length(gel_structs{1,i}.data)+1} = xlsread(filename, gel_id_str, 'A:B');
+    temp = readcell(filename, 'Sheet', gel_id_str, 'Range', 'A:B');
+    gel_structs{1,i}.data{length(gel_structs{1,i}.data)+1} = cell2mat(temp(5:end, :));
     cd ../../bensmaia_gelsight_scripts/mwe_charles_4_20_21/instron
     
 end
@@ -62,7 +63,8 @@ for i = 1:10
         gel_structs{1,i}.dates_measured = [gel_structs{1,i}.dates_measured, date_measured];
         filename = strcat(num2str(date_measured), '_', gel_id_str, '.xls');
         cd '../../../mwe_data/instron_new_data'
-        gel_structs{1,i}.data{length(gel_structs{1,i}.data)+1} = xlsread(filename, gel_id_str, 'A:B');
+        temp = readcell(filename, 'Sheet', gel_id_str, 'Range', 'A:B');
+        gel_structs{1,i}.data{length(gel_structs{1,i}.data)+1} = cell2mat(temp(5:end, :));
         cd ../../bensmaia_gelsight_scripts/mwe_charles_4_20_21/instron
     else
         x = 1;
@@ -71,7 +73,8 @@ for i = 1:10
             gel_structs{1,i}.dates_measured = [gel_structs{1,i}.dates_measured, date_measured];
             filename = strcat(num2str(date_measured), '_', gel_id_str, '.xls');
             cd '../../../mwe_data/instron_new_data'
-            gel_structs{1,i}.data{length(gel_structs{1,i}.data)+1} = xlsread(filename, gel_id_str, 'A:B');
+            temp = readcell(filename, 'Sheet', gel_id_str, 'Range', 'A:B');
+            gel_structs{1,i}.data{length(gel_structs{1,i}.data)+1} = cell2mat(temp(5:end, :));
             cd ../../bensmaia_gelsight_scripts/mwe_charles_4_20_21/instron
         end
     end
@@ -154,7 +157,8 @@ for i = 1:10
     gel_structs{1,i}.dates_measured = [gel_structs{1,i}.dates_measured, date_measured];
     filename = strcat(num2str(date_measured), '_', gel_id_str, '.xls');
     cd '../../../mwe_data/instron_new_data'
-    gel_structs{1,i}.data{length(gel_structs{1,i}.data)+1} = xlsread(filename, gel_id_str, 'A:B');
+    temp = readcell(filename, 'Sheet', gel_id_str, 'Range', 'A:B');
+    gel_structs{1,i}.data{length(gel_structs{1,i}.data)+1} = cell2mat(temp(5:end, :));
     cd ../../bensmaia_gelsight_scripts/mwe_charles_4_20_21/instron
 end
 % examine data
@@ -193,7 +197,8 @@ for i = 11:18
     filename = strcat(num2str(date_measured), '_', gel_id_str, '.xls');
     cd '../../../mwe_data/instron_new_data'
     gel_structs{1,i}.data = {};
-    gel_structs{1,i}.data{length(gel_structs{1,i}.data)+1} = xlsread(filename, gel_id_str, 'A:B');
+    temp = readcell(filename, 'Sheet', gel_id_str, 'Range', 'A:B');
+    gel_structs{1,i}.data{length(gel_structs{1,i}.data)+1} = cell2mat(temp(5:end, :));
     cd ../../bensmaia_gelsight_scripts/mwe_charles_4_20_21/instron
     
 end
@@ -244,7 +249,8 @@ for i = 1:10
     filename = strcat(num2str(date_measured), '_', "B1B2_old_indentor_", num2str(file_counter), '.xls');
     file_counter = file_counter + 1;
     cd '../../../mwe_data/instron_new_data'
-    gel_structs{1,i}.data{length(gel_structs{1,i}.data)+1} = xlsread(filename, gel_id_str, 'A:B');
+    temp = readcell(filename, 'Sheet', gel_id_str, 'Range', 'A:B');
+    gel_structs{1,i}.data{length(gel_structs{1,i}.data)+1} = cell2mat(temp(5:end, :));
     cd ../../bensmaia_gelsight_scripts/mwe_charles_4_20_21/instron
 end
 % examine data
