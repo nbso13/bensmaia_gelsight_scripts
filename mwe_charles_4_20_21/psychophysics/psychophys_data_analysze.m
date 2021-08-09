@@ -159,15 +159,11 @@ switch name_str
     case 'test'
         filename_gel = ["210728_gel_B5_3_empire_velveteen_processed", ...
             "210728_gel_B5_3_wool_gabardine_processed", ...
-            "210729_denim_gel_B5_3_processed", ...
-            "210729_snowflake_fuzzyside_gel_B5_3_processed", ...
-            "210729_microsuede_gel_B5_3_processed"];
+            "210729_denim_gel_B5_3_processed"];
         filename_nogel = ["210715_empire_velveteen_no_gel_processed", ...
             "210729_wool_garb_no_gel_processed", ...
-            "210729_denim_no_gel_processed", ...
-            "210729_snowflake_fuzzyside_no_gel_processed", ...
-            "210729_microsuede_no_gel_processed"];
-        texture_nums = [6, 15, 2, 43, 20];
+            "210729_denim_no_gel_processed"];
+        texture_nums = [6, 15, 2];
     otherwise
         error("No mode match found - choose test, 100grams, compliant, noncompliant, or all")
 end
@@ -404,7 +400,8 @@ for k = 1:k_len
     title(strcat("Mean, r=", num2str(corr_coef)));
     
     disp(mean(corrs))
-    correlation_results(k,1) = mean(corrs);
+    
+    correlation_results(k,1) = nanmean(corrs, 'all');
     correlation_results(k,2) = std(corrs);
     all_corrs(k, :) = corrs;
     disp(strcat(num2str(mean(slopes)), " +/- ", num2str(std(slopes)))); 
@@ -423,6 +420,9 @@ xticks([1, 2, 3])
 xticklabels(sd_strs)
 ylabel("Mean+/-SD Correlation Coefficient Across Participants")
 
+for i = 1:3
+    bee_swarm(all_corrs(i, :), i, 'r', length(all_corrs(i, :)));
+end
 
 fig = figure;
 hold on
