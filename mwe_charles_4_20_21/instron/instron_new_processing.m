@@ -269,8 +269,7 @@ title("210721")
 
 
 %% get change in slope per change in time for every gel
-
-
+close all
 figure;
 hold on
 change_slopes = [];
@@ -290,6 +289,7 @@ for i = 1:10
         run = data(temp); %run from that date
         slopes(j) = fit_run(run); % get slope
     end
+    slopes = slopes - slopes(1);
     scatter(days_later, slopes, [], colorscheme(i, :));
     best_fit = fit(days_later', slopes', "poly1");
     av_y = feval(best_fit, days_later); 
@@ -302,7 +302,7 @@ title("Change in Compliance Slope over Time for 2.8 gels")
 
 
 disp("Mean change in N/mm stiffness slope per day:")
-disp(strcat(num2str(mean(change_slopes))), " +/- ", num2str(std(change_slopes)));
+disp(strcat(num2str(mean(change_slopes)), " +/- ", num2str(std(change_slopes))));
 
 
 
@@ -524,17 +524,24 @@ leg.Box = 0;
 end
 
 function [days_later] = subtract_dates(date_ref, dates_compare)
-    year = floor(date_ref/10000) + 2000;
-    month = floor((date_ref - floor(date_ref/10000)*10000)/100);
-    day = date_ref - floor(date_ref/100)*100;
-    dt_ref = datetime(year, month, day);
-    year = floor(dates_compare/10000) + 2000;
-    month = floor((dates_compare - floor(dates_compare/10000)*10000)/100);
-    day = dates_compare - floor(dates_compare/100)*100;
-    dt_compare = datetime(year, month, day);
-    days_later = dt_compare - dt_ref;
-    days_later.Format = 'd';
-    days_later = time2num(days_later);
+%     year = floor(date_ref/10000) + 2000;
+%     month = floor((date_ref - floor(date_ref/10000)*10000)/100);
+%     day = date_ref - floor(date_ref/100)*100;
+%     dt_ref = datetime(year, month, day);
+%     year = floor(dates_compare/10000) + 2000;
+%     month = floor((dates_compare - floor(dates_compare/10000)*10000)/100);
+%     day = dates_compare - floor(dates_compare/100)*100;
+%     dt_compare = datetime(year, month, day);
+%     days_later = dt_compare - dt_ref;
+%     days_later.Format = 'd';
+%     days_later = time2num(days_later);
+    days_later = zeros(1,length(dates_compare));
+    for i = 1:length(dates_compare)
+        days_later(i) = abs((date_ref - 100*floor(date_ref/100)) - ...
+           (dates_compare(i) - 100*floor(dates_compare(i)/100))); %assuming no month_change
+    end
+
+    
 end
 
 function [fig] = plot_all_together(gel_structs, trace_num, colorscheme, hand_vis_on_indices)

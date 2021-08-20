@@ -188,9 +188,10 @@ for gel and touchsim
 % get indices of affs in big one
 % apply favorite neur indices to that indices list for chosen neurons of an
 % aff class
-% use those indices to rechose afferents in response collections from
-% previous loop and iteratively plot them using calcResponses and main loop
-% code. Also recalculate values in 'activities' variable.
+% use those indices to chose 
+
+
+%plot
 
 %% Mother of all plots
 %

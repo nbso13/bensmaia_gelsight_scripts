@@ -334,44 +334,44 @@ sd_ratings = std(roughData.allData, [], 2);
 for k = 1:k_len
     x_ax = x_axis{k};
     title_str = titstrs(k);
-    fig = figure;
+%     fig = figure;
     corrs = zeros(size(roughData.allData, 2), 1);
     slopes = corrs;
     for i = 1:size(roughData.allData, 2)
-        subplot(3,4, i);
+%         subplot(3,4, i);
         hold on
         rough_data = roughData.allData(:,i);
         rough_data = rough_data(texture_nums);
         for j = 1:num_textures
-            scatter(x_ax(j), rough_data(j), scatter_size, colorscheme(j, :), 'filled');
+%             scatter(x_ax(j), rough_data(j), scatter_size, colorscheme(j, :), 'filled');
         end
-        xlabel(titstrs(k))
-        ylabel("rated roughness")
-        ylim([0 2.5])
-        ax = gca;
-        ax.FontSize = 12;
-        ax.FontWeight = 'bold';
+%         xlabel(titstrs(k))
+%         ylabel("rated roughness")
+%         ylim([0 2.5])
+%         ax = gca;
+%         ax.FontSize = 12;
+%         ax.FontWeight = 'bold';
         
         if i == 1
-            strs = my_texture_names';
-            colors = colorscheme(1:size(strs,1), :);
-            leg = legend([color_legend(strs, colors)]);
-            leg.Box = 'off';
+%             strs = my_texture_names';
+%             colors = colorscheme(1:size(strs,1), :);
+%             leg = legend([color_legend(strs, colors)]);
+%             leg.Box = 'off';
         end
         
         coefficients = polyfit(x_ax, rough_data, 1);
         slopes(i) = coefficients(1);
         xFit = linspace(min(x_ax), max(x_ax), 1000);
         yFit = polyval(coefficients , xFit);
-        plot(xFit, yFit, 'k-', 'LineWidth', 2); % Plot fitted line.
+%         plot(xFit, yFit, 'k-', 'LineWidth', 2); % Plot fitted line.
         corr = corrcoef(x_ax, rough_data);
         corr_coef = corr(1,2);
         corrs(i) = corr_coef;
-        title(strcat("Ppnt. ", num2str(i), " r=", num2str(corr_coef)));
+%         title(strcat("Ppnt. ", num2str(i), " r=", num2str(corr_coef)));
     end
     
     %plot mean ratings
-    subplot(3, 4, i+1)
+    figure
     hold on
     rough_data = mean_ratings;
     rough_data = rough_data(texture_nums);
@@ -388,16 +388,20 @@ for k = 1:k_len
     ax = gca;
     ax.FontSize = 12;
     ax.FontWeight = 'bold';
+    strs = my_texture_names';
+    colors = colorscheme(1:size(strs,1), :);
+    leg = legend([color_legend(strs, colors)]);
+    leg.Box = 'off';
     
     coefficients = polyfit(x_ax, rough_data, 1);
     slopes(i) = coefficients(1);
     xFit = linspace(min(x_ax), max(x_ax), 1000);
     yFit = polyval(coefficients , xFit);
-    plot(xFit, yFit, 'k-', 'LineWidth', 2); % Plot fitted line.
+    plot(xFit, yFit, 'k-', 'LineWidth', 2, 'HandleVisibility','off'); % Plot fitted line.
     corr = corrcoef(x_ax, rough_data);
     corr_coef = corr(1,2);
     corrs(i) = corr_coef;
-    title(strcat("Mean, r=", num2str(corr_coef)));
+    title(strcat(title_str, " Mean, r=", num2str(corr_coef)));
     
     disp(mean(corrs))
     
@@ -406,10 +410,12 @@ for k = 1:k_len
     all_corrs(k, :) = corrs;
     disp(strcat(num2str(mean(slopes)), " +/- ", num2str(std(slopes)))); 
     fig.Position = [-113 320 1987 676];
-    sgtitle(titstrs(k));
+%     sgtitle(titstrs(k));
 end
 
+
 sd_strs = titstrs(1:3);
+
 fig = figure;
 hold on
 x = 1:3;

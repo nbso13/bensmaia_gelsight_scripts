@@ -3,10 +3,9 @@
 
 close all
 clear
+% addpath('helper_functions');
+% cd ../simulating_responses
 addpath('helper_functions');
-cd ../simulating_responses
-addpath('helper_functions');
-cd ../instron
 load('colorscheme.mat');
 
 batch_edges = [1, 5, 10, 14, 18, 22, 25, 28, 32, 36, 39, 42, 45, 48, 51, 54, 57, 60];
@@ -26,11 +25,11 @@ gel_structs = {};
 date_made_B1_B2 = 210709;
 date_measured = 210727;
 
-cd '../../../mwe_data/instron_new_data'
+cd 'data'
 filename = '210726_redo_batches_1.xls';
 ssds = spreadsheetDatastore(filename);
 measurements = sheetnames(ssds, 1);
-cd ../../bensmaia_gelsight_scripts/mwe_charles_4_20_21/instron
+cd ..
 
 
 for i = 1:length(measurements)-2
@@ -47,11 +46,11 @@ for i = 1:length(measurements)-2
     gel_structs{1,i}.date_made = date_made_B1_B2;
     gel_structs{1,i}.dates_measured = [];
     gel_structs{1,i}.dates_measured = [gel_structs{1,i}.dates_measured, date_measured];
-    cd '../../../mwe_data/instron_new_data'
+    cd 'data'
     gel_structs{1,i}.data = {};
     temp = readcell(filename, 'Sheet', gel_id_str, 'Range', 'A:B');
     gel_structs{1,i}.data{length(gel_structs{1,i}.data)+1} = cell2mat(temp(5:end, :));
-    cd ../../bensmaia_gelsight_scripts/mwe_charles_4_20_21/instron
+    cd ..
     
 end
 % examine data
@@ -77,11 +76,11 @@ plot_from_batch_nums(gel_structs, trace_number, colorscheme, batch_nums, batch_e
 date_made_B3_B4 = 210719;
 date_measured = 210727;
 
-cd '../../../mwe_data/instron_new_data'
+cd 'data'
 filename = '210726_redo_batches_2.xls';
 ssds = spreadsheetDatastore(filename);
 measurements = sheetnames(ssds, 1);
-cd ../../bensmaia_gelsight_scripts/mwe_charles_4_20_21/instron
+cd ..
 current_gel_list_length = length(gel_structs);
 
 for j = 1:length(measurements)-2
@@ -99,11 +98,11 @@ for j = 1:length(measurements)-2
     gel_structs{1,i}.date_made = date_made_B3_B4;
     gel_structs{1,i}.dates_measured = [];
     gel_structs{1,i}.dates_measured = [gel_structs{1,i}.dates_measured, date_measured];
-    cd '../../../mwe_data/instron_new_data'
+    cd 'data'
     gel_structs{1,i}.data = {};
     temp = readcell(filename, 'Sheet', gel_id_str, 'Range', 'A:B');
     gel_structs{1,i}.data{length(gel_structs{1,i}.data)+1} = cell2mat(temp(5:end, :));
-    cd ../../bensmaia_gelsight_scripts/mwe_charles_4_20_21/instron
+    cd ..
     
 end
 
@@ -133,11 +132,11 @@ plot_from_batch_nums(gel_structs, trace_number, colorscheme, batch_nums, batch_e
 date_made_B5 = 210722;
 date_measured = 210727;
 
-cd '../../../mwe_data/instron_new_data'
+cd 'data'
 filename = '210727_B5_1.xls';
 ssds = spreadsheetDatastore(filename);
 measurements = sheetnames(ssds, 1);
-cd ../../bensmaia_gelsight_scripts/mwe_charles_4_20_21/instron
+cd ..
 current_gel_list_length = length(gel_structs);
 
 for j = 1:length(measurements)-2
@@ -151,11 +150,11 @@ for j = 1:length(measurements)-2
     gel_structs{1,i}.date_made = date_made_B5;
     gel_structs{1,i}.dates_measured = [];
     gel_structs{1,i}.dates_measured = [gel_structs{1,i}.dates_measured, date_measured];
-    cd '../../../mwe_data/instron_new_data'
+    cd 'data'
     gel_structs{1,i}.data = {};
     temp = readcell(filename, 'Sheet', gel_id_str, 'Range', 'A:B');
     gel_structs{1,i}.data{length(gel_structs{1,i}.data)+1} = cell2mat(temp(5:end, :));
-    cd ../../bensmaia_gelsight_scripts/mwe_charles_4_20_21/instron
+    cd ..
     
 end
 
@@ -185,11 +184,11 @@ plot_from_batch_nums(gel_structs, trace_number, colorscheme, batch_nums, batch_e
 date_made_B6B7 = 210726;
 date_measured = 210728;
 
-cd '../../../mwe_data/instron_new_data'
+cd 'data'
 filename = '210728_B6_B7_new-indentor.xls';
 ssds = spreadsheetDatastore(filename);
 measurements = sheetnames(ssds, 1);
-cd ../../bensmaia_gelsight_scripts/mwe_charles_4_20_21/instron
+cd ..
 current_gel_list_length = length(gel_structs);
 
 for j = 1:length(measurements)-2
@@ -207,12 +206,11 @@ for j = 1:length(measurements)-2
     gel_structs{1,i}.date_made = date_made_B6B7;
     gel_structs{1,i}.dates_measured = [];
     gel_structs{1,i}.dates_measured = [gel_structs{1,i}.dates_measured, date_measured];
-    cd '../../../mwe_data/instron_new_data'
+    cd 'data'
     gel_structs{1,i}.data = {};
     temp = readcell(filename, 'Sheet', gel_id_str, 'Range', 'A:B');
     gel_structs{1,i}.data{length(gel_structs{1,i}.data)+1} = cell2mat(temp(5:end, :));
-    cd ../../bensmaia_gelsight_scripts/mwe_charles_4_20_21/instron
-    
+    cd ..  
 end
 
 
@@ -241,11 +239,11 @@ plot_from_batch_nums(gel_structs, trace_number, colorscheme, batch_nums, batch_e
 date_made_B8B9 = 210728;
 date_measured = 210729;
 
-cd '../../../mwe_data/instron_new_data'
+cd 'data'
 filename = '210729_B8B9.xls';
 ssds = spreadsheetDatastore(filename);
 measurements = sheetnames(ssds, 1);
-cd ../../bensmaia_gelsight_scripts/mwe_charles_4_20_21/instron
+cd ..
 current_gel_list_length = length(gel_structs);
 
 for j = 1:length(measurements)-2
@@ -263,12 +261,11 @@ for j = 1:length(measurements)-2
     gel_structs{1,i}.date_made = date_made_B8B9;
     gel_structs{1,i}.dates_measured = [];
     gel_structs{1,i}.dates_measured = [gel_structs{1,i}.dates_measured, date_measured];
-    cd '../../../mwe_data/instron_new_data'
+    cd 'data'
     gel_structs{1,i}.data = {};
     temp = readcell(filename, 'Sheet', gel_id_str, 'Range', 'A:B');
     gel_structs{1,i}.data{length(gel_structs{1,i}.data)+1} = cell2mat(temp(5:end, :));
-    cd ../../bensmaia_gelsight_scripts/mwe_charles_4_20_21/instron
-    
+    cd ..
 end
 
 
@@ -299,11 +296,11 @@ plot_from_batch_nums(gel_structs, trace_number, colorscheme, batch_nums, batch_e
 close all
 date_measured = 210726;
 
-cd '../../../mwe_data/instron_new_data'
+cd 'data'
 filename = '210726_fingers.xls';
 ssds = spreadsheetDatastore(filename);
 measurements = sheetnames(ssds, 1);
-cd ../../bensmaia_gelsight_scripts/mwe_charles_4_20_21/instron
+cd ..
 current_gel_list_length = length(gel_structs);
 
 for j = 1:length(measurements)-2
@@ -326,7 +323,7 @@ for j = 1:length(measurements)-2
     gel_structs{2,i} = gel_id_str;
     gel_structs{1,i}.dates_measured = [];
     gel_structs{1,i}.dates_measured = [gel_structs{1,i}.dates_measured, date_measured];
-    cd '../../../mwe_data/instron_new_data'
+    cd 'data'
     gel_structs{1,i}.data = {};
     if ~ (x == "nick")
         temp = readcell(filename, 'Sheet', ...
@@ -339,7 +336,7 @@ for j = 1:length(measurements)-2
             'Range', 'A:B');
         gel_structs{1,i}.data{length(gel_structs{1,i}.data)+1} = cell2mat(temp(5:end, :));
     end
-    cd ../../bensmaia_gelsight_scripts/mwe_charles_4_20_21/instron
+    cd ..
     
 end
 
@@ -365,11 +362,11 @@ title("Batches 1, 2, 3, 4, 5 210727")
 %% fingers_2
 date_measured = 210727;
 
-cd '../../../mwe_data/instron_new_data'
+cd 'data'
 filename = '210727_more_fingers_2.xls';
 ssds = spreadsheetDatastore(filename);
 measurements = sheetnames(ssds, 1);
-cd ../../bensmaia_gelsight_scripts/mwe_charles_4_20_21/instron
+cd ..
 current_gel_list_length = length(gel_structs);
 
 for j = 1:length(measurements)-2
@@ -390,13 +387,13 @@ for j = 1:length(measurements)-2
     gel_structs{2,i} = gel_id_str;
     gel_structs{1,i}.dates_measured = [];
     gel_structs{1,i}.dates_measured = [gel_structs{1,i}.dates_measured, date_measured];
-    cd '../../../mwe_data/instron_new_data'
+    cd 'data'
     gel_structs{1,i}.data = {};
     temp = readcell(filename, 'Sheet', ...
             strcat(x, "_right_index_", num2str(mod(j,3)+ ~logical(mod(j,3))*3)), ...
             'Range', 'A:B');
     gel_structs{1,i}.data{length(gel_structs{1,i}.data)+1} = cell2mat(temp(5:end, :));
-    cd ../../bensmaia_gelsight_scripts/mwe_charles_4_20_21/instron
+    cd ..
     
 end
 
@@ -417,7 +414,6 @@ end
 % all fingers
 figure;
 subplot(2, 2, 1)
-ylabel("Force (N)");
 ylim([-0.05, 0.4])
 batch_nums = [10:16];
 finger_slopes = plot_from_batch_nums(gel_structs, trace_number, colorscheme, batch_nums, batch_edges, disp_names);
@@ -426,7 +422,6 @@ title("all fingers")
 % all gels
 subplot(2, 2, 2);
 ylim([-0.05, 0.4])
-
 batch_nums = [1, 5, 6, 7, 8, 9];
 plot_from_batch_nums(gel_structs, trace_number, colorscheme, batch_nums, batch_edges, disp_names)
 title("all gels")
@@ -435,17 +430,15 @@ title("all gels")
 % plot human finger average
 subplot(2, 2, 3)
 ylim([-0.05, 0.4])
-ylabel("Force (N)"); xlabel("Indentation (mm)")
-target_structs = gel_structs(:,36:56);
+target_structs = gel_structs(:,28:48);
 mean_finger_slope = plot_av_sd_fit(target_structs, trace_number, colorscheme(13, :), "finger average");
 title("Average Finger")
 
 subplot(2, 2, 4)
-xlabel("Indentation (mm)")
 ylim([-0.05, 0.4])
-target_structs = gel_structs(:,horzcat(36:41, 48:54));
+target_structs = gel_structs(:,horzcat(28:33, 40:46));
 plot_av_sd_fit(target_structs, trace_number, colorscheme(19, :), "male average");
-target_structs = gel_structs(:,horzcat(42:47, 54:56));
+target_structs = gel_structs(:,horzcat(34:39, 46:48));
 plot_av_sd_fit(target_structs, trace_number, colorscheme(17, :), "female average");
 title("Male and female averages")
 
@@ -673,13 +666,13 @@ lower = av_force - std_force;
 upper = av_force + std_force;
 
 %fit a line to average and high and low sds
-av = regress(av_force, av_ind);
-high = regress(upper, av_ind);
-low = regress(lower, av_ind);
+av = fit(av_ind, av_force, 'poly1');
+high = fit(av_ind, upper, 'poly1');
+low = fit(av_ind, lower, 'poly1');
 
-av_y = av_ind*av; 
-high_y = av_ind*high; 
-low_y = av_ind*low; 
+av_y = feval(av, av_ind); 
+high_y = feval(high, av_ind); 
+low_y = feval(low, av_ind); 
 
 %plot
 gcf;
@@ -702,7 +695,7 @@ slopes = [];
 for i = batch_nums
     target_structs = gel_structs(:,batch_edges(i):batch_edges(i+1)-1);
     slope = plot_av_sd_fit(target_structs, trace_num, colorscheme(i+2, :), disp_names(i));
-    slopes = [slopes, slope];
+    slopes = [slopes, slope.p1];
 end
 
 

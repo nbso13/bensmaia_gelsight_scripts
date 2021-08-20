@@ -12,7 +12,7 @@ function bee_swarm(group_data, x, group_color, max_points)
    
     n_bins = ceil(1 + log2(numel(group_data)));
     group_hist = hist(group_data(:),n_bins);
-    s = 0.4;
+    s = 0.2;
     group_hist_prop = (group_hist / max(group_hist)) * (s*1);
     r = max(group_hist_prop);
    
@@ -45,6 +45,6 @@ function bee_swarm(group_data, x, group_color, max_points)
         scatter(x_vals, y_vals, 10, 'MarkerFaceColor', group_color, 'MarkerEdgeColor', group_color,'MarkerFaceAlpha', 0.5);
         dp_ind = dp_ind + group_hist(bin);
     end
-%     plot([x-r, x+r], [group_mean, group_mean], 'Color' , [0.2 0.2 0.2], 'LineWidth', 2)
+    plot([x-r, x+r], [group_mean, group_mean], 'Color' , [0.2 0.2 0.2], 'LineWidth', 2)
 
 end

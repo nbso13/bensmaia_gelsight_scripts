@@ -1,4 +1,4 @@
-function [FRs_ts, FRs_gel, r, figure_handles] = calcResponses(aff_pop_in, ts, gel, ...
+function [FRs_ts, FRs_gel, loc, r, figure_handles] = calcResponses(aff_pop_in, ts, gel, ...
      ppm, speed, len, samp_freq, top_neuron_number, ...
     texture_rates, neuron_selection_modes, plot_flag)
 %calcResponses given parameters, scans textures in ts structs across hand
@@ -8,6 +8,7 @@ s = {};
 figure_handles = {};
 ts_structs = [ts, gel];
 response_fig = figure;
+loc = zeros(2, 4);
 for i = 1:length(ts_structs)
     aff_pop = aff_pop_in;
     s{i} = stim_scan_shape(ts_structs(i).shape, ts_structs(i).offset, ppm, ...
@@ -20,10 +21,12 @@ for i = 1:length(ts_structs)
     min_y = min(ts_structs(i).shape(:, 2));
     max_y = max(ts_structs(i).shape(:, 2));
     
-    loc = [min_x, max_x, min_y, max_y];
+    loc(i,:) = [min_x, max_x, min_y, max_y];
     
-    [resp_new] = chooseNeurons(resp, neuron_selection_modes, ...
-        texture_rates, top_neuron_number, aff_pop, loc);
+%     [resp_new] = chooseNeurons(resp, neuron_selection_modes, ...
+%         texture_rates, top_neuron_number, aff_pop, loc);
+%    
+    resp_new = resp;
     r{i} = resp_new;
     
     if plot_flag
