@@ -1,6 +1,6 @@
 function [FRs_ts, FRs_gel, loc, r, figure_handles] = calcResponses(aff_pop_in, ts, gel, ...
      ppm, speed, len, samp_freq, top_neuron_number, ...
-    texture_rates, neuron_selection_modes, plot_flag)
+    texture_rates, neuron_selection_modes, same_neuron_flag, plot_flag)
 %calcResponses given parameters, scans textures in ts structs across hand
 %and measures response in aff_pop. FRs are returned.
 r = {};
@@ -21,12 +21,18 @@ for i = 1:length(ts_structs)
     min_y = min(ts_structs(i).shape(:, 2));
     max_y = max(ts_structs(i).shape(:, 2));
     
-    loc(i,:) = [min_x, max_x, min_y, max_y];
     
-%     [resp_new] = chooseNeurons(resp, neuron_selection_modes, ...
-%         texture_rates, top_neuron_number, aff_pop, loc);
-%    
-    resp_new = resp;
+    specific_loc = [min_x, max_x, min_y, max_y]; %prevents row of 0's in loc bug
+    loc(i,:) = specific_loc;
+    
+    if ~same_neuron_flag
+    [resp_new] = chooseNeurons(resp, neuron_selection_modes, ...
+        texture_rates, top_neuron_number, aff_pop, specific_loc);
+    else
+        resp_new = resp;
+    end
+    
+    
     r{i} = resp_new;
     
     if plot_flag

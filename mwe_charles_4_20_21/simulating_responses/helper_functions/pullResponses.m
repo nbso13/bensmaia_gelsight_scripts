@@ -1,6 +1,6 @@
 function [FRs_ts, FRs_gel, loc, response_collection, len_scan] = pullResponses(aff_pop_in, gel, ...
     no_gel, ppm, top_neuron_number, amplitudes, len, speed, pin_radius, ...
-     texture_rates, neuron_selection_modes, flip_flag, figure_dir)
+     texture_rates, neuron_selection_modes, flip_flag, same_neuron_flag, figure_dir)
 %pullResponses: given struct filenames and other hyperparams, calc firing
 %rates. filenames indicate mat file name. ppm is pins per millimeter for
 %touchsim model. ts amplitude indicates how much of the texture to input to
@@ -70,9 +70,10 @@ else
     plot_flag = 0;
 end
     
-[FRs_ts, FRs_gel, loc, response_collection, figure_handles] = calcResponses(aff_pop_in, skin_surface_ts,...
+[FRs_ts, FRs_gel, loc, response_collection, ...
+    figure_handles] = calcResponses(aff_pop_in, skin_surface_ts,...
     new_gel_ts, ppm, speed, len, samp_freq, top_neuron_number, ...
-    texture_rates, neuron_selection_modes, plot_flag);
+    texture_rates, neuron_selection_modes, same_neuron_flag, plot_flag);
 end
 
 
