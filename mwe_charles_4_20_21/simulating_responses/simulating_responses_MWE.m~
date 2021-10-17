@@ -8,7 +8,7 @@ close all
 
 %set loop vars
 
-ppms = [8];
+ppms = [9];
 flip_flag = 1;
 rads = 0.5*1./ppms;
 root_means = {};
@@ -23,7 +23,7 @@ m = 1;% for m = 1:length(ppms)
     aff_colors, neuron_id, rates, spikes, iPC, iRA, iSA, htxt_name] = setup_vars();
 
 % choose which texture set to analyze
-name_str = 'compliant'; % 'all', 'compliant', 'noncompliant', '100grams', 'test'
+name_str = 'test'; % 'all', 'compliant', 'noncompliant', '100grams', 'test'
 [texture_nums, filename_gel, filename_nogel, texture_names, ...
     my_texture_names] = assign_names(name_str, htxt_name);
 
@@ -31,7 +31,8 @@ name_str = 'compliant'; % 'all', 'compliant', 'noncompliant', '100grams', 'test'
 % not choosing new neuron for each texture
 same_neuron_flag = 1;
 min_area_flag = 1; %if true, uses 'and' scanning area for textures. if false, uses 'or' area, where any scanned area is valid for neurons.
-
+cross_fold = 1;
+plot_flag = 0;
 % choose good neurons
 % good_neurons = [2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 18 22 25 28 33 34];
 good_neurons = 1:39;
@@ -109,27 +110,30 @@ for i = 1:num_textures
     sem_gel = FRs_gel{5}';
     activities.ts(i,:) = [mean_ts, sem_ts];
     activities.gel(i,:) = [mean_gel, sem_gel];
+    close all
     
-    h3 = findobj('Type','figure');
-    fig = figure(h3(3));
-    fig.Position = [100 100 900 700];
-    subplot(2,3,3); % plot real spikes using TouchSim plot_spikes function wrapper
-    tsPlotSpikes(spikes, len_scan, good_neurons, htxt_name, neuron_identities, texture_nums(i), speed)
-    title(strcat(no_gel.name, " Recorded Data"));
-    ylabel("");
-    ax = gca;
-    ax.FontSize = 12;
-    ax.FontWeight = 'bold';
-    
-    subplot(2,3, 6); plotFiringRates(rates, good_neurons, htxt_name, neuron_identities, texture_nums(i), speed, 1);
-    %     title(strcat(no_gel.name, "Mean Rate Recorded Data"));
-    title("")
-    ylabel("")
-    ax = gca;
-    ax.FontSize = 12;
-    ax.FontWeight = 'bold';
-    close(h3(1), h3(2), h3(3), h3(4)); %close extraneous figures
-    %
+    if plot_flag
+        h3 = findobj('Type','figure');
+        fig = figure(h3(3));
+        fig.Position = [100 100 900 700];
+        subplot(2,3,3); % plot real spikes using TouchSim plot_spikes function wrapper
+        tsPlotSpikes(spikes, len_scan, good_neurons, htxt_name, neuron_identities, texture_nums(i), speed)
+        title(strcat(no_gel.name, " Recorded Data"));
+        ylabel("");
+        ax = gca;
+        ax.FontSize = 12;
+        ax.FontWeight = 'bold';
+        
+        subplot(2,3, 6); plotFiringRates(rates, good_neurons, htxt_name, neuron_identities, texture_nums(i), speed, 1);
+        %     title(strcat(no_gel.name, "Mean Rate Recorded Data"));
+        title("")
+        ylabel("")
+        ax = gca;
+        ax.FontSize = 12;
+        ax.FontWeight = 'bold';
+        close(h3(1), h3(2), h3(3), h3(4)); %close extraneous figures
+        %
+    end
     
     disp("Calculating distance metric between real and sim spike trains...")
     % spike distance
@@ -146,12 +150,13 @@ disp(strcat("average time per texture: ", num2str(tpt(m))));
 
 
 %% find affs that correlate well
-if same_neuron_flag
-    if min_area_flag
+aff_names = ["PCs", "RAs", "SAs"];
+if same_neuron_flag %if we allow the same neurons to be chosen multiple times
+    if min_area_flag % 
         %restrict affs to those in common scanning window for RA and SA.
         loc_mins = min(abs(locs)); loc_mins(1) = -loc_mins(1); loc_mins(3) = -loc_mins(3);
     else
-        %restrict affs to those in any scanning window for RA and SA.
+        %restrict affs to those largest communal scanning window for RA and SA.
         loc_mins = max(abs(locs)); loc_mins(1) = -loc_mins(1); loc_mins(3) = -loc_mins(3);
     end
     FRs = {gel_FRs, ts_FRs};
@@ -169,7 +174,6 @@ if same_neuron_flag
             FRs{i}{j} = rates_for_aff_for_texture;
         end
     end
-    %%
     % fix rates
     real_rates = cell(1,3);
     for i = 1:3
@@ -180,67 +184,13 @@ if same_neuron_flag
             real_rates{i} = [real_rates{i}; raw_rates{j, i}];
         end
     end
-    
-    %calculate indices based on correlations
-    [max_grand_inds] = define_indices(real_rates, FRs, in_loc_indices, aff_pop);
-    
-  
-    
-    reselected_rs = cell(1,num_textures);
-    for i = 1:num_textures
-        gel_and_ts_old_rs = res_colls{i};
-        gel_and_ts_old_rs = {gel_and_ts_old_rs{2}, gel_and_ts_old_rs{1}};
-        % switch so gel then ts
-        
-        new_rs = cell(1,2);
-        for m = 1:2 %reselecting all fields
-            copy_aff_pop = AfferentPopulation(aff_pop.afferents);
-            old_res_col = gel_and_ts_old_rs{m};
-            new_res_col = ResponseCollection(copy_aff_pop, old_res_col.responses, old_res_col.stimulus);
-            new_res_col.affpop.afferents = copy_aff_pop.afferents(:, max_grand_inds{m});
-            new_res_col.responses = new_res_col.responses(:, max_grand_inds{m});
-            new_rs{m} = new_res_col;
-        end
-        
-        reselected_rs{i} = new_rs;
-        plot_flag = 1;
-        [new_FRs_ts, new_FRs_gel] = new_calc_responses(new_rs, plot_flag, ["names", "names"]);
-        mean_ts = new_FRs_ts{4}';
-        sem_ts = new_FRs_ts{5}';
-        mean_gel = new_FRs_gel{4}';
-        sem_gel = new_FRs_gel{5}';
-        activities.ts(i,:) = [mean_ts, sem_ts];
-        activities.gel(i,:) = [mean_gel, sem_gel];
-        
-        h3 = findobj('Type','figure');
-        fig = figure(h3(1));
-        fig.Position = [100 100 900 700];
-        subplot(2,3,3); % plot real spikes using TouchSim plot_spikes function wrapper
-        tsPlotSpikes(spikes, len_scan, good_neurons, htxt_name, neuron_identities, texture_nums(i), speed)
-        title(strcat(no_gel.name, " Recorded Data"));
-        ylabel("");
-        ax = gca;
-        ax.FontSize = 12;
-        ax.FontWeight = 'bold';
-        
-        subplot(2,3, 6); plotFiringRates(rates, good_neurons, htxt_name, neuron_identities, texture_nums(i), speed, 1);
-        %     title(strcat(no_gel.name, "Mean Rate Recorded Data"));
-        title("")
-        ylabel("")
-        ax = gca;
-        ax.FontSize = 12;
-        ax.FontWeight = 'bold';
-%         close(h3(1)); %close extraneous figures
-        %
-        
-        disp("Calculating distance metric between real and sim spike trains...")
-        % spike distance
-        distances_real_gel{i} = spike_dist_touchsim(spikes, r{2}.responses,... % double check r{2} is gel?
-            len_scan, good_neurons, neuron_identities, texture_nums(i), speed);
-        % each entry is, for each aff,num sim affs by num real affs
-        distances_real_ts{i} = spike_dist_touchsim(spikes, r{1}.responses,...
-            len_scan, good_neurons, neuron_identities, texture_nums(i), speed);
-    end
+    % to do no cross fold, set cross fold var to 1
+    [distances_real_gel, distances_real_ts, ...
+        activities] = cross_fold_wrapper(real_rates, ...
+        FRs, in_loc_indices, aff_pop, aff_names, num_textures, ...
+        res_colls, spikes, len_scan, good_neurons,  htxt_name, ...
+        neuron_identities, texture_nums, speed, no_gel, rates, activities, ...
+        cross_fold);
 end
 
 
@@ -326,7 +276,7 @@ end
 
 
 figure;
-aff_names = ["PCs", "RAs", "SAs"];
+
 sig_mat_textures = zeros(3, num_textures);
 for i = 1:3 %plotting either scatter or bar
     
@@ -559,10 +509,12 @@ switch name_str
         texture_nums = [45, 4, 31, 7, 38, 9, 6];
     case 'test'
         filename_gel = ["210729_snowflake_fuzzyside_gel_B5_3_processed", ...
-            "210729_microsuede_gel_B5_3_processed"];
+            "210729_microsuede_gel_B5_3_processed",...
+            "210730_chiffon_gel_B5_3_processed"];
         filename_nogel = [ "210729_snowflake_fuzzyside_no_gel_processed", ...
-            "210729_microsuede_no_gel_processed"];
-        texture_nums = [43, 20];
+            "210729_microsuede_no_gel_processed",...
+            "210730_chiffon_no_gel_processed"];
+        texture_nums = [43, 20, 12];
     otherwise
         error("No mode match found - choose test, 100grams, compliant, noncompliant, or all")
 end
@@ -629,7 +581,9 @@ function [modes] = set_modes()
 % neuron_selection_modes =
 %        "best" -  average of closest n=top_neuron_number
 %        "best_area" - average of closest n=top neuron number in texture
-%        "area_rand" - random n affs in area (that fire)
+%        "area_rand" - random n affs in area (that fire) NOTE these are
+%        good for complete aff correlation where you choose matching affs
+%        not texture by texture but across all responses
 %        "all_rand" - random n affs (that fire)
 %        "best_area_match" - match on an afferent by afferent basis, same
 %        as best area
@@ -658,24 +612,47 @@ for i = 1:size(temp, 2)
 end
 end
 
-function [max_grand_inds] = define_indices(real_rates, FRs, in_loc_indices, aff_pop)
+function [max_grand_inds] = define_indices(real_rates, FRs, in_loc_indices, ...
+    aff_pop, aff_names, train_inds, test_inds)
 be_plottin = 1;
 corrs = cell(2,3);
 neur_indices = cell(2,3);
 for m = 1:2 % for gel and touchsim
     for i = 1:3 % for every aff class
-        temp = zeros(size(real_rates{i}, 2), size(FRs{m}{i}, 2));
+        temp = zeros(size(real_rates{i}, 2), size(FRs{m}{i}, 2)); % real by sim affs for this aff type for gel/ts
+        temp_tester = zeros(size(real_rates{i}, 2), size(FRs{m}{i}, 2));
         for j = 1:size(real_rates{i}, 2) % for every real afferent
-            for k = 1:size(FRs{1}{i}, 2) % for every simmed afferent
-                tempest = corrcoef(real_rates{i}(:,j), FRs{1}{i}(:,k));
+            for k = 1:size(FRs{m}{i}, 2) % for every simmed afferent
+                real_responses = real_rates{i}(:,j); % rates for every texture
+                res_train = real_responses(train_inds);
+                sim_responses = FRs{m}{i}(:,k);
+                sim_train = sim_responses(train_inds);
+                    
+                tempest = corrcoef(res_train, sim_train);
                 temp(j,k) = tempest(1,2);
+                tempest_test = corrcoef(real_responses(test_inds), sim_responses(test_inds)); 
+                temp_tester(j,k) = tempest_test(1,2);
+                
             end
         end
-        corrs{m,i} = temp;
-        [inds] = diff_max_for_each_col(temp'); %choose a new best simulated aff for every real aff
+        
+        if isempty(train_inds) % i.e., no cross val
+            [inds] = diff_max_for_each_col(temp_tester');
+            corrs{m,i} = temp_tester;
+        else
+            [inds] = diff_max_for_each_col(temp'); %choose a new best simulated aff for every real aff
+            corrs{m,i} = temp;
+        end
+            
+        % on average, for test indices/textures, how good are the
+        % correlations (not directly maxed?)
+        test_corrs  = temp_tester(1:size(temp_tester,1), inds); % chosen sim afferents based on corrs for train indices
+        
+        disp(strcat(" average correlation for test textures: ", ...
+            num2str(nanmean(test_corrs, 'all')), ", aff_index: ", num2str(i)));
         if be_plottin
             figure;
-            title("first ", aff_names(i) " (blue) firing over all textures and most corr sim aff (red)")
+            title(strcat("first ", aff_names(i), " (blue) firing over all textures and most corr sim aff (red)"));
             hold on
             plot(1:length(FRs{1}{i}(:,inds(1))), FRs{1}{i}(:,inds(1)), 'r')
             plot(1:length(real_rates{i}(:,1)), real_rates{i}(:,1), 'b')
@@ -705,6 +682,130 @@ for m = 1:2
 end
 
 end
+
+
+
+function [distances_real_gel, distances_real_ts, activities] = per_texture_loop(max_grand_inds, ...
+    num_textures, res_colls, aff_pop, spikes, len_scan, good_neurons, ...
+    htxt_name, neuron_identities, texture_nums, speed, no_gel, rates, activities)
+
+reselected_rs = cell(1,num_textures);
+for i = 1:num_textures
+    gel_and_ts_old_rs = res_colls{i};
+    gel_and_ts_old_rs = {gel_and_ts_old_rs{2}, gel_and_ts_old_rs{1}};
+    % switch so gel then ts
+    
+    new_rs = cell(1,2);
+    for m = 1:2 %reselecting all fields
+        copy_aff_pop = AfferentPopulation(aff_pop.afferents);
+        old_res_col = gel_and_ts_old_rs{m};
+        new_res_col = ResponseCollection(copy_aff_pop, old_res_col.responses, old_res_col.stimulus);
+        new_res_col.affpop.afferents = copy_aff_pop.afferents(:, max_grand_inds{m});
+        new_res_col.responses = new_res_col.responses(:, max_grand_inds{m});
+        new_rs{m} = new_res_col;
+    end
+    
+    reselected_rs{i} = new_rs;
+    plot_flag = 0;
+    [new_FRs_ts, new_FRs_gel] = new_calc_responses(new_rs, plot_flag, ["names", "names"]);
+    mean_ts = new_FRs_ts{4}';
+    sem_ts = new_FRs_ts{5}';
+    mean_gel = new_FRs_gel{4}';
+    sem_gel = new_FRs_gel{5}';
+    activities.ts(i,:) = [mean_ts, sem_ts];
+    activities.gel(i,:) = [mean_gel, sem_gel];
+    
+    if plot_flag
+        h3 = findobj('Type','figure');
+        fig = figure(h3(1));
+        fig.Position = [100 100 900 700];
+        subplot(2,3,3); % plot real spikes using TouchSim plot_spikes function wrapper
+        tsPlotSpikes(spikes, len_scan, good_neurons, htxt_name, neuron_identities, texture_nums(i), speed)
+        title(strcat(no_gel.name, " Recorded Data"));
+        ylabel("");
+        ax = gca;
+        ax.FontSize = 12;
+        ax.FontWeight = 'bold';
+
+        subplot(2,3, 6); plotFiringRates(rates, good_neurons, htxt_name, neuron_identities, texture_nums(i), speed, 1);
+        %     title(strcat(no_gel.name, "Mean Rate Recorded Data"));
+        title("")
+        ylabel("")
+        ax = gca;
+        ax.FontSize = 12;
+        ax.FontWeight = 'bold';
+    end
+    %         close(h3(1)); %close extraneous figures
+    %
+    
+    disp("Calculating distance metric between real and sim spike trains...")
+    % spike distance
+    distances_real_gel{i} = spike_dist_touchsim(spikes, new_rs{2}.responses,... % double check r{2} is gel?
+        len_scan, good_neurons, neuron_identities, texture_nums(i), speed);
+    % each entry is, for each aff,num sim affs by num real affs
+    distances_real_ts{i} = spike_dist_touchsim(spikes, new_rs{1}.responses,...
+        len_scan, good_neurons, neuron_identities, texture_nums(i), speed);
+end
+end
+
+
+function [distances_real_gel, distances_real_ts, ...
+    activities_out] = cross_fold_wrapper(real_rates, ...
+    FRs, in_loc_indices, aff_pop, aff_names, num_textures, ...
+    res_colls, spikes, len_scan, good_neurons,  htxt_name, ...
+    neuron_identities, texture_nums, speed, no_gel, rates, activities, ...
+    cross_fold)
+
+
+cross_val_div = round(num_textures/cross_fold);
+cross_val_devs = 1:cross_val_div:num_textures; 
+cross_val_devs(end+1) = num_textures+1; % for each run thru the loop we
+% are correlating for everything BUT the textures within these indices so
+% we can use them as a test set.
+
+activities_out = activities;
+
+for x = 1:cross_fold % for every cross fold batch
+    
+    if x == 1 % if the first
+        train_inds = cross_val_devs(2):(cross_val_devs(end)-1); % take every batch but the first for training
+    elseif x == cross_fold % if the last
+        train_inds = 1:(cross_val_devs(end-1)-1); %every batch but the last for training
+    else
+        before_inds = 1:(cross_val_devs(x)-1); %inds before the test batch
+        after_inds = cross_val_devs(x+1):(cross_val_devs(end)-1); %inds after test_batch
+        train_inds = [before_inds, after_inds];
+    end
+    
+    test_inds = cross_val_devs(x):cross_val_devs(x+1)-1;
+    
+    [max_grand_inds] = define_indices(real_rates, FRs, in_loc_indices, aff_pop, aff_names, train_inds, test_inds); 
+    % these are inds of best correlating neurons but ONLY based on train
+    % textures - not test set - cross_val_dev(x):cross_val_dev(x+1)-1
+    
+    new_num_textures = length(test_inds);
+    new_texture_nums = texture_nums(test_inds);
+    new_activities = activities;
+    new_activities.names = activities.names(test_inds);
+    new_activities.real = activities.real(test_inds, :);
+    new_activities.ts = activities.ts(test_inds, :);
+    new_activities.gel = activities.gel(test_inds, :);
+
+    [partial_distances_real_gel, partial_distances_real_ts, partial_activities] = per_texture_loop(max_grand_inds, ...
+        new_num_textures, res_colls, aff_pop, spikes, len_scan, good_neurons, ...
+        htxt_name, neuron_identities, new_texture_nums, speed, no_gel, rates, new_activities);
+    close all;
+    activities_out.real(test_inds, :) = partial_activities.real;
+    activities_out.gel(test_inds, :) = partial_activities.gel;
+    activities_out.ts(test_inds, :) = partial_activities.ts;
+    distances_real_gel(test_inds) = partial_distances_real_gel; 
+    distances_real_ts(test_inds) = partial_distances_real_ts;
+end
+
+end
+
+
+
 
 
 % textures to do

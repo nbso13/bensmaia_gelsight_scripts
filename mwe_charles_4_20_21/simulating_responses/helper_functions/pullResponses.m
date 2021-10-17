@@ -19,7 +19,7 @@ len_scan = len;
 
 %% build models
 % str = input("View touchsim surfaces? (y/n)", 's');
-str = 'y';
+str = 'n';
 disp("Building surface models...")
 if str == "y"
     plot_flag = 1;
@@ -63,7 +63,7 @@ new_gel_ts.offset = new_gel_ts.offset + gel_amplitude;
 
 %% calc_responses
 % str = input("Calculating neural responses. Display figures? (y/n)", 's');
-str = 'y';
+str = 'n';
 if str == "y"
     plot_flag = 1;
 else
