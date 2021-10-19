@@ -24,7 +24,7 @@ function bee_swarm(group_data, x, group_color, max_points)
         x_vec = [x-freq, fliplr(x+freq), x-freq(1)];
         y_vec = [freq_x, fliplr(freq_x), freq_x(1)];
         %patch(x_vec, y_vec, group_color)
-        plot(x_vec, y_vec, 'Color', group_color)
+        plot(x_vec, y_vec, 'Color', group_color, 'HandleVisibility', 'off')
     end
     
     for i = 1:length(group_hist)
@@ -42,9 +42,9 @@ function bee_swarm(group_data, x, group_color, max_points)
         x_range = x + linspace(-group_hist_prop(bin), group_hist_prop(bin), group_hist(bin));
         x_vals = x_range(randperm(length(x_range)));
         y_vals = group_data(dp_ind:dp_ind+group_hist(bin)-1);
-        scatter(x_vals, y_vals, 10, 'MarkerFaceColor', group_color, 'MarkerEdgeColor', group_color,'MarkerFaceAlpha', 0.5);
+        scatter(x_vals, y_vals, 30, 'MarkerFaceColor', group_color, 'MarkerEdgeColor', group_color,'MarkerFaceAlpha', 0.5);
         dp_ind = dp_ind + group_hist(bin);
     end
-    plot([x-r, x+r], [group_mean, group_mean], 'Color' , [0.2 0.2 0.2], 'LineWidth', 2)
+    plot([x-r, x+r], [group_mean, group_mean], 'Color' , [0.2 0.2 0.2], 'LineWidth', 2, 'HandleVisibility', 'off')
 
 end

@@ -461,7 +461,7 @@ ratios = [2.8, 2.9, 3.1, 3.3, 3.8, 4.2];
 ratio_strs = string(ratios);
 figure; scatter(ratios, slopes, 30, 'MarkerFaceColor', 'r', 'MarkerEdgeColor', 'r','MarkerFaceAlpha', 0.5);
 hold on
-xlabel("percentage activator"); ylabel("slope");
+xlabel("ratios"); ylabel("slope");
 
 best_fit = fit(ratios', slopes', 'poly1');
 ys = feval(best_fit, ratios);
@@ -498,15 +498,16 @@ title("Gels and Female average")
 figure;
 batch_nums = [10:16];
 rough_av_plotter(gel_structs, trace_number, batch_nums, batch_edges)
-target_structs = gel_structs(:,batch_edges(9):batch_edges(19)-1);
+batch_nums = [9];
+target_structs = gel_structs(:,batch_edges(9):batch_edges(9+1)-1);
 plot_rough_av(target_structs, trace_number, 'on', 'r');
-title("Human finger stiffness distribution (n=7, 5th to 95th percentile shaded)");
+title("Human Finger Distribution (5th to 95th Percentile Shaded)");
 ylim([0 inf]);
 xlabel("Indentation (mm)");
 ylabel("Force (N)");
 
 colors = [0, 0, 0; 1, 0, 0];
-strings = {'Mean participant traces'; 'Mean Batch 9 gel trace (4.2% activator)'};
+strings = {'Mean participant traces'; 'Gel Batch 9 (base to activator ratio = 4.2)'};
 leg = legend([color_legend(strings, colors)]);
 leg.Box = 0; 
 

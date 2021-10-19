@@ -18,6 +18,7 @@ figure;
 % scatter_list = [];
 for i = 1:3 %for each afferent
     subplot(1, 3, i)
+    daspect([1 1 1])
     hold on;
     x = 1:max([max(activities.real(:,i)), ...
         max(activities.gel(:, i)), max(activities.ts(:, i))]);
@@ -28,15 +29,15 @@ for i = 1:3 %for each afferent
         scatter(activities.real(j,i),activities.gel(j,i), [], 'r', 'o', 'filled');
         scatter(activities.real(j,i), activities.ts(j,i), [], 'b', '+');
     end
-     if (i == 1)
+    if (i == 1)
         strs = {'unity line', 'gel profiles', 'touchsim profiles' };
         colors = [ 0,0,0; 1, 0, 0; 0, 0, 1];
         leg = [color_legend(strs', colors)];
-    	leg = legend(leg);
+        leg = legend(leg);
         leg.Box = 0;
         ylabel("Simulated Activity (Hz)");
-     end
-    pbaspect([1 1 1])
+    end
+    
     
     all_ratios{i, 1} = activities.gel(:,i)./activities.real(:,i);
     mean_ratios(i, 1) = mean(all_ratios{i, 1});
