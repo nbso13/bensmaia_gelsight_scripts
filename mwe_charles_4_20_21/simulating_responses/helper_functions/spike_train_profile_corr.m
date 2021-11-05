@@ -22,9 +22,9 @@ for i = 1:3 % for each afferent class
     norm_mean_aff_psd = mean_aff_psd./max(mean_aff_psd);
     subplot(3,1, i);
     hold on
-    p1 = plot(f_rate, norm_gel_psd_interp, 'cyan', 'LineWidth', line_thick);
+    p1 = plot(f_rate, norm_gel_psd_interp, 'red', 'LineWidth', line_thick);
     p1.Color(4) = transparency;
-    p2 = plot(f_rate, norm_no_gel_psd_interp, 'red', 'LineWidth', line_thick);
+    p2 = plot(f_rate, norm_no_gel_psd_interp, 'blue', 'LineWidth', line_thick);
     p2.Color(4) = transparency;
     p3 = plot(f_rate, norm_mean_aff_psd, 'black', 'LineWidth', line_thick);
     p3.Color(4) = transparency;

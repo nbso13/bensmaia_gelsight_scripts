@@ -132,6 +132,7 @@ for i = 1:num_textures
     % cor returned is aff_class x [gel no_gel] x max_trial num. Non used
     % trials are nans.
     correlations = vertcat(correlations, cor); %afferent classes array([gel no_gel] x trial)
+    
     close all
 end
 total_time = toc;
@@ -155,13 +156,14 @@ mean_ratio_norm = nanmean(mean_ratios_norm, 1);
 
 f = figure;
 f.Position = [100, 100, 300, 300];
-plot(f_no_gels{1}, mean_ratio, 'k');
-ylabel('Mean Raw Ratio'); 
-yyaxis right
-plot(f_no_gels{1}, mean_ratio_norm);
-ylabel('Mean Norm Ratio'); 
+plot(f_no_gels{1}, mean_ratio, 'k', 'LineWidth', 2);
+ylabel('Power Ratio'); 
+% yyaxis right
+% plot(f_no_gels{1}, mean_ratio_norm);
+% ylabel('Mean Norm Ratio'); 
 xlabel('Spatial Frequency (1/mm)');
 xlim([0 7]);
+title("Mean Gel to No Gel Power Ratio")
 ax = gca;
 ax.FontSize = 12;
 ax.FontWeight = 'bold';

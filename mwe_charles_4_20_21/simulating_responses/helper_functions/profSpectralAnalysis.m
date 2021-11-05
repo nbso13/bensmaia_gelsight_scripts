@@ -51,22 +51,25 @@ pxx_no_gel_norm = pxx_no_gel./(max(pxx_no_gel));
 
 subplot(1, 3, 1)
 
-plotWelch(pxx_gel, f_gel, 'c')
+plotWelch(pxx_gel, f_gel, 'r')
 
 hold on;
 
-plotWelch(pxx_no_gel, f_no_gel, 'r')
+plotWelch(pxx_no_gel, f_no_gel, 'b')
 title(strcat(no_gel.name, " Raw PSD"));
 ax = gca;
 ax.FontSize = 12;
 ax.FontWeight = 'bold';
-% legend(["Gel", "Raw"]); 
+strs = {'Gel', 'No gel'}';
+colors = [[1 0 0 ]; [0 0 1]];
+leg = legend(color_legend(strs, colors));
+leg.Box = 0;
 
 subplot(1, 3, 2)
 
-plotWelch(pxx_no_gel_norm, f_no_gel, 'r')
+plotWelch(pxx_no_gel_norm, f_no_gel, 'b')
 hold on;
-plotWelch(pxx_gel_norm, f_gel, 'c')
+plotWelch(pxx_gel_norm, f_gel, 'r')
 title("Normalized PSD");
 xlabel(""); ylabel("");
 ax = gca;
@@ -77,20 +80,20 @@ ax.FontWeight = 'bold';
 subplot(1, 3, 3)
 interp_gel = interp1(f_gel, pxx_gel, f_no_gel);
 pxx_gel_to_nogel_ratio = interp_gel./pxx_no_gel;
-plot(f_no_gel, pxx_gel_to_nogel_ratio, 'k');
-ylabel('Raw Ratio'); 
+plot(f_no_gel, pxx_gel_to_nogel_ratio, 'k', 'LineWidth', 2);
+ylabel('Power Ratio'); 
 ax = gca;
 ax.FontSize = 12;
 ax.FontWeight = 'bold';
 
-yyaxis right
+% yyaxis right
 interp_gel_norm = interp1(f_gel, pxx_gel_norm, f_no_gel);
 pxx_gel_to_nogel_ratio_norm = interp_gel_norm./pxx_no_gel_norm;
-plt = plot(f_no_gel, pxx_gel_to_nogel_ratio_norm);
+% plt = plot(f_no_gel, pxx_gel_to_nogel_ratio_norm);
 % delete(plt)
-ylabel('Normalized Ratio'); 
+% ylabel('Normalized Ratio'); 
 xlim([0 7]);
-title("Gel : NoGel PSD Ratio");
+title("Gel to No Gel Profile Power Ratio");
 ax = gca;
 ax.FontSize = 12;
 ax.FontWeight = 'bold';

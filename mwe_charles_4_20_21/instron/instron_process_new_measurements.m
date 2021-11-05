@@ -483,7 +483,9 @@ leg.Box = 0;
 r_2 = corrcoef(ratios, slopes);
 hold on
 text(2.8,0.2, strcat("R^2 value: ", num2str(r_2(2,1)*r_2(2,1))));
-
+ax = gca;
+ax.FontSize = 12;
+ax.FontWeight = 'bold';
 
 
 figure;
@@ -496,20 +498,31 @@ title("Gels and Female average")
 %%
 %distribution of fingers
 figure;
+hold on;
+batch_nums = [1, 5, 6, 7, 8, 9];
+for i = 1:length(batch_nums)
+    target_structs = gel_structs(:,...
+        batch_edges(batch_nums(i)):batch_edges(batch_nums(i)+1)-1);
+    if i == 1
+        plot_rough_av(target_structs, trace_number, 'on', 'r');
+    else
+        plot_rough_av(target_structs, trace_number, 'off', 'r');
+    end
+end
 batch_nums = [10:16];
 rough_av_plotter(gel_structs, trace_number, batch_nums, batch_edges)
-target_structs = gel_structs(:,batch_edges(9):batch_edges(19)-1);
-plot_rough_av(target_structs, trace_number, 'on', 'r');
-title("Human finger stiffness distribution (n=7, 5th to 95th percentile shaded)");
+title("Finger and gel stiffness distribution (human subjects: n=7, 5th to 95th percentile shaded)");
 ylim([0 inf]);
 xlabel("Indentation (mm)");
 ylabel("Force (N)");
 
-colors = [0, 0, 0; 1, 0, 0];
-strings = {'Mean participant traces'; 'Mean Batch 9 gel trace (4.2% activator)'};
+colors = [1, 0, 0; 0, 0, 1];
+strings = {'Mean gel traces'; 'Mean participant traces'};
 leg = legend([color_legend(strings, colors)]);
 leg.Box = 0; 
-
+ax = gca;
+ax.FontSize = 12;
+ax.FontWeight = 'bold';
 
 
 
@@ -748,7 +761,7 @@ function [] = rough_av_plotter(gel_structs, trace_num, batch_nums, batch_edges)
 %wrapper for plot_rough_av
 forces = {};
 count = 1;
-col = 'k';
+col = 'b';
 for i = batch_nums
     if ~(count == 1)
         handle_vis = 'off';
@@ -792,7 +805,7 @@ hold on
 x2 = [av_ind', fliplr(av_ind')];
 inBetween = [low_y', fliplr(high_y')];
 inBetween(isnan(inBetween)) = 0;
-h = patch(x2, inBetween, 'b',  'HandleVisibility','off');
+h = patch(x2, inBetween, 'k',  'HandleVisibility','off');
 set(h, 'facealpha', 0.2)
 h(1).EdgeColor = 'none';
 
@@ -822,6 +835,6 @@ av_ind = mean(ind, 2);
 gcf;
 hold on
 plot(av_ind, av_force, 'Color', ...
-    col, 'LineWidth', 1.3,  'HandleVisibility', handle_vis);
+    col, 'LineWidth', 2,  'HandleVisibility', handle_vis);
 end
         

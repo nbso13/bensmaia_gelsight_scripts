@@ -1,7 +1,7 @@
 function [] = plotWelch(pxx, f, color)
 %plotWelch plots the normalized power spectrum as passed.
 % - thanks to charles greenspon for code - 
-plot(f, pxx, color);
+plot(f, pxx, color, 'LineWidth', 2);
 ylabel('Power'); 
 xlabel('Spatial Frequency (1/mm)');
 xlim([0 7]);

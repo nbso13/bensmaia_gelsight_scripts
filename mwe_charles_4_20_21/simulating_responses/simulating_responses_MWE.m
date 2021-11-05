@@ -30,8 +30,10 @@ name_str = 'compliant'; % 'all', 'compliant', 'noncompliant', '100grams', 'test'
 % set same neuron flag - if true, use the same neurons for all all textures
 % not choosing new neuron for each texture
 same_neuron_flag = 1;
-min_area_flag = 1; %if true, uses 'and' scanning area for textures. if false, uses 'or' area, where any scanned area is valid for neurons.
-cross_fold = 1;
+min_area_flag = 1; %if true, uses 'and' scanning area for textures 
+% if false, uses 'or' area, where neurons in any scanned area across textures
+% may be selected
+cross_fold = 1; % if 1, no cross fold.
 plot_flag = 0;
 % choose good neurons
 % good_neurons = [2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 18 22 25 28 33 34];
